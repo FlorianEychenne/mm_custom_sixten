@@ -53,6 +53,14 @@ node modules/mm_custom_sixten/tests/e2e/run.mjs            # vérifie
 node modules/mm_custom_sixten/tests/e2e/run.mjs --update   # enregistre les captures de référence
 ```
 
+Gestes au doigt (écran tactile émulé : glisser, poignées, pincer, déplacer la scène, toucher) : le test de `mm_custom`
+en mode compagnon.
+
+```bash
+node modules/mm_custom/tests/e2e/touch.mjs companion phone
+node modules/mm_custom/tests/e2e/touch.mjs companion tablet
+```
+
 ## Polices et images
 
 Polices `views/fonts/*.woff2` (Montserrat, Azeret Mono, licence SIL Open Font License) et logos `views/img/` copiés du
