@@ -37,12 +37,8 @@
                     <p class="price">{$price}</p>
                 {/if}
                 <small class="sx-lead">{$mmcs_lead_time|default:''}</small>
-                <form method="POST">
-                    <input type="hidden" name="token" value="{$mm_custom_token|escape:'html':'UTF-8'}">
-                    <input type="hidden" name="svgTemplateResult" id="svgTemplateResult" value="">
-                    <input type="hidden" name="customData" id="customData" value="">
-                    <button type="submit" name="add-to-cart" class="mm-btn-cart add-to-cart" id="add-to-cart">{l s='Add to cart' mod='mm_custom_sixten'}</button>
-                </form>
+                {* A plain button: the design is sent by MmCustom.cart.add() (AJAX), never by a form *}
+                <button type="button" class="mm-btn-cart add-to-cart" id="add-to-cart">{l s='Add to cart' mod='mm_custom_sixten'}</button>
             </div>
         </div>
         <button type="button" class="mm-btn save-custom" data-product-id="{$product_id}" data-category="{$product_category_id}" data-product-attribute="{$product_attribute_id}" >{if $is_resuming_custom}{l s='Save changes' mod='mm_custom_sixten'}{else}{l s='Save' mod='mm_custom_sixten'}{/if}</button>

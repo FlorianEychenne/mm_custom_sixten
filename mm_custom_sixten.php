@@ -25,7 +25,7 @@ class Mm_custom_sixten extends Module
     {
         $this->name = 'mm_custom_sixten';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'Mediamart';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '9.0.0', 'max' => _PS_VERSION_];
