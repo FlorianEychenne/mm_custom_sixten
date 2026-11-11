@@ -176,7 +176,6 @@
 </div>
 
 {include file='module:mm_custom/views/templates/front/configurator/components/modals.tpl'}
-{include file='module:mm_custom/views/templates/front/configurator/components/notice.tpl'}
 
 </div>
 {/block}
