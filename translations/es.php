@@ -80,3 +80,12 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_498f79c4c5bbde77f1bceb6
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167d9dc6dca0'] = 'Ocultar';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Deshacer el último cambio';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Restablecer el diseño';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Ver la alfombra en 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = 'Preparando la vista 3D…';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vista 3D no está disponible en este dispositivo.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vista 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8881acb68b243c1886a70ce2b5b2d015'] = 'Arrastra para girar · Rueda o pellizco para hacer zoom';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6a0501a02a9166ea69a2b4574259667c'] = 'Giro automático';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_3b81991dc4e4d91dd53f0d62232c76c6'] = 'Restablecer la vista';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_31beee010f609c2ff70870575f07ace0'] = 'Vista superior';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_fd55cbe27e77a09355b130cc4391b0bb'] = 'Descargar esta vista';

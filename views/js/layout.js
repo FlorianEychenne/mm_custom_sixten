@@ -1471,6 +1471,66 @@
         }
 
         /*
+         * Vue 3D (Mathieu, 2026-11-12) : bouton « 3D » après la story. Au premier clic seulement, views/js/viewer3d.js et three.js
+         * (jsDelivr, version figée) sont chargés ; la texture est l'image du tapis telle qu'elle est (MmCustom.export.canvas).
+         * Proposé pour un tapis dont la taille est connue (MmCustom.product.sizeCm, 4 m au plus) et si le navigateur a WebGL.
+         */
+        const VIEWER_URL = window.mm_custom_sixten && window.mm_custom_sixten.viewer3d
+        const matSize = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
+
+        if (MmCustom.export && VIEWER_URL && matSize && matSize.length && matSize.width && matSize.length <= 400 && story) {
+            const view3d = document.createElement('button')
+
+            view3d.type = 'button'
+            view3d.className = 'sx-shot sx-shot--3d'
+            view3d.innerHTML = '<span aria-hidden="true">3D</span>'
+            view3d.title = t('view3d', 'See the mat in 3D')
+            view3d.setAttribute('aria-label', view3d.title)
+            story.insertAdjacentElement('afterend', view3d)
+
+            let viewerModule = null
+
+            view3d.addEventListener('click', function () {
+                if (view3d.classList.contains('is-busy')) return
+
+                view3d.classList.add('is-busy')
+                view3d.title = t('view3dLoading', 'Preparing the 3D view…')
+
+                const load = viewerModule ? Promise.resolve(viewerModule) : import(VIEWER_URL).then(function (m) { viewerModule = m; return m })
+                const stageNode = MmCustom.svg.root() && MmCustom.svg.root().parentElement
+                const pattern = stageNode ? stageNode.querySelector('.mat-pattern') : null
+
+                Promise.all([load, MmCustom.export.canvas({ width: 4096 })]).then(function (results) {
+                    const viewer = results[0]
+
+                    if (!viewer.supported()) throw new Error('webgl')
+
+                    view3d.classList.remove('is-busy')
+                    view3d.title = t('view3d', 'See the mat in 3D')
+
+                    const design = $('.sx-design-btn span', topBar)
+
+                    return viewer.open({
+                        canvas: results[1],
+                        pattern: pattern,
+                        sizeCm: matSize,
+                        title: title(),
+                        subtitle: [matSize.width + ' × ' + matSize.length + ' cm', design ? design.textContent.trim() : ''].filter(Boolean).join(' · '),
+                        fileName: MmCustom.export.fileName(title()).replace(/\.png$/, ''),
+                        t: t,
+                    })
+                }).catch(function (error) {
+                    console.error('mm_custom_sixten: 3D', error)
+                    window.alert(t('view3dFailed', 'The 3D view is not available on this device.'))
+                }).then(function () {
+                    view3d.classList.remove('is-busy')
+                    view3d.title = t('view3d', 'See the mat in 3D')
+                    view3d.focus({ preventScroll: true })
+                })
+            })
+        }
+
+        /*
          * Story Instagram (Sixten 0.18.25) : 1080 × 1920. Fond noir, dégradé radial centré ; grand S de la marque en contour
          * très fin derrière le tapis ; le tapis entier, debout, centré dans une zone de 920 × 1204 px à partir de y = 285 ;
          * dessous le logo Sixten et « Motorsport Customization ». Les 250 px du haut et du bas restent libres (barre de la

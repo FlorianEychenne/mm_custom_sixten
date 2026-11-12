@@ -107,6 +107,8 @@ class Mm_custom_sixten extends Module
         Media::addJsDef([
             'mm_custom_sixten' => [
                 'img' => __PS_BASE_URI__ . 'modules/' . $this->name . '/views/img/',
+                // Vue 3D : module ES chargé au clic (layout.js) ; la date du fichier évite un cache périmé
+                'viewer3d' => __PS_BASE_URI__ . 'modules/' . $this->name . '/views/js/viewer3d.js?v=' . (int) @filemtime(__DIR__ . '/views/js/viewer3d.js'),
                 'translations' => $this->jsTranslations(),
             ],
         ]);
@@ -153,6 +155,15 @@ class Mm_custom_sixten extends Module
             'colorCode' => $this->l('Colour code'),
             'font' => $this->l('Font'),
             'yourText' => $this->l('Your text'),
+            'view3d' => $this->l('See the mat in 3D'),
+            'view3dLoading' => $this->l('Preparing the 3D view…'),
+            'view3dFailed' => $this->l('The 3D view is not available on this device.'),
+            'view3dTitle' => $this->l('3D view'),
+            'view3dHint' => $this->l('Drag to turn · Scroll or pinch to zoom'),
+            'view3dRotate' => $this->l('Turn automatically'),
+            'view3dReset' => $this->l('Reset the view'),
+            'view3dTop' => $this->l('Top view'),
+            'view3dShot' => $this->l('Download this view'),
             'printNote' => $this->l('Custom printed colors may vary slightly from those shown on screen, depending on your display and the printing process.'),
             'switchTitle' => $this->l('Change option?'),
             'switchText' => $this->l('Your current design will be replaced: each size and design has its own template.'),

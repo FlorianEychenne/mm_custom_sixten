@@ -80,3 +80,12 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_498f79c4c5bbde77f1bceb6
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167d9dc6dca0'] = 'Cacher';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Annuler la dernière modification';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Réinitialiser le design';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Voir le tapis en 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = 'Préparation de la vue 3D…';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n’est pas disponible sur cet appareil.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vue 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8881acb68b243c1886a70ce2b5b2d015'] = 'Glisse pour tourner · Molette ou pincement pour zoomer';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6a0501a02a9166ea69a2b4574259667c'] = 'Rotation automatique';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_3b81991dc4e4d91dd53f0d62232c76c6'] = 'Revenir à la vue de départ';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_31beee010f609c2ff70870575f07ace0'] = 'Vue de dessus';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_fd55cbe27e77a09355b130cc4391b0bb'] = 'Télécharger cette vue';

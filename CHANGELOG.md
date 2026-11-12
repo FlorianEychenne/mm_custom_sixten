@@ -6,6 +6,27 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Vue 3D (Mathieu) : voir le tapis personnalisé en 3D
+
+Reprise de la démo `_assets/3dmat` de new.sixten (three.js 0.170) dans le configurateur.
+
+- `views/js/viewer3d.js` (nouveau, module ES) : fenêtre plein écran avec le tapis en 3D (base caoutchouc de 2 mm, insert
+  feutre en retrait de 2 cm qui dépasse de 4 mm, ombre au sol, éclairage d'intérieur), tourner / zoomer à la souris ou au
+  doigt, rotation automatique, retour à la vue de départ, vue de dessus, téléchargement de la vue en PNG, Échap ou croix pour
+  fermer (contexte WebGL et textures libérés). Texture : `MmCustom.export.canvas({ width: 4096 })`, donc le tapis tel qu'il
+  est à l'écran (feutre de la taille, impression en overlay, polices et logos incorporés, bordure) ; relief tiré de la photo
+  du feutre de la scène. Dimensions réelles : `MmCustom.product.sizeCm()`.
+- `views/js/layout.js` : bouton « 3D » après la story, proposé si la taille est connue (4 m au plus) ; au premier clic
+  seulement, `viewer3d.js` et three.js sont chargés (jsDelivr, version figée, modules `+esm`) ; message si WebGL manque.
+- `mm_custom_sixten.php` : URL de `viewer3d.js` (avec la date du fichier) dans `mm_custom_sixten.viewer3d` ; 9 chaînes
+  (5 langues). `views/css/site.css` : bouton et fenêtre (fond papier clair, croix et outils comme les autres fenêtres).
+- Rendu à la demande : la scène n'est redessinée que quand la vue change (geste, inertie, animation), immobile elle ne consomme
+  rien. Vérifié au navigateur sur new.sixten (Ducati 95x240 Racer, 1440 et 390 px, rendu logiciel) : bouton, ouverture, design
+  fidèle (polices, logos, couleurs), rotation à la souris, vue de dessus, fermeture par Échap, aucune erreur ; préparer l'image
+  (4096 px) et charger three.js prend environ 0,5 s. Pas vérifié sur un vrai téléphone ni avec une carte graphique.
+- Rien n'est chargé tant que le bouton n'est pas utilisé. three.js vient d'un CDN : à héberger dans le module avant la
+  production si on préfère ne dépendre d'aucun tiers. Pas de réalité augmentée dans ce lot (la démo en a une : à reprendre).
+
 ### Habillage (Mathieu) : typographie alignée sur le site, fenêtres normalisées, survol des boutons d'outils
 
 Le thème Sixten n'a plus de police mono (`--sx-mono` vaut Montserrat depuis le thème 0.21.0) : les textes en `var(--mmx-caps)` gardaient

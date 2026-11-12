@@ -80,3 +80,12 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_498f79c4c5bbde77f1bceb6
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167d9dc6dca0'] = 'Verbergen';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Laatste wijziging ongedaan maken';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Ontwerp herstellen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Bekijk de mat in 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = '3D-weergave wordt voorbereid…';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'De 3D-weergave is niet beschikbaar op dit apparaat.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = '3D-weergave';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8881acb68b243c1886a70ce2b5b2d015'] = 'Sleep om te draaien · Scroll of knijp om te zoomen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6a0501a02a9166ea69a2b4574259667c'] = 'Automatisch draaien';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_3b81991dc4e4d91dd53f0d62232c76c6'] = 'Weergave herstellen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_31beee010f609c2ff70870575f07ace0'] = 'Bovenaanzicht';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_fd55cbe27e77a09355b130cc4391b0bb'] = 'Deze weergave downloaden';
