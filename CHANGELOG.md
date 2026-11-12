@@ -6,6 +6,27 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Habillage (Mathieu) : typographie alignée sur le site, fenêtres normalisées, survol des boutons d'outils
+
+Le thème Sixten n'a plus de police mono (`--sx-mono` vaut Montserrat depuis le thème 0.21.0) : les textes en `var(--mmx-caps)` gardaient
+des graisses fines à côté de titres en 900. Tout est dans `views/css/site.css`, aucun gabarit ni script touché.
+
+- **Typographie** : dans les 45 règles en `var(--mmx-caps)` / `var(--sx-mono)`, petites capitales en graisse 600 (10 px au moins,
+  interlettrage de 0,14em au plus), autres valeurs en 600. Boutons (`.mm-btn`, `.mm-btn-alt`, `.mm-btn-cart`, `.sx-lib-btn`,
+  `.save-custom`, `.sx-design-btn`, `.btn` des fenêtres) comme les `.btn` du site : Montserrat 800, interlettrage 0,09em. Lignes
+  d'information grises (`.sx-row__meta`, `.sx-meta small`) en texte courant (graisse 500, sans interlettrage).
+- **Fenêtres** (`.mm-modal`, `.mm-existing-modal`, `#modal-logo-choice-content`, `#modal-logos-library-content`,
+  `.mmc-designs__dialog`) : même forme partout (fond blanc, filet noir 1,5 px, angles droits, voile noir à 60 %) ; la fenêtre des designs
+  perd son coin coupé, qui rognait son filet. Même croix partout (`.save-auth-close`, `.mm-existing-close`, `.mmc-designs__close`,
+  `#close-logos-library-modal`) : carré noir de 2,75rem, croix blanche, rouge au survol ; dans le coin haut droit pour la fenêtre de
+  connexion, le choix de logo et « Mes créations ». Fenêtre de connexion : onglets en deux segments (actif noir, texte blanc ; plus le
+  bleu de Bootstrap), champs à filet noir sans le fond bleu du remplissage automatique, lien « Mot de passe oublié ? » en petites
+  capitales soulignées.
+- **Survol des boutons d'outils** (zoom, taille du texte) : fond noir et signe blanc, comme les autres boutons carrés. Le fond gris
+  recouvrait le filet du groupe et donnait l'impression d'un bouton qui grossit.
+- Vérifié au navigateur sur new.sixten (Ducati 95x240 Racer, 1440 px) : volets Textes et Logos, zoom au survol, fenêtres de connexion
+  et de choix du design. Pas vérifié : bibliothèque de logos ouverte, « Mes créations », fenêtre de sortie, téléphone.
+
 ### Logos (Mathieu) : interrupteur « Cacher le logo » retiré, l'œil de la ligne suffit
 
 - `views/templates/front/configurator.tpl` : le bloc « Cacher le logo » (`#sx-hide-logo`) de l'éditeur de logo est retiré ;

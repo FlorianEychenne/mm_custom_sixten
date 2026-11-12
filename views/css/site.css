@@ -37,7 +37,7 @@ body#module-mm_custom-customModule #loading-page .loading-block{position:relativ
 body#module-mm_custom-customModule #loading-page .loading-block::before{content:"";display:block;width:5rem;aspect-ratio:1169/1210;margin:0 auto;background:#fff;
   -webkit-mask:url("../img/sixten-s.svg") no-repeat center/contain;mask:url("../img/sixten-s.svg") no-repeat center/contain;animation:sx-load-pulse 1.6s ease-in-out infinite}
 body#module-mm_custom-customModule #loading-page .loading-block p{display:block;box-sizing:content-box;width:calc(var(--mmc-n,26) * (1ch + .2em));margin:2.25rem auto 0;padding-right:.15em;overflow:hidden;white-space:nowrap;text-align:left;
-  border-right:.6em solid var(--sx-red);font-family:var(--sx-mono);font-size:.8125rem!important;font-weight:400;letter-spacing:.2em;text-transform:uppercase;line-height:1.4;color:#fff!important;
+  border-right:.6em solid var(--sx-red);font-family:var(--sx-mono);font-size:.8125rem!important;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.4;color:#fff!important;
   animation:sx-load-type 4s steps(var(--mmc-n,26),end) infinite,sx-load-caret .8s step-end infinite}
 @keyframes sx-load-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.28)}}
 @keyframes sx-load-type{0%{width:0}55%{width:calc(var(--mmc-n,26) * (1ch + .2em))}100%{width:calc(var(--mmc-n,26) * (1ch + .2em))}}
@@ -51,21 +51,21 @@ body#module-mm_custom-customModule .sx-config-logo__s{display:block;width:100%;h
 body#module-mm_custom-customModule .module-top-bar .module-title{display:flex;flex:0 1 auto;min-width:0;flex-direction:row;align-items:center;gap:1.5rem}
 body#module-mm_custom-customModule .module-top-bar .module-title h1{margin:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--mmx-font);font-size:.9375rem;font-weight:900;font-style:normal;letter-spacing:-.01em;line-height:1.1;text-transform:uppercase;color:#fff}
 body#module-mm_custom-customModule .module-top-bar .module-title .module-attributes{display:flex;gap:.5rem;margin:0;font-size:0;font-style:normal}
-body#module-mm_custom-customModule .module-top-bar .module-title .module-attribute{padding:.25rem .625rem;border:1px solid rgba(255,255,255,.35);font-family:var(--mmx-caps);font-size:.625rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#9A9A9A}
+body#module-mm_custom-customModule .module-top-bar .module-title .module-attribute{padding:.25rem .625rem;border:1px solid rgba(255,255,255,.35);font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#9A9A9A}
 body#module-mm_custom-customModule .module-top-bar .module-attributes.is-switcher{display:block}
 body#module-mm_custom-customModule .sx-variants{display:flex;flex-wrap:nowrap;gap:.75rem}
 body#module-mm_custom-customModule .sx-variant{display:inline-flex;align-items:center;gap:.5rem;margin:0;padding:0;border:0}
-body#module-mm_custom-customModule .sx-variant__label{font-family:var(--mmx-caps);font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:#9A9A9A;white-space:nowrap}
+body#module-mm_custom-customModule .sx-variant__label{font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:#9A9A9A;white-space:nowrap;font-weight:600}
 body#module-mm_custom-customModule .sx-variant__select{appearance:none;-webkit-appearance:none;height:2.125rem;min-width:6.5rem;padding:0 2rem 0 .75rem;border:1.5px solid #fff;border-radius:0;
   background:#000 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23fff' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right .75rem center;
-  color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background-color .2s}
+  color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:border-color .2s,background-color .2s}
 body#module-mm_custom-customModule .sx-variant__select:hover,body#module-mm_custom-customModule .sx-variant__select:focus-visible{border-color:var(--sx-red);outline:0}
 body#module-mm_custom-customModule .sx-variant__select option{background:#000;color:#fff;text-transform:uppercase}
 /* actions à droite : aperçu PNG (caméra), sauvegarder, fermer ; même hauteur, bords blancs */
 body#module-mm_custom-customModule .sx-actions{display:flex;align-items:center;gap:.5rem;margin-left:auto;flex:0 0 auto}
 body#module-mm_custom-customModule .sx-shot,
 body#module-mm_custom-customModule .sx-actions .save-custom,
-body#module-mm_custom-customModule .sx-config-close{position:static;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:2.25rem;min-height:0;margin:0;padding:0 .875rem;border:1.5px solid #fff;border-radius:0;background:transparent;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;line-height:1;cursor:pointer;backdrop-filter:none;transition:background-color .2s,color .2s,border-color .2s}
+body#module-mm_custom-customModule .sx-config-close{position:static;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:2.25rem;min-height:0;margin:0;padding:0 .875rem;border:1.5px solid #fff;border-radius:0;background:transparent;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;line-height:1;cursor:pointer;backdrop-filter:none;transition:background-color .2s,color .2s,border-color .2s}
 body#module-mm_custom-customModule .sx-shot{width:2.25rem;padding:0;pointer-events:auto}
 body#module-mm_custom-customModule .sx-stage-hint .sx-shot{border:0;box-shadow:inset 0 0 0 1.5px #000;color:#000}
 body#module-mm_custom-customModule .sx-stage-hint .sx-shot:hover,body#module-mm_custom-customModule .sx-stage-hint .sx-shot:focus-visible{background:#000;color:#fff}
@@ -79,7 +79,7 @@ body#module-mm_custom-customModule .sx-actions .save-custom:hover,body#module-mm
 /* ---------- Boutons du module (modales) ---------- */
 body#module-mm_custom-customModule .mm-btn,body#module-mm_custom-customModule .mm-btn-cart{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.25rem 1.25rem;border:0;border-radius:0;background:#000;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:background-color .2s,color .2s}
 body#module-mm_custom-customModule .mm-btn:hover,body#module-mm_custom-customModule .mm-btn-cart:hover{background:var(--sx-red);color:#fff}
-body#module-mm_custom-customModule .mm-btn-alt{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.25rem 1.25rem;border:1.5px solid #000;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+body#module-mm_custom-customModule .mm-btn-alt{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.25rem 1.25rem;border:1.5px solid #000;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
 body#module-mm_custom-customModule .mm-btn-alt:hover{background:#000;color:#fff}
 
 /* ---------- Colonne des outils (gauche) : étapes, lignes, prix ---------- */
@@ -91,7 +91,7 @@ body#module-mm_custom-customModule .module-container .tools::-webkit-scrollbar-t
 body#module-mm_custom-customModule .module-container .tools>div{padding:0!important;height:auto!important;max-height:none!important;overflow:visible!important}
 
 body#module-mm_custom-customModule .module-container .tools .text-design>.fonts{display:none!important}
-body#module-mm_custom-customModule .module-container .tools .mm-tools-title{display:block;margin:0 0 .5rem;font-family:var(--mmx-caps);font-size:.625rem!important;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--mmx-text-2)!important}
+body#module-mm_custom-customModule .module-container .tools .mm-tools-title{display:block;margin:0 0 .5rem;font-family:var(--mmx-caps);font-size:.625rem!important;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mmx-text-2)!important}
 
 /* étapes : trois cases, numéro + libellé + compteur ; la case de l'outil ouvert est noire */
 body#module-mm_custom-customModule .sx-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));flex:0 0 auto;border-bottom:1px solid var(--mmx-border)}
@@ -124,13 +124,13 @@ body#module-mm_custom-customModule .sx-row__main{display:flex;flex:1 1 auto;flex
 body#module-mm_custom-customModule .sx-row__title{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:.875rem;font-weight:700;line-height:1.2}
 body#module-mm_custom-customModule .sx-rows--text .sx-row__title{font-size:1.25rem;font-weight:900;font-style:normal;line-height:1;letter-spacing:-.02em;text-transform:uppercase}
 body#module-mm_custom-customModule .sx-row.is-empty .sx-row__title,body#module-mm_custom-customModule .sx-row.is-hidden .sx-row__title{color:var(--mmx-text-2);font-weight:500;font-style:normal;font-size:.8125rem;letter-spacing:0;text-transform:none;font-family:var(--mmx-font)!important}
-body#module-mm_custom-customModule .sx-row__meta{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.06em;color:var(--mmx-text-2)}
+body#module-mm_custom-customModule .sx-row__meta{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.06em;color:var(--mmx-text-2);font-weight:600}
 body#module-mm_custom-customModule .sx-row__end{display:flex;flex:none;align-items:center;color:#000}
 body#module-mm_custom-customModule .sx-row__end svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 body#module-mm_custom-customModule .sx-row.is-hidden .sx-row__end{color:var(--mmx-text-2)}
 body#module-mm_custom-customModule .sx-row.on .sx-row__end svg{transform:rotate(90deg)}
 body#module-mm_custom-customModule .sx-rows--text .sx-row.on .sx-row__end svg{transform:none}
-body#module-mm_custom-customModule .sx-row__action{font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;text-underline-offset:.3em}
+body#module-mm_custom-customModule .sx-row__action{font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:underline;text-underline-offset:.3em;font-weight:600}
 
 /* éditeur : sous la ligne choisie ; bloc « OK, suivant » en pied */
 body#module-mm_custom-customModule .sx-editor{display:flex;flex-direction:column;gap:1rem;padding:.25rem 0 1.25rem;border-bottom:1px solid #000}
@@ -152,9 +152,9 @@ body#module-mm_custom-customModule .sx-fontlist li{padding:.5rem .75rem;overflow
 body#module-mm_custom-customModule .sx-fontlist li:hover{background:var(--mmx-surface-2)}
 body#module-mm_custom-customModule .sx-fontlist li[aria-selected=true]{background:#000;color:#fff}
 body#module-mm_custom-customModule .sx-text-bar .sx-size{display:inline-flex;flex:none;align-items:stretch;height:2.75rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff}
-body#module-mm_custom-customModule .sx-text-bar .sx-size button{width:2.5rem;height:auto;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:1.125rem;line-height:1;cursor:pointer}
+body#module-mm_custom-customModule .sx-text-bar .sx-size button{width:2.5rem;height:auto;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:1.125rem;line-height:1;cursor:pointer;font-weight:600}
 body#module-mm_custom-customModule .sx-text-bar .sx-size button:hover{background:var(--mmx-surface-2)}
-body#module-mm_custom-customModule .module-container .tools .text-design .inputTextDesign .sx-size input{flex:none;width:3.25rem;min-width:0;height:auto;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:500;text-align:center;-moz-appearance:textfield}
+body#module-mm_custom-customModule .module-container .tools .text-design .inputTextDesign .sx-size input{flex:none;width:3.25rem;min-width:0;height:auto;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;text-align:center;-moz-appearance:textfield}
 body#module-mm_custom-customModule .sx-text-bar .sx-size input::-webkit-outer-spin-button,body#module-mm_custom-customModule .sx-text-bar .sx-size input::-webkit-inner-spin-button{appearance:none;margin:0}
 body#module-mm_custom-customModule .sx-text-bar .sx-size input:focus{outline:0}
 body#module-mm_custom-customModule .sx-text-bar i{width:1px;height:1.25rem;margin:0 .25rem;background:var(--mmx-border)}
@@ -176,7 +176,7 @@ body#module-mm_custom-customModule .mm-wheel{display:flex;flex-direction:row;ali
 body#module-mm_custom-customModule .mm-wheel-preview{display:flex;align-items:center;gap:0;padding:0;height:2.75rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff}
 body#module-mm_custom-customModule .mm-wheel-swatch{position:relative;flex:none;width:2.75rem;height:2.75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;cursor:pointer}
 body#module-mm_custom-customModule .mm-wheel-swatch::after{content:"";position:absolute;right:.25rem;bottom:.25rem;width:.75rem;height:.75rem;border:1px solid #fff;background:conic-gradient(#f33,#ff3,#3f3,#3ff,#33f,#f3f,#f33)}
-body#module-mm_custom-customModule .mm-wheel-hex{width:7rem;height:2.75rem;margin:0;padding:0 .75rem;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:500;letter-spacing:.06em}
+body#module-mm_custom-customModule .mm-wheel-hex{width:7rem;height:2.75rem;margin:0;padding:0 .75rem;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;letter-spacing:.06em}
 body#module-mm_custom-customModule .mm-wheel-hex:focus{outline:0;box-shadow:none}
 
 body#module-mm_custom-customModule .module-container .tools .colors-grid{display:grid;grid-template-columns:repeat(auto-fill,1.5rem)!important;gap:.5rem!important;padding:.125rem}
@@ -188,7 +188,7 @@ body#module-mm_custom-customModule .module-container .tools .colors-grid .font-c
 body#module-mm_custom-customModule .module-container .tools .colors-grid .picked{outline:2px solid #000;outline-offset:2px}
 body#module-mm_custom-customModule .module-container .tools .colors-grid .colors-color svg,
 body#module-mm_custom-customModule .module-container .tools .colors-grid .font-color svg{width:.75rem;height:.75rem}
-body#module-mm_custom-customModule .module-container .tools .brand-color::before{border-radius:0;background:#000;color:#fff;font-family:var(--mmx-caps);font-size:.625rem}
+body#module-mm_custom-customModule .module-container .tools .brand-color::before{border-radius:0;background:#000;color:#fff;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600}
 body#module-mm_custom-customModule .sx-note{margin:0;font-size:.75rem;line-height:1.5;color:var(--mmx-text-2)}
 body#module-mm_custom-customModule .module-container .tools .erase-border{font-size:.75rem!important;color:var(--mmx-text-2)!important;text-decoration:underline}
 
@@ -207,17 +207,17 @@ body#module-mm_custom-customModule .module-container .tools .sx-drop span em{fon
 
 body#module-mm_custom-customModule .module-container .tools .sx-logo--library>.mm-tools-title{display:none}
 
-body#module-mm_custom-customModule .module-container .tools .sx-lib-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:stretch;min-height:2.75rem;padding:.25rem 1rem;border:0;border-radius:0;background:#000;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+body#module-mm_custom-customModule .module-container .tools .sx-lib-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;align-self:stretch;min-height:2.75rem;padding:.25rem 1rem;border:0;border-radius:0;background:#000;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
 body#module-mm_custom-customModule .module-container .tools .sx-lib-btn:hover{background:var(--sx-red)}
 body#module-mm_custom-customModule .module-container .tools .sx-lib-btn svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
 body#module-mm_custom-customModule .module-container .tools .sx-current{display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:1rem;align-items:center}
 body#module-mm_custom-customModule .module-container .tools .sx-thumb{display:grid;place-items:center;width:4.5rem;height:3.25rem;padding:.375rem;border:0;border-radius:0;background:var(--mmx-surface-2);overflow:hidden}
 body#module-mm_custom-customModule .module-container .tools .sx-thumb img,body#module-mm_custom-customModule .module-container .tools .sx-thumb svg{width:100%;height:100%;object-fit:contain}
-body#module-mm_custom-customModule .module-container .tools .sx-thumb--empty{padding:0;background:transparent;box-shadow:inset 0 0 0 1.5px var(--mmx-border);color:var(--mmx-text-2);font-family:var(--mmx-caps);font-size:.5625rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;line-height:1.4}
+body#module-mm_custom-customModule .module-container .tools .sx-thumb--empty{padding:0;background:transparent;box-shadow:inset 0 0 0 1.5px var(--mmx-border);color:var(--mmx-text-2);font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;text-align:center;line-height:1.4;font-weight:600}
 body#module-mm_custom-customModule .module-container .tools .sx-meta{display:flex;flex-direction:column;align-items:flex-start;gap:.25rem;min-width:0}
 body#module-mm_custom-customModule .module-container .tools .sx-meta b{max-width:100%;font-size:.8125rem;font-weight:700;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body#module-mm_custom-customModule .module-container .tools .sx-meta small{font-size:.6875rem;color:var(--mmx-text-2)}
-body#module-mm_custom-customModule .module-container .tools .sx-remove{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
+body#module-mm_custom-customModule .module-container .tools .sx-remove{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;font-weight:600}
 body#module-mm_custom-customModule .module-container .tools .sx-remove[hidden]{display:none}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size,body#module-mm_custom-customModule .module-container .tools .sx-logo-pos{display:flex;flex-direction:column;gap:.375rem}
@@ -232,10 +232,10 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty input{height:1.125rem;margin:0}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;height:1.0625rem}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .mm-tools-title{margin:0}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{font-family:var(--mmx-caps);font-size:.6875rem;color:var(--mmx-text-2);white-space:nowrap}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{font-family:var(--mmx-caps);font-size:.6875rem;color:var(--mmx-text-2);white-space:nowrap;font-weight:700}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos input:disabled{opacity:.35}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-hint{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-align:left;text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-hint{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-align:left;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;font-weight:600}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-hint[hidden]{display:none}
 /* emplacement vide : « Votre logo » (vignette vide, curseurs grisés) s'efface, bibliothèque et import suffisent */
 body#module-mm_custom-customModule .module-container .tools .sx-logo--current:has(.sx-thumb--empty) .sx-current,
@@ -254,9 +254,9 @@ body#module-mm_custom-customModule .module-container .tools input[type=range]::-
 /* prix + ajout au panier : dans l'en-tête, avant Sauvegarder (0.10.10) */
 body#module-mm_custom-customModule .module-footer{position:static;flex:0 0 auto;display:block;margin-right:.5rem;padding:0;border:0;border-radius:0;background:transparent;backdrop-filter:none}
 body#module-mm_custom-customModule .module-footer .add-to-shopping-cart{display:grid;grid-template-columns:auto auto;align-items:center;column-gap:1rem;row-gap:.125rem}
-body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .price{grid-column:1;grid-row:1;justify-self:end;margin:0;font-family:var(--mmx-caps);font-size:1.125rem;font-weight:500;line-height:1;color:#fff!important}
+body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .price{grid-column:1;grid-row:1;justify-self:end;margin:0;font-family:var(--mmx-caps);font-size:1.125rem;font-weight:700;line-height:1;color:#fff!important}
 body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{grid-column:2;grid-row:1/span 2;margin:0}
-body#module-mm_custom-customModule .sx-lead{grid-column:1;grid-row:2;justify-self:end;font-family:var(--mmx-caps);font-size:.5rem;font-weight:400;letter-spacing:.1em;line-height:1.2;text-transform:uppercase;color:#9A9A9A;white-space:nowrap}
+body#module-mm_custom-customModule .sx-lead{grid-column:1;grid-row:2;justify-self:end;font-family:var(--mmx-caps);font-size:.5rem;font-weight:600;letter-spacing:.1em;line-height:1.2;text-transform:uppercase;color:#9A9A9A;white-space:nowrap}
 body#module-mm_custom-customModule .mm-btn-cart{min-height:2.25rem;padding:0 1.125rem;border:0;background:var(--sx-red);color:#fff;font-size:.625rem;letter-spacing:.12em;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
 body#module-mm_custom-customModule .mm-btn-cart:hover{background:#fff;color:#000}
 
@@ -278,19 +278,19 @@ body#module-mm_custom-customModule .module-container .template:not(.barnum) svg.
 body#module-mm_custom-customModule .sx-stage-hint{position:absolute;z-index:5;top:1rem;left:1rem;display:flex;align-items:center;gap:.5rem;pointer-events:none}
 
 /* interrupteurs (0.10.2) : masquer / afficher les outils (à gauche) et les repères (à droite) */
-body#module-mm_custom-customModule .sx-toggle{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;padding:0;border:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:background-color .2s,color .2s}
+body#module-mm_custom-customModule .sx-toggle{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;padding:0;border:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:background-color .2s,color .2s}
 body#module-mm_custom-customModule .sx-toggle span{display:none}
 body#module-mm_custom-customModule .sx-toggle svg{width:1.0625rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
 body#module-mm_custom-customModule .sx-toggle:hover{background:#000;color:#fff}
 
 body#module-mm_custom-customModule .sx-toggle--hots[aria-pressed=false]{color:var(--mmx-text-2);box-shadow:inset 0 0 0 1.5px var(--mmx-border)}
-body#module-mm_custom-customModule .sx-stage-hint p{margin:0;display:flex;align-items:center;gap:.5rem;font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mmx-text-2)}
+body#module-mm_custom-customModule .sx-stage-hint p{margin:0;display:flex;align-items:center;gap:.5rem;font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mmx-text-2);font-weight:600}
 
 body#module-mm_custom-customModule .sx-zoom{position:absolute;z-index:5;right:var(--mm-stage-pad);bottom:1.25rem;display:flex;align-items:stretch;height:2.5rem;padding:0;background:#fff;box-shadow:inset 0 0 0 1.5px #000;border:0;border-radius:0}
-body#module-mm_custom-customModule .sx-zoom button{display:flex;align-items:center;justify-content:center;width:2.5rem;height:auto;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:1.0625rem;line-height:1;cursor:pointer;transition:background-color .2s}
+body#module-mm_custom-customModule .sx-zoom button{display:flex;align-items:center;justify-content:center;width:2.5rem;height:auto;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:1.0625rem;line-height:1;cursor:pointer;transition:background-color .2s;font-weight:600}
 body#module-mm_custom-customModule .sx-zoom button:hover{background:var(--mmx-surface-2)}
 body#module-mm_custom-customModule .sx-zoom button:last-child{border-left:1.5px solid #000}
-body#module-mm_custom-customModule .sx-zoom__value{display:flex;align-items:center;justify-content:center;min-width:3.25rem;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.06em;color:#000}
+body#module-mm_custom-customModule .sx-zoom__value{display:flex;align-items:center;justify-content:center;min-width:3.25rem;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.06em;color:#000}
 /* repères numérotés sur le tapis (zones de l'étape en cours) : rond noir à liseré blanc, rouge pour la zone choisie */
 /* « Votre design ici » sur l'emplacement vide, guides d'accroche du glisser-déposer, curseurs */
 body#module-mm_custom-customModule svg [id^="logo_group"]>image,body#module-mm_custom-customModule svg [id^="logo_group"]>svg,body#module-mm_custom-customModule svg[id^="template"] text{cursor:grab}
@@ -323,17 +323,17 @@ body#module-mm_custom-customModule #modal-logos-library{background:rgba(0,0,0,.6
 body#module-mm_custom-customModule #modal-logos-library-content{display:flex;flex-direction:column;gap:1rem;width:min(1120px,calc(100vw - 2rem));max-width:none;height:min(86vh,900px);max-height:none;padding:1.5rem 1.75rem;overflow:hidden;box-shadow:0 2rem 5rem rgba(0,0,0,.35)}
 body#module-mm_custom-customModule .mmc-lib__head{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
 body#module-mm_custom-customModule .mmc-lib__title{flex:1 1 auto;margin:0;font-family:var(--mmx-font);font-size:1.375rem;font-weight:900;font-style:normal;letter-spacing:-.005em;text-transform:uppercase;color:#000}
-body#module-mm_custom-customModule .mmc-lib__count{margin-left:.5rem;font-family:var(--mmx-caps);font-size:.625rem;font-weight:400;font-style:normal;letter-spacing:.14em;color:var(--mmx-text-2);vertical-align:middle}
+body#module-mm_custom-customModule .mmc-lib__count{margin-left:.5rem;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;font-style:normal;letter-spacing:.14em;color:var(--mmx-text-2);vertical-align:middle}
 body#module-mm_custom-customModule .mmc-lib__search{display:flex;align-items:center;gap:.5rem;height:2.75rem;width:min(20rem,100%);padding:0 .75rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000}
 body#module-mm_custom-customModule .mmc-lib__search svg{width:1rem;height:1rem;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
-body#module-mm_custom-customModule .mmc-lib__search input{flex:1 1 auto;min-width:0;height:100%;border:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:500;letter-spacing:.04em}
+body#module-mm_custom-customModule .mmc-lib__search input{flex:1 1 auto;min-width:0;height:100%;border:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;letter-spacing:.04em}
 body#module-mm_custom-customModule .mmc-lib__search input:focus{outline:0}
 body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal{position:static;display:grid;place-items:center;width:2.75rem;height:2.75rem;margin:0;padding:0;border:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;cursor:pointer}
 body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal:hover{background:#000}
 body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal:hover img{filter:invert(1)}
 body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal img{width:1rem;height:1rem;filter:none}
 body#module-mm_custom-customModule #modal-logos-library-content .sort-letters{display:flex;flex-wrap:wrap;gap:.375rem;margin:0;padding:0}
-body#module-mm_custom-customModule #modal-logos-library-content .sort-letters button{height:2rem;margin:0;padding:0 .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px var(--mmx-border);background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background-color .15s,color .15s}
+body#module-mm_custom-customModule #modal-logos-library-content .sort-letters button{height:2rem;margin:0;padding:0 .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px var(--mmx-border);background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background-color .15s,color .15s}
 body#module-mm_custom-customModule #modal-logos-library-content .sort-letters button:hover{box-shadow:inset 0 0 0 1.5px #000}
 body#module-mm_custom-customModule #modal-logos-library-content .sort-letters button.active{background:#000;color:#fff;box-shadow:none}
 body#module-mm_custom-customModule #modal-logos-library-content .logos-block{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:.75rem;flex:1 1 auto;min-height:0;margin:0;padding:.25rem .25rem 1rem 0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.3) transparent}
@@ -343,7 +343,7 @@ body#module-mm_custom-customModule #modal-logos-library-content .logos-block img
 body#module-mm_custom-customModule #modal-logos-library-content .logos-block img[data-ink=wh]{background:#111}
 body#module-mm_custom-customModule #modal-logos-library-content .logos-block img:hover{box-shadow:inset 0 0 0 2px #000;transform:translateY(-1px)}
 body#module-mm_custom-customModule #modal-logos-library-content .logos-block img[data-ink=wh]:hover{box-shadow:inset 0 0 0 2px var(--sx-red)}
-body#module-mm_custom-customModule .mmc-lib__item figcaption{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mmx-text-2);text-align:center}
+body#module-mm_custom-customModule .mmc-lib__item figcaption{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mmx-text-2);text-align:center;font-weight:600}
 body#module-mm_custom-customModule .mmc-lib__empty{margin:0;font-size:.8125rem;color:var(--mmx-text-2)}
 body#module-mm_custom-customModule .mmc-lib__empty[hidden]{display:none}
 @media (max-width:991.98px){
@@ -354,7 +354,7 @@ body#module-mm_custom-customModule .mmc-lib__empty[hidden]{display:none}
   body#module-mm_custom-customModule #modal-logos-library-content .logos-block img{height:4.5rem;padding:.625rem}
 }
 body#module-mm_custom-customModule .save-auth-form input[type=email],body#module-mm_custom-customModule .save-auth-form input[type=password],body#module-mm_custom-customModule .save-auth-form input[type=text]{min-height:3rem;padding:.5rem 1rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000}
-body#module-mm_custom-customModule .save-auth-tab{color:var(--mmx-text-2);font-family:var(--mmx-caps);letter-spacing:.1em;text-transform:uppercase}
+body#module-mm_custom-customModule .save-auth-tab{color:var(--mmx-text-2);font-family:var(--mmx-caps);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
 body#module-mm_custom-customModule .save-auth-tab.active{color:#000;border-color:#000}
 body#module-mm_custom-customModule .save-auth-close{color:#000}
 body#module-mm_custom-customModule .mm-existing-overlay{background:rgba(0,0,0,.6);backdrop-filter:none}
@@ -430,7 +430,7 @@ body#module-mm_custom-customModule .sx-steps button.on{background:#000;color:#ff
 body#module-mm_custom-customModule .sx-steps button:hover{background:#262626}
 body#module-mm_custom-customModule.sx-dock-open .sx-steps button.on{background:#fff;color:#000}
 
-body#module-mm_custom-customModule .sx-steps__label{font-family:var(--mmx-caps);font-size:.625rem;font-weight:500;letter-spacing:.16em;white-space:nowrap}
+body#module-mm_custom-customModule .sx-steps__label{font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.16em;white-space:nowrap}
 
 /* panneau d'outils : fermé au départ */
 body#module-mm_custom-customModule .module-container .info{display:none;border:0;background:#fff;flex-direction:column}
@@ -439,7 +439,7 @@ body#module-mm_custom-customModule .module-container .info::after{content:"";pos
 body#module-mm_custom-customModule .sx-dock__head{display:flex;align-items:center;gap:1rem;flex:0 0 auto;height:3.5rem;padding:0 1.25rem 0 1.5rem;background:#000;color:#fff}
 body#module-mm_custom-customModule .sx-dock__eye{display:flex;align-items:center;flex:1 1 auto;gap:.75rem;margin:0;font-family:var(--lnwks-font-display);font-size:1.0625rem;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:#fff}
 body#module-mm_custom-customModule .sx-dock__eye::before{content:"";flex:none;width:2rem;height:1px;background:var(--sx-red,#E4032E)}
-body#module-mm_custom-customModule .sx-dock__next{display:inline-flex;align-items:center;gap:.375rem;padding:0;border:0;background:none;color:#fff;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+body#module-mm_custom-customModule .sx-dock__next{display:inline-flex;align-items:center;gap:.375rem;padding:0;border:0;background:none;color:#fff;font-family:var(--mmx-caps);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-weight:600}
 body#module-mm_custom-customModule .sx-dock__next:hover{color:var(--sx-red,#E4032E)}
 body#module-mm_custom-customModule .sx-dock__close{display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:0;background:transparent;color:#fff;font:400 1.375rem/1 var(--mmx-caps);cursor:pointer}
 body#module-mm_custom-customModule .sx-dock__close:hover{background:var(--sx-red,#E4032E)}
@@ -510,7 +510,7 @@ body#module-mm_custom-customModule .sx-stage-hint .sx-shot:hover,body#module-mm_
 @media (min-width:992px){body#module-mm_custom-customModule .sx-steps button{gap:0}}
 
 /* Infobulle maison des boutons de la scène (0.18.17) : bulle noire, mono capitales, sous le bouton ; sans coin coupé ni bordure (cf. règle des formes coupées) */
-.mmc-tip{position:fixed;z-index:100000;left:0;top:0;width:max-content;max-width:calc(100vw - 16px);padding:.4rem .6rem;background:#000;color:#fff;font-family:var(--sx-mono,monospace);font-size:.625rem;font-weight:400;line-height:1.4;letter-spacing:.1em;text-transform:uppercase;white-space:normal;pointer-events:none;opacity:0;transform:translateY(-3px);transition:opacity .12s ease,transform .12s ease}
+.mmc-tip{position:fixed;z-index:100000;left:0;top:0;width:max-content;max-width:calc(100vw - 16px);padding:.4rem .6rem;background:#000;color:#fff;font-family:var(--sx-mono,monospace);font-size:.625rem;font-weight:600;line-height:1.4;letter-spacing:.1em;text-transform:uppercase;white-space:normal;pointer-events:none;opacity:0;transform:translateY(-3px);transition:opacity .12s ease,transform .12s ease}
 .mmc-tip.is-on{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.mmc-tip{transition:none;transform:none}}
 
@@ -552,10 +552,10 @@ body#module-mm_custom-customModule .mmc-overlay .mmc-marker:hover circle,body#mo
 body#module-mm_custom-customModule .mmc-overlay .mmc-marker{outline:0}
 
 /* « Votre design ici » (ui/design-here.js) */
-body#module-mm_custom-customModule .mmc-overlay .mmc-design-here{fill:#fff;fill-opacity:.85;font-family:var(--sx-mono,monospace);letter-spacing:.14em;text-transform:uppercase}
+body#module-mm_custom-customModule .mmc-overlay .mmc-design-here{fill:#fff;fill-opacity:.85;font-family:var(--sx-mono,monospace);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
 
 /* zoom (ui/zoom.js) : la barre du module, déplacée dans .sx-zoomwrap et habillée en .sx-zoom ; bouton de rotation à côté */
-body#module-mm_custom-customModule .sx-zoom .mmc-zoom__level{width:auto;min-width:3.25rem;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:500;letter-spacing:.06em}
+body#module-mm_custom-customModule .sx-zoom .mmc-zoom__level{width:auto;min-width:3.25rem;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.06em}
 body#module-mm_custom-customModule .sx-zoom .mmc-zoom__level:hover{background:transparent}
 body#module-mm_custom-customModule .sx-toggle--rot svg{width:1.125rem;height:1.125rem}
 @media (max-width:991.98px){
@@ -568,7 +568,7 @@ body#module-mm_custom-customModule .mmc-color-pop .IroBox,body#module-mm_custom-
 body#module-mm_custom-customModule .mm-wheel-preview .mm-wheel-swatch{padding:0}
 
 /* fenêtres du module : bibliothèque (recherche), sortie, téléphone */
-body#module-mm_custom-customModule .mmc-lib__search{display:block;height:2.75rem;width:min(20rem,100%);padding:0 .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:500;letter-spacing:.04em}
+body#module-mm_custom-customModule .mmc-lib__search{display:block;height:2.75rem;width:min(20rem,100%);padding:0 .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;letter-spacing:.04em}
 body#module-mm_custom-customModule .mmc-lib__search:focus{outline:0;box-shadow:inset 0 0 0 2px var(--sx-red)}
 body#module-mm_custom-customModule .mmc-lib__head{order:-1}
 body#module-mm_custom-customModule .mmc-phone-notice__title{margin:0 0 .5rem;font-family:var(--mmx-font);font-size:1.375rem;font-weight:900;text-transform:uppercase;color:#000}
@@ -581,15 +581,15 @@ body#module-mm_custom-customModule .mmc-designs .mmc-designs__dialog{box-sizing:
 body#module-mm_custom-customModule .mmc-designs__title{margin:0;text-align:left;padding-right:3.5rem;font-family:var(--lnwks-font-display,Montserrat,sans-serif);font-size:1.875rem;font-weight:900;line-height:1;letter-spacing:-.02em;text-transform:uppercase}
 body#module-mm_custom-customModule .mmc-designs .mmc-designs__close{top:2rem;right:2rem;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;background:#000;color:#fff;font-size:1.5rem;line-height:1}
 body#module-mm_custom-customModule .mmc-designs .mmc-designs__close:hover,body#module-mm_custom-customModule .mmc-designs .mmc-designs__close:focus-visible{background:var(--sx-red);outline:0}
-body#module-mm_custom-customModule .mmc-designs .sx-dp__eye{margin:0 0 -.8rem;display:flex;align-items:center;gap:.75rem;font-family:var(--sx-mono);font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:#6b6b6b}
+body#module-mm_custom-customModule .mmc-designs .sx-dp__eye{margin:0 0 -.8rem;display:flex;align-items:center;gap:.75rem;font-family:var(--sx-mono);font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:#6b6b6b;font-weight:600}
 body#module-mm_custom-customModule .mmc-designs .sx-dp__eye::before{content:"";flex:none;width:2rem;height:1px;background:var(--sx-red,#E4032E)}
-body#module-mm_custom-customModule .mmc-designs .sx-dp__note{margin:0;font-family:var(--sx-mono);font-size:.625rem;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b}
+body#module-mm_custom-customModule .mmc-designs .sx-dp__note{margin:0;font-family:var(--sx-mono);font-size:.625rem;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;color:#6b6b6b;font-weight:600}
 body#module-mm_custom-customModule .mmc-designs__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin:0;padding:0;list-style:none}
 body#module-mm_custom-customModule .mmc-designs__item{position:relative;display:flex;flex-direction:column;width:100%;padding:.4rem;border:0;border-radius:0;background:#fff;color:#000;text-align:left;cursor:pointer;box-shadow:0 0 0 1px #E5E5E5;transition:box-shadow .15s ease}
 body#module-mm_custom-customModule .mmc-designs__item:hover,body#module-mm_custom-customModule .mmc-designs__item:focus-visible,body#module-mm_custom-customModule .mmc-designs__item.is-current{box-shadow:0 0 0 2px #000;outline:0}
 body#module-mm_custom-customModule .mmc-designs__item img{display:block;width:100%;aspect-ratio:2.14/1;padding:.6rem;object-fit:contain;background:#F4F4F4}
-body#module-mm_custom-customModule .mmc-designs__name{display:block;text-align:left;min-height:1.75rem;padding:.6rem .15rem .1rem;font-family:var(--sx-mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
-body#module-mm_custom-customModule .mmc-designs__badge{position:absolute;top:auto;left:auto;right:.55rem;bottom:.55rem;padding:.2rem .45rem;border-radius:0;background:#000;color:#fff;font-family:var(--sx-mono);font-size:.5625rem;letter-spacing:.12em;text-transform:uppercase}
+body#module-mm_custom-customModule .mmc-designs__name{display:block;text-align:left;min-height:1.75rem;padding:.6rem .15rem .1rem;font-family:var(--sx-mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+body#module-mm_custom-customModule .mmc-designs__badge{position:absolute;top:auto;left:auto;right:.55rem;bottom:.55rem;padding:.2rem .45rem;border-radius:0;background:#000;color:#fff;font-family:var(--sx-mono);font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
 @media (max-width:991.98px){body#module-mm_custom-customModule .mmc-designs__grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:575.98px){
   body#module-mm_custom-customModule .mmc-designs{padding:0;place-items:stretch}
@@ -604,7 +604,7 @@ body#module-mm_custom-customModule .mmc-designs__badge{position:absolute;top:aut
    permet ; alignement montré seulement pour un texte de plusieurs lignes ou un texte de logo (comme sur new.sixten) */
 body#module-mm_custom-customModule .mmc-text-editor{display:flex;flex-direction:column;gap:.75rem}
 body#module-mm_custom-customModule .mmc-text-editor[hidden]{display:none}
-body#module-mm_custom-customModule .mmc-text-editor textarea{display:block;width:100%;min-height:2.75rem;padding:.625rem .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.9375rem;font-weight:500;letter-spacing:.04em;line-height:1.5rem;resize:none;overflow:hidden}
+body#module-mm_custom-customModule .mmc-text-editor textarea{display:block;width:100%;min-height:2.75rem;padding:.625rem .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.9375rem;font-weight:600;letter-spacing:.04em;line-height:1.5rem;resize:none;overflow:hidden}
 body#module-mm_custom-customModule .mmc-text-editor textarea:focus{outline:0;box-shadow:inset 0 0 0 2px var(--sx-red)}
 body#module-mm_custom-customModule .sx-text-bar__align{display:none;gap:.5rem}
 body#module-mm_custom-customModule.sx-text-multi .sx-text-bar__align{display:inline-flex}
@@ -645,3 +645,44 @@ body#module-mm_custom-customModule .sx-row__eye[hidden]{display:none}
 body#module-mm_custom-customModule .sx-row__eye:hover,body#module-mm_custom-customModule .sx-row__eye:focus-visible{background:#000;color:#fff;outline:0}
 body#module-mm_custom-customModule .sx-stage-hint .sx-hist:disabled{opacity:.35;pointer-events:none}
 body#module-mm_custom-customModule .sx-stage-hint .sx-hist[hidden]{display:none}
+
+/* ==========================================================================================================================================
+   Normalisation (Mathieu, 2026-11-12), après le passage du site de la police mono à Montserrat (thème 0.21.0 à 0.23.0).
+   1. Typographie : même échelle que le site. Dans toutes les règles en var(--mmx-caps) / var(--sx-mono) ci-dessus : petites capitales en
+      graisse 600 (10 px au moins, interlettrage de .14em au plus), autres valeurs en 600. Boutons : comme les .btn du site (graisse 800,
+      interlettrage .09em).
+   2. Fenêtres : une seule forme (fond blanc, filet noir de 1,5 px, angles droits, même marge intérieure, voile noir à 60 %), une seule croix
+      (carré noir de 2,75rem, croix blanche, rouge au survol), onglets en segments noir / blanc (plus de bleu Bootstrap), champs à filet noir
+      sans le fond bleu du remplissage automatique.
+   3. Survol des boutons d'outils (zoom, taille du texte, étapes) : fond noir et signe blanc, comme les autres boutons carrés ; le fond gris
+      recouvrait le filet du groupe et donnait l'impression d'un bouton qui grossit.
+   ========================================================================================================================================== */
+/* 1. boutons */
+body#module-mm_custom-customModule :is(.mm-btn,.mm-btn-cart,.mm-btn-alt,.sx-lib-btn,.save-custom,.sx-design-btn),body#module-mm_custom-customModule .mm-modal .btn{font-family:var(--mmx-font);font-size:.75rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+body#module-mm_custom-customModule .sx-zoom .mmc-zoom__level,body#module-mm_custom-customModule .module-container .tools .text-design .inputTextDesign .sx-size input{font-weight:700;letter-spacing:0}
+/* lignes d'information grises (police, taille, couleur d'un texte ; origine d'un logo) : texte courant, pas un libellé */
+body#module-mm_custom-customModule .sx-row__meta,body#module-mm_custom-customModule .module-container .tools .sx-meta small{font-family:var(--mmx-font);font-size:.6875rem;font-weight:500;letter-spacing:0}
+/* 2. fenêtres */
+body#module-mm_custom-customModule :is(.mm-modal-overlay,.mm-existing-overlay,#modal-logos-library,#modal-logo-choice){background:rgba(0,0,0,.6);backdrop-filter:none}
+body#module-mm_custom-customModule :is(.mm-modal,.mm-existing-modal,#modal-logo-choice-content,#modal-logos-library-content,.mmc-designs__dialog){background:#fff;color:#000;border:1.5px solid #000;border-radius:0;box-shadow:0 2rem 5rem rgba(0,0,0,.3)}
+body#module-mm_custom-customModule .mm-modal:not(.mmc-designs__dialog):not(.mmc-modal--wide),body#module-mm_custom-customModule .mm-existing-modal,body#module-mm_custom-customModule .mm-modal#modal-logo-choice-content{padding:clamp(1.5rem,3vw,2rem)}
+body#module-mm_custom-customModule :is(.save-auth-close,.mm-existing-close,.mmc-designs__close,#close-logos-library-modal){display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;background:#000;color:#fff;font-family:var(--mmx-font);font-size:1.5rem;font-weight:500;line-height:1;opacity:1;cursor:pointer;transition:background-color .2s ease}
+body#module-mm_custom-customModule :is(.save-auth-close,.mm-existing-close,.mmc-designs__close,#close-logos-library-modal):is(:hover,:focus-visible){background:var(--sx-red);color:#fff;outline:0}
+body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal img,body#module-mm_custom-customModule .close-logo-modal img{filter:invert(1)}
+body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal:hover img{filter:invert(1)}
+body#module-mm_custom-customModule .save-auth-modal-content>.save-auth-close,body#module-mm_custom-customModule #modal-logo-choice-content>.save-auth-close,body#module-mm_custom-customModule .mm-existing-modal>.mm-existing-close{position:absolute;top:0;right:0}
+body#module-mm_custom-customModule .mm-modal.save-auth-modal-content.save-auth-modal-content,body#module-mm_custom-customModule .mm-modal.mmc-modal--wide#modal-logo-choice-content,body#module-mm_custom-customModule .mm-existing-modal.mm-existing-modal.mm-existing-modal{padding-top:calc(2.75rem + 1.25rem)}
+/* toutes les fenêtres sont des rectangles à filet noir : le coin coupé de la fenêtre des designs rognait son filet et sa croix */
+body#module-mm_custom-customModule .mmc-designs .mmc-designs__dialog{clip-path:none}
+body#module-mm_custom-customModule .save-auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0 0 1rem;padding:0;box-shadow:inset 0 0 0 1.5px #000}
+body#module-mm_custom-customModule .save-auth-tab,body#module-mm_custom-customModule .save-auth-tab.nav-link{min-height:2.75rem;padding:.5rem;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-font);font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+body#module-mm_custom-customModule .save-auth-tab.active,body#module-mm_custom-customModule .save-auth-tab.nav-link.active{background:#000;color:#fff}
+body#module-mm_custom-customModule .save-auth-tab:not(.active):hover{background:var(--mmx-surface-2)}
+body#module-mm_custom-customModule .save-auth-form .form-control{border:1.5px solid #000!important;border-radius:0;background:#fff;color:#000;box-shadow:none}
+body#module-mm_custom-customModule .save-auth-form input.form-control:focus{border-color:#000;box-shadow:0 0 0 2px rgba(0,0,0,.15);outline:0}
+body#module-mm_custom-customModule .save-auth-form input:-webkit-autofill,body#module-mm_custom-customModule .save-auth-form input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 100px #fff inset;-webkit-text-fill-color:#000;caret-color:#000}
+body#module-mm_custom-customModule .save-auth-form a{display:inline-block;color:#000;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:.35em}
+body#module-mm_custom-customModule .save-auth-form a:hover{color:var(--sx-red)}
+/* 3. survol des boutons d'outils */
+body#module-mm_custom-customModule .sx-zoom button:not(.mmc-zoom__level):is(:hover,:focus-visible),body#module-mm_custom-customModule .sx-text-bar .sx-size button:is(:hover,:focus-visible){background:#000;color:#fff;outline:0}
+body#module-mm_custom-customModule .sx-zoom button:last-child:is(:hover,:focus-visible){border-left-color:#000}
