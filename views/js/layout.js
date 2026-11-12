@@ -849,12 +849,12 @@
             })
         }
 
-        // Field (several lines when the text allows it) and alignment: ui/text-editor.js of mm_custom, in the Sixten bar.
+        // Field (several lines when the text allows it): ui/text-editor.js of mm_custom. No alignment: the text is moved instead.
         // The font is chosen from the field itself; size and offset are sliders with a figure in cm, as for the logos.
         let editor = null
 
         if (textArea && ui.textEditor) {
-            editor = ui.textEditor.mount(textArea, { text: true, align: true, size: false, fonts: [] })
+            editor = ui.textEditor.mount(textArea, { text: true, align: false, size: false, fonts: [] })
         }
 
         if (editor) {

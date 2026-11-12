@@ -6,6 +6,14 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Textes et scène (Mathieu) : plus d'alignement gauche / centre / droite ; icônes en colonnes sur téléphone seulement
+
+- Textes : les boutons d'alignement ne sont plus montés (`align: false`), le texte se déplace (décalage, glisser) ; la barre
+  du texte, vide, est masquée et l'espace sous le champ réduit.
+- Outils de la scène : en ligne sur ordinateur, comme avant, avec la 3D à côté de la rotation et du zoom ; en colonnes
+  sous 992 px seulement (à gauche repères, image, story, annuler, réinitialiser ; à droite 3D, rotation, +, 100 %, −).
+- Vérifié à 1440 et 390 px : aucun bouton d'alignement, outils en ligne puis en colonnes.
+
 ### Logos (Mathieu) : plus de bloc « Votre logo » en double ; pas de repère L1, T1… sur téléphone
 
 - Le bloc « Votre logo » (vignette, nom, origine) répétait la ligne L1… juste au-dessus : masqué (`site.css`), gardé dans le
