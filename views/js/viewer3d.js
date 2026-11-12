@@ -12,7 +12,12 @@
  *     l'impression couvre tout le tapis, la bordure recouvre ses 2 cm extérieurs ;
  *   - éclairage : environnement « pièce » + lumière principale avec ombre douce au sol.
  *
- * open({ canvas, pattern, sizeCm, title, subtitle, t }) -> Promise<void>
+ * Réalité augmentée (« Voir chez moi », repris de la même démo) : poser le tapis au sol, en taille réelle, avec le téléphone.
+ *   - iPhone / iPad : AR Quick Look, sur un fichier USDZ fabriqué dans le navigateur à l'ouverture de la vue 3D ;
+ *   - Android (Chrome, ARCore) : WebXR « immersive-ar » avec détection du sol, boutons tourner / déplacer / fermer ;
+ *   - ordinateur ou téléphone sans RA : pas de bouton (la création n'étant pas enregistrée, un QR code n'aurait rien à ouvrir).
+ *
+ * open({ canvas, pattern, sizeCm, title, subtitle, fileName, t }) -> Promise<void>
  */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/+esm'
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js/+esm'
@@ -25,6 +30,10 @@ const RADIUS = 0.006
 const FELT_RADIUS = 0.002
 const FILL = 0.92           // part de la zone disponible occupée par le tapis
 
+// Éclairage mesuré (2026-11-12) : en vue de dessus, un fond orange #FD5100 sort à 1 ou 2 % de l image 2D ; les valeurs de la
+// démo (exposition 0.9, lumière 2.2, environnement 1, duvet 0.15) le blanchissaient (écart de 94 sur 255) sur ce fond clair
+const LIGHTING = { exposure: 0.76, key: 1.55, hemi: 0.2, env: 0.5, sheen: 0.04 }
+
 const VIEW_DEFAULT = new THREE.Vector3(-0.58, 0.56, 0.60).normalize()
 const VIEW_TOP = new THREE.Vector3(0, 1, 0.0001).normalize()
 
@@ -33,6 +42,74 @@ const ICONS = {
     reset: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4M17 12h4M12 3v4M12 17v4"/><circle cx="12" cy="12" r="4"/></svg>',
     top: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10"/></svg>',
     shot: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+    ar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>',
+}
+
+// ---- réalité augmentée : outils ----
+// Sépare une géométrie par groupe de matériaux (l'exporteur USDZ ne gère pas les tableaux de matériaux)
+function splitByGroups(geo) {
+    return geo.groups.map((g) => {
+        const out = new THREE.BufferGeometry()
+
+        for (const [name, attr] of Object.entries(geo.attributes)) {
+            const n = attr.itemSize
+
+            out.setAttribute(name, new THREE.BufferAttribute(attr.array.slice(g.start * n, (g.start + g.count) * n), n))
+        }
+
+        return { geo: out, materialIndex: g.materialIndex }
+    })
+}
+
+// Carte de normales calculée depuis le relief (Quick Look ne gère pas les bump maps)
+function bumpToNormalTexture(bumpTex, size = 1024, strength = 2) {
+    const src = document.createElement('canvas')
+
+    src.width = src.height = size
+
+    const sctx = src.getContext('2d', { willReadFrequently: true })
+
+    sctx.drawImage(bumpTex.image, 0, 0, size, size)
+
+    const hd = sctx.getImageData(0, 0, size, size).data
+    const c = document.createElement('canvas')
+
+    c.width = c.height = size
+
+    const ctx = c.getContext('2d')
+    const out = ctx.createImageData(size, size)
+    const od = out.data
+    const H = (x, y) => hd[(((y + size) % size) * size + ((x + size) % size)) * 4] / 255
+
+    for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+            const dx = (H(x + 1, y) - H(x - 1, y)) * strength
+            const dy = (H(x, y + 1) - H(x, y - 1)) * strength
+            const l = Math.hypot(dx, dy, 1)
+            const i = (y * size + x) * 4
+
+            od[i] = (-dx / l * 0.5 + 0.5) * 255
+            od[i + 1] = (dy / l * 0.5 + 0.5) * 255
+            od[i + 2] = (1 / l * 0.5 + 0.5) * 255
+            od[i + 3] = 255
+        }
+    }
+    ctx.putImageData(out, 0, 0)
+
+    const t = new THREE.CanvasTexture(c)
+
+    t.colorSpace = THREE.NoColorSpace
+
+    return t
+}
+
+async function arMode() {
+    const probe = document.createElement('a')
+
+    if (probe.relList && probe.relList.supports && probe.relList.supports('ar')) return 'quicklook'
+    if (navigator.xr && await navigator.xr.isSessionSupported('immersive-ar').catch(() => false)) return 'webxr'
+
+    return ''
 }
 
 function roundedRect(w, h, r) {
@@ -136,6 +213,8 @@ export async function open(options) {
     const t = options.t || function (key, fallback) { return fallback }
     const W = options.sizeCm.length / 100
     const H = options.sizeCm.width / 100
+    // Éclairage (réglable par options.lighting pour les essais) : voir LIGHTING
+    const L = Object.assign({}, LIGHTING, options.lighting || {})
 
     // ---- interface ----
     const overlay = el('div', 'sx3d')
@@ -177,6 +256,36 @@ export async function open(options) {
     const bShot = button(ICONS.shot, t('view3dShot', 'Download this view'))
 
     bRotate.setAttribute('aria-pressed', 'false')
+
+    // « Voir chez moi » : affiché seulement si l'appareil sait poser le tapis au sol (voir setupAR)
+    const bAR = el('button', 'sx3d__ar', ICONS.ar + '<span></span>')
+    const bARLabel = bAR.querySelector('span')
+
+    bAR.type = 'button'
+    bAR.hidden = true
+    bARLabel.textContent = t('arButton', 'See it at home')
+    tools.appendChild(bAR)
+
+    // Interface pendant la session WebXR (dom-overlay) : message en haut, boutons en bas
+    const arOverlay = el('div', 'sx3d-ar')
+    const arMsg = el('p', 'sx3d-ar__msg')
+    const arCtrls = el('div', 'sx3d-ar__ctrls')
+    const arButton = (cls, text, label) => {
+        const b = el('button', 'sx3d-ar__btn ' + cls)
+
+        b.type = 'button'
+        b.textContent = text
+        if (label) { b.title = label; b.setAttribute('aria-label', label) }
+        arCtrls.appendChild(b)
+
+        return b
+    }
+    const arLeft = arButton('sx3d-ar__btn--turn', '⟲', t('arTurnLeft', 'Turn left'))
+    const arMove = arButton('', t('arMove', 'Move'))
+    const arRight = arButton('sx3d-ar__btn--turn', '⟳', t('arTurnRight', 'Turn right'))
+    const arClose = arButton('sx3d-ar__btn--close', t('close', 'Close'))
+
+    arOverlay.append(arMsg, arCtrls)
     overlay.append(viewer, head, hint, tools)
     document.body.appendChild(overlay)
     document.documentElement.classList.add('sx3d-on')
@@ -187,9 +296,10 @@ export async function open(options) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.NeutralToneMapping
-    renderer.toneMappingExposure = 0.9
+    renderer.toneMappingExposure = L.exposure
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.xr.enabled = true
     viewer.appendChild(renderer.domElement)
 
     const scene = new THREE.Scene()
@@ -197,6 +307,7 @@ export async function open(options) {
     const envTarget = pmrem.fromScene(new RoomEnvironment(renderer), 0.04)
 
     scene.environment = envTarget.texture
+    scene.environmentIntensity = L.env
 
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 50)
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -209,7 +320,7 @@ export async function open(options) {
     controls.autoRotateSpeed = 0.6
 
     const reach = Math.max(W, H)
-    const key = new THREE.DirectionalLight(0xffffff, 2.2)
+    const key = new THREE.DirectionalLight(0xffffff, L.key)
 
     key.castShadow = true
     key.shadow.mapSize.set(2048, 2048)
@@ -219,14 +330,18 @@ export async function open(options) {
     key.shadow.radius = 6
     key.shadow.bias = -0.0005
     key.position.set(Math.cos(0.61) * 3, 4, Math.sin(0.61) * 3)
-    scene.add(key, key.target, new THREE.HemisphereLight(0xffffff, 0x444444, 0.35))
+    // Tout ce qui appartient au tapis (tapis, ombre au sol, lumière) : en réalité augmentée, c'est ce groupe qu'on pose
+    const world = new THREE.Group()
+
+    scene.add(world, new THREE.HemisphereLight(0xffffff, 0x444444, L.hemi))
+    world.add(key, key.target)
 
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), new THREE.ShadowMaterial({ opacity: 0.22 }))
 
     ground.rotation.x = -Math.PI / 2
     ground.position.y = -0.0005
     ground.receiveShadow = true
-    scene.add(ground)
+    world.add(ground)
 
     // ---- tapis ----
     const map = new THREE.CanvasTexture(options.canvas)
@@ -235,7 +350,7 @@ export async function open(options) {
     map.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
     const top = new THREE.MeshPhysicalMaterial({
-        map, roughness: 0.95, metalness: 0, sheen: 0.15, sheenRoughness: 0.6, sheenColor: new THREE.Color(0x3a3a3a),
+        map, roughness: 0.95, metalness: 0, sheen: L.sheen, sheenRoughness: 0.6, sheenColor: new THREE.Color(0x3a3a3a),
     })
 
     if (options.pattern && options.pattern.naturalWidth) {
@@ -250,7 +365,7 @@ export async function open(options) {
     const felt = new THREE.Mesh(slab(W, H, W - BORDER * 2, H - BORDER * 2, FELT_RADIUS, RUBBER_THICK - 0.0005, FELT_TOP, 0.0006, true), [top, feltSide])
 
     for (const m of [rubber, felt]) { m.castShadow = true; m.receiveShadow = true; mat.add(m) }
-    scene.add(mat)
+    world.add(mat)
 
     // ---- cadrage : tout le tapis dans la zone libre entre l'en-tête et les outils ----
     function size() {
@@ -346,6 +461,7 @@ export async function open(options) {
 
     ro.observe(viewer)
     resize()
+    if (options.view === 'top') applyView(VIEW_TOP, false)
 
     // Rendu à la demande : la scène n'est redessinée que si la vue change (geste, inertie, animation, rotation
     // automatique, redimensionnement). Immobile, elle ne consomme rien (batterie des téléphones).
@@ -353,8 +469,15 @@ export async function open(options) {
 
     controls.addEventListener('change', () => { dirty = true })
 
-    renderer.setAnimationLoop(() => {
+    renderer.setAnimationLoop((time, frame) => {
         const dt = clock.getDelta()
+
+        if (renderer.xr.isPresenting) {
+            updateHitTest(frame)
+            renderer.render(scene, camera)
+
+            return
+        }
 
         if (flyTo) {
             flyTo.k = Math.min(1, flyTo.k + dt / 1.1)
@@ -391,11 +514,177 @@ export async function open(options) {
         a.remove()
     })
 
+    // ---- réalité augmentée ----
+    let mode = ''
+    let usdzUrl = null
+    let xrSession = null
+    let hitSource = null
+    let placed = false
+    let yawOffset = 0
+    const reticle = new THREE.Group()
+
+    {
+        // aperçu avant la pose : le contour du tapis et un repère central
+        const outline = new THREE.LineLoop(
+            new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(-W / 2, 0, -H / 2), new THREE.Vector3(W / 2, 0, -H / 2),
+                new THREE.Vector3(W / 2, 0, H / 2), new THREE.Vector3(-W / 2, 0, H / 2)]),
+            new THREE.LineBasicMaterial({ color: 0xffffff }))
+        const dot = new THREE.Mesh(new THREE.RingGeometry(0.05, 0.065, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff }))
+
+        reticle.add(outline, dot)
+        reticle.visible = false
+        scene.add(reticle)
+    }
+
+    const _m = new THREE.Matrix4()
+    const _p = new THREE.Vector3()
+    const _q = new THREE.Quaternion()
+    const _s = new THREE.Vector3()
+    const _cam = new THREE.Vector3()
+
+    function updateHitTest(frame) {
+        if (!frame || !hitSource || placed) return
+
+        const hits = frame.getHitTestResults(hitSource)
+
+        if (!hits.length) { reticle.visible = false; return }
+
+        const pose = hits[0].getPose(renderer.xr.getReferenceSpace())
+
+        _m.fromArray(pose.transform.matrix).decompose(_p, _q, _s)
+        reticle.position.copy(_p)
+        // le tapis se présente de face, dans le sens de la longueur
+        renderer.xr.getCamera().getWorldPosition(_cam)
+        reticle.rotation.set(0, Math.atan2(_cam.x - _p.x, _cam.z - _p.z) + yawOffset, 0)
+        if (!reticle.visible) arMsg.textContent = t('arTap', 'Tap the screen to place the mat')
+        reticle.visible = true
+    }
+
+    async function buildUSDZ() {
+        const { USDZExporter } = await import('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/exporters/USDZExporter.js/+esm')
+        const arScene = new THREE.Scene()
+
+        arScene.add(new THREE.Mesh(rubber.geometry, new THREE.MeshStandardMaterial({ color: rubberMat.color, roughness: rubberMat.roughness })))
+
+        const feltMats = [
+            new THREE.MeshStandardMaterial({ map, normalMap: top.bumpMap ? bumpToNormalTexture(top.bumpMap) : null, roughness: 0.95 }),
+            new THREE.MeshStandardMaterial({ color: feltSide.color, roughness: 0.95 }),
+        ]
+
+        for (const part of splitByGroups(felt.geometry)) arScene.add(new THREE.Mesh(part.geo, feltMats[part.materialIndex]))
+
+        const data = await new USDZExporter().parseAsync(arScene, { maxTextureSize: 4096, quickLookCompatible: true })
+
+        return URL.createObjectURL(new Blob([data], { type: 'model/vnd.usdz+zip' }))
+    }
+
+    async function startWebXR() {
+        try {
+            xrSession = await navigator.xr.requestSession('immersive-ar', {
+                requiredFeatures: ['hit-test'], optionalFeatures: ['dom-overlay'], domOverlay: { root: arOverlay },
+            })
+        } catch (e) {
+            console.error('mm_custom_sixten: AR', e)
+            window.alert(t('arFailed', 'Could not start the AR camera on this device.'))
+
+            return
+        }
+
+        renderer.xr.setReferenceSpaceType('local')
+        await renderer.xr.setSession(xrSession)
+
+        const viewerSpace = await xrSession.requestReferenceSpace('viewer')
+
+        hitSource = await xrSession.requestHitTestSource({ space: viewerSpace })
+        placed = false
+        yawOffset = 0
+        world.visible = false
+        arOverlay.classList.add('is-on')
+        arMsg.textContent = t('arAim', 'Aim at the floor and move the phone slowly…')
+
+        xrSession.addEventListener('select', () => {
+            if (!reticle.visible) return
+            world.position.copy(reticle.position)
+            world.rotation.y = reticle.rotation.y
+            world.visible = true
+            reticle.visible = false
+            placed = true
+            arMsg.textContent = t('arPlaced', 'Mat placed · ⟲ ⟳ to turn it, « Move » to place it again')
+        })
+        xrSession.addEventListener('end', () => {
+            if (hitSource && hitSource.cancel) hitSource.cancel()
+            hitSource = null
+            xrSession = null
+            arOverlay.classList.remove('is-on')
+            reticle.visible = false
+            world.position.set(0, 0, 0)
+            world.rotation.set(0, 0, 0)
+            world.visible = true
+            dirty = true
+        })
+    }
+
+    // les boutons de l'overlay ne doivent pas déclencher un « select » (pose du tapis)
+    arCtrls.addEventListener('beforexrselect', (e) => e.preventDefault())
+
+    const turn = (deg) => {
+        const r = THREE.MathUtils.degToRad(deg)
+
+        if (placed) world.rotation.y += r
+        else yawOffset += r
+    }
+
+    arLeft.addEventListener('click', () => turn(15))
+    arRight.addEventListener('click', () => turn(-15))
+    arMove.addEventListener('click', () => {
+        placed = false
+        world.visible = false
+        arMsg.textContent = t('arAgain', 'Aim at the floor then tap the screen to place the mat again')
+    })
+    arClose.addEventListener('click', () => { if (xrSession) xrSession.end() })
+
+    bAR.addEventListener('click', () => {
+        if (mode === 'quicklook' && usdzUrl) {
+            const a = document.createElement('a')
+
+            a.rel = 'ar'
+            a.href = usdzUrl + '#allowsContentScaling=0' // taille réelle bloquée
+            a.appendChild(document.createElement('img')) // Quick Look exige une image enfant
+            a.click()
+        } else if (mode === 'webxr') {
+            startWebXR()
+        }
+    })
+
+    arMode().then(async (m) => {
+        mode = m
+        if (!mode) return
+        document.body.appendChild(arOverlay)
+        bAR.hidden = false
+        if (mode !== 'quicklook') return
+
+        // iPhone : le fichier USDZ est préparé tout de suite, Quick Look exige un clic qui ouvre directement le fichier
+        bAR.disabled = true
+        bARLabel.textContent = t('arPreparing', 'Preparing…')
+        try {
+            usdzUrl = await buildUSDZ()
+            bARLabel.textContent = t('arButton', 'See it at home')
+            bAR.disabled = false
+        } catch (e) {
+            console.error('mm_custom_sixten: USDZ', e)
+            bAR.hidden = true
+        }
+    })
+
     // ---- fermeture : tout est libéré (contexte WebGL, textures, géométries) ----
     return new Promise((resolve) => {
         function onKey(e) { if (e.key === 'Escape') shut() }
 
         function shut() {
+            if (xrSession) xrSession.end().catch(() => {})
+            if (usdzUrl) URL.revokeObjectURL(usdzUrl)
+            arOverlay.remove()
             document.removeEventListener('keydown', onKey)
             ro.disconnect()
             renderer.setAnimationLoop(null)

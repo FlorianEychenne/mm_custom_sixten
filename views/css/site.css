@@ -715,3 +715,18 @@ html.sx3d-on{overflow:hidden}
 .sx3d__tool:hover,.sx3d__tool:focus-visible,.sx3d__tool[aria-pressed=true]{background:#000;color:#fff;outline:0}
 @media (max-width:767.98px){.sx3d__hint{white-space:normal;width:calc(100% - 2rem);text-align:center}}
 @media (prefers-reduced-motion:reduce){.sx3d{transition:none}body#module-mm_custom-customModule .sx-stage-hint .sx-shot--3d.is-busy span{animation:none}}
+/* Réalité augmentée : bouton « Voir chez moi » au bout de la barre d'outils (noir, rouge au survol), puis interface pendant la session
+   WebXR d'Android (message en haut, boutons ronds en bas, comme la démo) */
+.sx3d__ar{display:inline-flex;align-items:center;gap:.5rem;height:2.75rem;padding:0 1rem;border:0;border-left:1.5px solid #000;border-radius:0;background:#000;color:#fff;font-family:"Montserrat",Arial,sans-serif;font-size:.6875rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:background-color .2s ease}
+.sx3d__ar[hidden]{display:none}
+.sx3d__ar svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sx3d__ar:hover,.sx3d__ar:focus-visible{background:#E4032E;outline:0}
+.sx3d__ar[disabled]{opacity:.6;cursor:progress}
+.sx3d-ar{display:none;position:fixed;inset:0;pointer-events:none;font-family:"Montserrat",Arial,sans-serif;color:#fff}
+.sx3d-ar.is-on{display:block}
+.sx3d-ar__msg{position:absolute;top:max(16px,env(safe-area-inset-top));left:16px;right:16px;margin:0;padding:12px 14px;background:rgba(0,0,0,.6);font-size:.9375rem;font-weight:600;line-height:1.35;text-align:center}
+.sx3d-ar__ctrls{position:absolute;bottom:max(24px,env(safe-area-inset-bottom));left:16px;right:16px;display:flex;justify-content:center;gap:10px;pointer-events:auto}
+.sx3d-ar__btn{min-width:52px;height:52px;padding:0 18px;border:0;border-radius:0;background:rgba(0,0,0,.6);color:#fff;font-family:inherit;font-size:.8125rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.sx3d-ar__btn--turn{font-size:1.25rem;letter-spacing:0}
+.sx3d-ar__btn--close{background:#fff;color:#000}
+@media (max-width:420px){.sx3d__tool{width:2.5rem}.sx3d__ar{padding:0 .75rem}}

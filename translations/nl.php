@@ -89,3 +89,13 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6a0501a02a9166ea69a2b45
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_3b81991dc4e4d91dd53f0d62232c76c6'] = 'Weergave herstellen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_31beee010f609c2ff70870575f07ace0'] = 'Bovenaanzicht';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_fd55cbe27e77a09355b130cc4391b0bb'] = 'Deze weergave downloaden';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9c298bca9612f890e6fb1efd0e18eef3'] = 'Bekijk bij mij thuis';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_c2a63550a3878587a550449bcdfe1f52'] = 'Voorbereiden…';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_48d3c4fef8e6a1b5f3e745b46d252889'] = 'Richt op de vloer en beweeg de telefoon langzaam…';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f08491a9e9fb9e8de28fa02823403f5b'] = 'Tik op het scherm om de mat neer te leggen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_08052ea7e509dcafd027bd1e322d6613'] = 'Mat geplaatst · ⟲ ⟳ om te draaien, „Verplaatsen” om opnieuw te plaatsen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_a9a60b90bc37fb7b6189205f9df4bb15'] = 'Richt op de vloer en tik op het scherm om de mat opnieuw te plaatsen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6bc362dbf494c61ea117fe3c71ca48a5'] = 'Verplaatsen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_99a562fafc1067cc1ef34d3548ae9813'] = 'Naar links draaien';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d83615d44ccee1d67942b4005c28f61'] = 'Naar rechts draaien';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dbfe595c31d00abd919445549641e4b9'] = 'De AR-camera kon op dit apparaat niet worden gestart.';

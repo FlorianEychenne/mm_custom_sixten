@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Vue 3D (Mathieu) : réalité augmentée « Voir chez moi »
+
+Reprise de la démo `_assets/3dmat` : poser le tapis personnalisé au sol, en taille réelle, avec le téléphone.
+
+- `views/js/viewer3d.js` : bouton « Voir chez moi » au bout des outils de la vue 3D, affiché seulement si l'appareil sait le
+  faire. iPhone / iPad : AR Quick Look, sur un fichier USDZ fabriqué dans le navigateur dès l'ouverture de la vue 3D
+  (exporteur USDZ de three.js chargé seulement sur ces appareils ; relief converti en carte de normales, taille réelle
+  bloquée). Android (Chrome, ARCore) : WebXR « immersive-ar » avec détection du sol ; aperçu du contour, pose au toucher,
+  boutons tourner (15°), déplacer, fermer. Ordinateur et téléphones sans RA : pas de bouton (la création n'est pas
+  enregistrée, un QR code n'aurait rien à ouvrir). Le tapis, son ombre et la lumière forment un groupe qu'on pose.
+- `mm_custom_sixten.php` : 10 chaînes (5 langues) ; `views/css/site.css` : bouton et interface de la session.
+- Éclairage de la vue 3D réglé à la mesure : en vue de dessus, un fond orange #FD5100 sortait blanchi (écart de 94 sur 255 avec
+  l'image 2D : réglages de la démo, pensés pour un fond sombre) ; il en est maintenant à 1 ou 2 % (exposition 0,76, lumière
+  1,55, ciel 0,2, environnement 0,5, duvet 0,04 : constante `LIGHTING`). Option `view: 'top'` et `lighting` pour les essais.
+- Vérifié au navigateur (sans RA réelle) : pas de bouton sur ordinateur, export USDZ réussi en simulant un iPhone (bouton
+  affiché après préparation), vue 3D inchangée. Pas vérifié sur un vrai iPhone ni un vrai Android : à tester.
+
 ### Vue 3D (Mathieu) : voir le tapis personnalisé en 3D
 
 Reprise de la démo `_assets/3dmat` de new.sixten (three.js 0.170) dans le configurateur.
