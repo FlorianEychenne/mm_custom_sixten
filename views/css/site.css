@@ -799,3 +799,11 @@ body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .sx-zoom__fit{order:4;b
 @media (prefers-reduced-motion:reduce){body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d.is-busy span{animation:none}}
 /* les deux colonnes alignées par le bas : un libellé sur deux lignes (téléphone) ne décale pas les curseurs */
 body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{align-items:end}
+
+/* Logos (2026-11-13) : pas de bloc « Votre logo » (vignette, nom, origine), doublon de la ligne L1… ; « Retirer » passe dans le pied */
+body#module-mm_custom-customModule .module-container .tools .sx-logo--current>.mm-tools-title,body#module-mm_custom-customModule .module-container .tools .sx-logo--current .sx-current{display:none!important}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-foot:not(:has(>:not([hidden]))){display:none}
+/* Téléphone : pas de repère L1, T1, C1… devant les lignes (la vignette et le nom suffisent) */
+@media (max-width:767.98px){
+  body#module-mm_custom-customModule .sx-row__badge{display:none!important}
+}

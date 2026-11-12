@@ -87,13 +87,13 @@
                 <div class="sx-rows sx-rows--logo"></div>
                 <div class="sx-editor sx-editor--logo">
                     <div class="sx-logo sx-logo--current">
+                        {* « Votre logo » (vignette, nom, origine) : masqué, la ligne L1… au-dessus dit déjà la même chose ; gardé pour layout.js *}
                         <p class="mm-tools-title">{l s='Your logo' mod='mm_custom_sixten'}</p>
                         <div class="sx-current">
                             <div class="sx-thumb sx-thumb--empty">{l s='No logo' mod='mm_custom_sixten'}</div>
                             <div class="sx-meta">
                                 <b>{l s='Nothing placed yet' mod='mm_custom_sixten'}</b>
                                 <small>{l s='Import a file or pick one from the library.' mod='mm_custom_sixten'}</small>
-                                <button type="button" class="sx-remove" hidden>{l s='Remove' mod='mm_custom_sixten'}</button>
                             </div>
                         </div>
                         <div class="sx-logo-sliders">
@@ -117,6 +117,7 @@
                         </div>
                         {* L'interrupteur « Cacher le logo » est retiré, comme celui du texte : l'œil de la ligne suffit. *}
                         <div class="sx-logo-foot">
+                            <button type="button" class="sx-remove" hidden>{l s='Remove' mod='mm_custom_sixten'}</button>
                             <button type="button" class="sx-logo-hint" hidden>{l s='Logo larger than its slot: fit it back' mod='mm_custom_sixten'}</button>
                         </div>
                     </div>

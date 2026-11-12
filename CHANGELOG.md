@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Logos (Mathieu) : plus de bloc « Votre logo » en double ; pas de repère L1, T1… sur téléphone
+
+- Le bloc « Votre logo » (vignette, nom, origine) répétait la ligne L1… juste au-dessus : masqué (`site.css`), gardé dans le
+  gabarit pour `layout.js`. Le bouton « Retirer » quitte ce bloc pour le pied de l'éditeur, sous les curseurs
+  (`configurator.tpl`).
+- Sous 768 px, les repères L1, T1, C1… devant les lignes ne s'affichent plus : la vignette et le nom suffisent.
+- Vérifié à 1440 et 390 px avec un logo importé : bloc masqué, « Retirer » visible et fonctionnel, repères présents sur
+  ordinateur seulement.
+
 ### Téléphone (Mathieu) : pas de poignées sur les logos non plus
 
 - `views/css/site.css` : sous 768 px, les coins et la poignée de rotation sont masqués pour toute sélection, texte ou logo ;
