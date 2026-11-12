@@ -473,7 +473,8 @@ body#module-mm_custom-customModule .module-container .tools{padding:1rem 1.5rem 
 @media (max-width:991.98px){
   /* téléphone : le tapis en haut, les trois onglets en bas sur toute la largeur, le panneau s'ouvre au-dessus des onglets */
   body#module-mm_custom-customModule{--sx-tabs-h:4.25rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - .5rem)}
-  body#module-mm_custom-customModule.sx-dock-open{--mm-stage-h:28svh}
+  /* volet ouvert : le tapis garde 34 % de la hauteur de l'écran (28 % avant), le volet est moins haut d'autant */
+  body#module-mm_custom-customModule.sx-dock-open{--mm-stage-h:34svh}
   body#module-mm_custom-customModule .module-container .sx-viewport{border-bottom:0}
   body#module-mm_custom-customModule .module-container>.sx-steps{left:.75rem;right:.75rem;bottom:.75rem;gap:.5rem}
   body#module-mm_custom-customModule .sx-steps button{flex:1;gap:.5rem;height:2.75rem;padding:0 .5rem;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}

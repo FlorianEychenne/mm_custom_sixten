@@ -6,6 +6,13 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Téléphone (Mathieu) : volet d'outils moins haut
+
+- `views/css/site.css` (sous 992 px, volet ouvert) : le tapis garde 34 % de la hauteur de l'écran au lieu de 28 %
+  (`--mm-stage-h`), le volet Couleurs / Textes / Logos est moins haut d'autant (353 px au lieu de 404 sur un écran de
+  390 × 844). Le zoom et la rotation ne recouvrent plus le bas du tapis.
+- Vérifié au navigateur en 390 × 844 et 360 × 640 (Honda 95x200 Racer, volet Couleurs ouvert).
+
 ### Outils du configurateur (Mathieu) : lignes repliables, œil, logo du modèle, annuler, réinitialiser, ordre des tailles
 
 Demande `mm_custom` avec `MmCustom.history` et `MmCustom.logos.freeTransform()` (commit du même jour) : à déployer
