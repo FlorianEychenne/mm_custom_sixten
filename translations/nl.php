@@ -13,8 +13,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_77017f5d6795a784a075eeb
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_25f5ff0fafafb246decfaf968ef9ecef'] = 'Vervang het: bibliotheek of bestand';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8925f3c3fc12d91a8a626212e899f4dd'] = 'Vrije plaats';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e614ef5ba8146ae31b422c69d56ffa79'] = 'Voeg een logo toe: bibliotheek of bestand';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f4ec5f57bd4d31b803312d873be40da9'] = 'Wijzigen';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ec211f7c20af43e742bf2570c3cb84f9'] = 'Toevoegen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_662f707d5491e9bce8238a6c0be92190'] = 'verborgen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_eb8dbd746b1ff63d212646f7007e8a35'] = 'Markeringen tonen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7eb0cef0f3b43e376670dc173212cf92'] = 'Markeringen verbergen';
@@ -80,3 +78,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_b27dc2f2b21e0f0f6620486
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_d5dc11d91e7ca69c704b87835d719179'] = 'Voorbeelden in de oorspronkelijke kleuren. Als je de mat al hebt aangepast, wordt je om bevestiging gevraagd voordat je wisselt.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_825bf7ca86eb956b9e62ba6318e4e1f4'] = 'Het logo kon niet worden geplaatst. Kies een logoplaats op de mat en probeer het opnieuw.';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_daa6b483e9f6ca081ec7e0b4a352f9e9'] = 'Wijzigingen opslaan';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_498f79c4c5bbde77f1bceb6c86fd0f6d'] = 'Tonen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167d9dc6dca0'] = 'Verbergen';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Laatste wijziging ongedaan maken';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Ontwerp herstellen';

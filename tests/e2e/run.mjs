@@ -7,6 +7,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// Ouvre la ligne voulue : un clic sur la ligne déjà ouverte replierait son éditeur (flèche de la ligne)
+async function openRow(page, selector, index) {
+  const row = page.locator(selector).nth(index);
+
+  if (!(await row.evaluate((r) => r.classList.contains('is-open')))) await row.click();
+}
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const lib = await import(path.join(here, '../../../mm_custom/tests/e2e/lib.mjs'));
 const { launch, openConfigurator, makePng, sql, BASE } = lib;
@@ -78,7 +85,7 @@ const scenarios = {
 
         if (device === 'desktop') {
           await page.click('.sx-steps button[data-tool="logo"]');
-          await page.locator('.sx-rows--logo .sx-row').first().click();
+          await openRow(page, '.sx-rows--logo .sx-row', 0);
           await page.click('.sx-toggle--hots');
           await shot(page, `${device}-logo-markers`);
           await page.click('.sx-design-btn');
@@ -141,7 +148,7 @@ const scenarios = {
 
       // Logo de la bibliothèque dans L1 : la ligne garde sa place et prend le nom du logo
       await page.click('.sx-steps button[data-tool="logo"]');
-      await page.locator('.sx-rows--logo .sx-row').first().click();
+      await openRow(page, '.sx-rows--logo .sx-row', 0);
       await page.click('.sx-lib-btn');
       await page.fill('.mmc-lib__search', 'yamaha');
       await page.waitForTimeout(300);

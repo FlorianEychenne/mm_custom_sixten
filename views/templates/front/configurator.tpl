@@ -164,6 +164,13 @@
             <button type="button" class="sx-shot sx-shot--story" title="{l s='Download an Instagram story (1080 × 1920)' mod='mm_custom_sixten'}" aria-label="{l s='Download an Instagram story (1080 × 1920)' mod='mm_custom_sixten'}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4M5 12v7h14v-7"/></svg>
             </button>
+            {* Historique du moteur (MmCustom.history) : annuler la dernière modification, revenir à la création ouverte *}
+            <button type="button" class="sx-shot sx-hist sx-hist--undo" disabled title="{l s='Undo the last change' mod='mm_custom_sixten'}" aria-label="{l s='Undo the last change' mod='mm_custom_sixten'}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></svg>
+            </button>
+            <button type="button" class="sx-shot sx-hist sx-hist--reset" disabled title="{l s='Reset the design' mod='mm_custom_sixten'}" aria-label="{l s='Reset the design' mod='mm_custom_sixten'}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 102.6-5.9"/><path d="M4 4v4.5h4.5"/><path d="M9.5 9.5l5 5M14.5 9.5l-5 5"/></svg>
+            </button>
         </div>
     </div>
 

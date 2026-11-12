@@ -4,6 +4,34 @@ Une entrée par commit, la plus récente en haut.
 
 ---
 
+## 12/11/2026
+
+### Outils du configurateur (Mathieu) : lignes repliables, œil, logo du modèle, annuler, réinitialiser, ordre des tailles
+
+Demande `mm_custom` avec `MmCustom.history` et `MmCustom.logos.freeTransform()` (commit du même jour) : à déployer
+ensemble. Sans eux, les boutons Annuler / Réinitialiser sont masqués et le logo du modèle n'a pas ses curseurs. Version
+du module inchangée (1.0.1), non tagué.
+
+- **Tailles** (`layout.js`) : le menu suit l'ordre des valeurs de l'attribut dans PrestaShop (celui que renvoie
+  `MmCustomCombination::variants`) ; le tri « la plus grande d'abord » est retiré.
+- **Lignes** (`layout.js`, `site.css`) : chaque ligne (couleurs, textes, logos) porte une flèche à droite. Un clic sur
+  la ligne choisie replie ou déplie son éditeur ; la flèche pointe vers le bas quand il est ouvert. Une ligne est un
+  `<div role="button">` (Entrée / Espace), plus un `<button>`, car elle contient maintenant un bouton.
+- **Œil** : sur les lignes de texte et de logo (pas sur un emplacement libre), l'œil est un bouton qui cache ou montre
+  le texte ou le logo, comme l'interrupteur « Cacher… » de l'éditeur, qui suit. Sur les logos, il remplace le mot
+  « Changer » / « Ajouter » (chaînes `Change` et `Add` retirées, `Show` et `Hide` ajoutées, 5 langues).
+- **Logo du modèle** : « Taille du logo » et « Décalage gauche / droite » sont proposés aussi pour un logo dessiné
+  dans le gabarit (curseur de taille = son échelle : 0 = tel que dessiné, 100 = deux fois plus grand ; il suit les
+  poignées), avec sa vignette dans « Votre logo ».
+- **Annuler / Réinitialiser** (`configurator.tpl`, `layout.js`) : deux boutons à côté de l'image et de la story,
+  grisés quand il n'y a rien à annuler. « Réinitialiser le design » revient à la création telle qu'elle a été ouverte
+  et s'annule comme le reste. Après un retour en arrière, les lignes et les outils relisent le tapis.
+- `tests/e2e/run.mjs` : `openRow()` n'ouvre une ligne que si elle ne l'est pas déjà (un second clic la replierait).
+  Suite non relancée (environnement de Flo) : les captures de référence changent (œil, flèches, deux boutons).
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic, 1440 et 390 px) : ordre des tailles, repli des
+  lignes, œil et interrupteur, taille / décalage d'un logo du modèle, annulation d'une couleur, d'un texte, d'une pose
+  de logo, d'un curseur et d'un glisser, réinitialisation puis annulation, aucune erreur dans la console.
+
 ## 11/11/2026
 
 ### 1.0.1 : accordé à mm_custom 3.0 lot 5 (à déployer avec lui)

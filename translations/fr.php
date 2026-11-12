@@ -13,8 +13,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_77017f5d6795a784a075eeb
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_25f5ff0fafafb246decfaf968ef9ecef'] = 'Remplace-le : bibliothèque ou fichier';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8925f3c3fc12d91a8a626212e899f4dd'] = 'Emplacement libre';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e614ef5ba8146ae31b422c69d56ffa79'] = 'Ajoute un logo : bibliothèque ou fichier';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f4ec5f57bd4d31b803312d873be40da9'] = 'Changer';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ec211f7c20af43e742bf2570c3cb84f9'] = 'Ajouter';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_662f707d5491e9bce8238a6c0be92190'] = 'masqué';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_eb8dbd746b1ff63d212646f7007e8a35'] = 'Afficher les repères';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7eb0cef0f3b43e376670dc173212cf92'] = 'Masquer les repères';
@@ -80,3 +78,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_b27dc2f2b21e0f0f6620486
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_d5dc11d91e7ca69c704b87835d719179'] = 'Aperçus dans les couleurs d’origine. Si tu as déjà modifié le tapis, on te demande confirmation avant de changer.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_825bf7ca86eb956b9e62ba6318e4e1f4'] = 'Le logo n’a pas pu être placé. Choisissez un emplacement de logo sur le tapis, puis réessayez.';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_daa6b483e9f6ca081ec7e0b4a352f9e9'] = 'Enregistrer les modifications';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_498f79c4c5bbde77f1bceb6c86fd0f6d'] = 'Afficher';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167d9dc6dca0'] = 'Cacher';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Annuler la dernière modification';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Réinitialiser le design';

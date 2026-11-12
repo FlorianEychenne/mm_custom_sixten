@@ -51,6 +51,7 @@
             middle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M5.5 18h13"/></svg>',
             end: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M10 12h10M7 18h13"/></svg>',
             rotate: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 11-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg>',
+            undo: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/></svg>',
             grid: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/></svg>',
         }
 
@@ -260,6 +261,7 @@
             if (!detail.element || !kind) return
 
             current[detail.type] = detail.element
+            collapsed[kind.key] = false
 
             if (ui.colorPicker) ui.colorPicker.close() // the picker belongs to the previous zone
             if (loaded) openDock()
@@ -275,6 +277,7 @@
 
         const rows = {}
         const editors = {}
+        const collapsed = {} // kind key -> the editor of the chosen row is folded (arrow of the row)
         const logoMeta = {} // name and origin of the logo placed in each slot (slot id)
 
         KINDS.forEach(function (kind) {
@@ -403,7 +406,7 @@
             if (kind.key === 'colors') {
                 const hex = zone.color || '#000000'
 
-                return { title: zone.label, meta: zone.color ? hex.toUpperCase() + (hex === '#ffffff' || hex === '#000000' ? ' · ' + colorName(hex) : '') : '', swatch: hex, end: ICONS.chevron }
+                return { title: zone.label, meta: zone.color ? hex.toUpperCase() + (hex === '#ffffff' || hex === '#000000' ? ' · ' + colorName(hex) : '') : '', swatch: hex, eye: '' }
             }
 
             if (kind.key === 'text') {
@@ -414,13 +417,14 @@
                     title: zone.content ? textOf(zone.element) : '',
                     font: style.fontFamily,
                     meta: prettyFamily(style.fontFamily) + ' · ' + Math.round(parseFloat(style.fontSize)) + (hex && !zone.hidden ? ' · ' + colorName(hex) : '') + (zone.hidden ? ' · ' + t('hidden', 'hidden') : ''),
-                    end: zone.hidden ? ICONS.eyeOff : ICONS.eye,
+                    eye: zone.hidden ? 'off' : 'on',
                 }
             }
 
             const info = logoInfo(zone)
 
-            return { title: info.title, meta: info.meta, end: '<span class="sx-row__action">' + esc(zone.source ? t('change', 'Change') : t('add', 'Add')) + '</span>' }
+            // The eye shows or hides a logo; a free slot has nothing to hide
+            return { title: info.title, meta: info.meta, eye: zone.source ? (zone.hidden ? 'off' : 'on') : '' }
         }
 
         let refreshing = false
@@ -433,7 +437,29 @@
                 refreshing = false
                 KINDS.forEach(renderRows)
                 refreshLogoEditor()
+                syncHides()
             })
+        }
+
+        // The eye of a row shows or hides its text or its logo, like the switch of the editor
+        function toggleHidden(kind, zone) {
+            if (kind.key === 'text') MmCustom.texts.setHidden(zone.element, !zone.hidden)
+            else if (kind.key === 'logo' && zone.source) MmCustom.logos.setVisible(zone.element, !!zone.hidden)
+
+            refreshRows()
+        }
+
+        // Click on a row: another zone is selected (its editor opens); the chosen one folds or unfolds its editor
+        function toggleRow(kind, zone) {
+            if (zone.element === current[kind.type] && active === kind) {
+                collapsed[kind.key] = !collapsed[kind.key]
+
+                if (collapsed[kind.key] && ui.colorPicker) ui.colorPicker.close()
+
+                refreshRows()
+            } else {
+                selectZone(zone)
+            }
         }
 
         function renderRows(kind) {
@@ -446,15 +472,31 @@
             if (buttons.length !== zones.length) {
                 buttons.forEach(function (b) { b.remove() })
                 buttons = zones.map(function (zone, index) {
-                    const button = document.createElement('button')
+                    // A row is a button that holds another one (the eye): a <div role="button">, not a <button>
+                    const button = document.createElement('div')
+                    const fresh = function () { return MmCustom.zones.all(kind.type)[index] }
 
-                    button.type = 'button'
                     button.className = 'sx-row'
-                    button.innerHTML = '<span class="sx-row__badge"></span><span class="sx-row__thumb"></span><span class="sx-row__main"><span class="sx-row__title"></span><span class="sx-row__meta"></span></span><span class="sx-row__end"></span>'
-                    button.addEventListener('click', function () {
-                        const fresh = MmCustom.zones.all(kind.type)[index]
+                    button.setAttribute('role', 'button')
+                    button.tabIndex = 0
+                    button.innerHTML = '<span class="sx-row__badge"></span><span class="sx-row__thumb"></span><span class="sx-row__main"><span class="sx-row__title"></span><span class="sx-row__meta"></span></span>'
+                        + '<span class="sx-row__end"><button type="button" class="sx-row__eye" hidden></button><span class="sx-row__chev" aria-hidden="true">' + ICONS.chevron + '</span></span>'
+                    button.addEventListener('click', function (event) {
+                        const zone = fresh()
 
-                        if (fresh) selectZone(fresh)
+                        if (!zone) return
+
+                        if (event.target.closest('.sx-row__eye')) toggleHidden(kind, zone)
+                        else toggleRow(kind, zone)
+                    })
+                    button.addEventListener('keydown', function (event) {
+                        if (event.target !== button || (event.key !== 'Enter' && event.key !== ' ')) return
+
+                        event.preventDefault()
+
+                        const zone = fresh()
+
+                        if (zone) toggleRow(kind, zone)
                     })
                     box.appendChild(button)
 
@@ -471,10 +513,25 @@
                 const thumb = button.querySelector('.sx-row__thumb')
                 const title = button.querySelector('.sx-row__title')
 
+                const open = on && !collapsed[kind.key]
+                const eyeButton = button.querySelector('.sx-row__eye')
+
                 button.classList.toggle('on', on)
+                button.classList.toggle('is-open', open)
                 button.classList.toggle('is-empty', !zone.used)
                 button.classList.toggle('is-hidden', !!zone.hidden)
                 button.setAttribute('aria-pressed', String(on))
+                button.setAttribute('aria-expanded', String(open))
+
+                // Rewritten only when it changes: the eye keeps the focus while it is used
+                if (eyeButton.dataset.state !== item.eye) {
+                    eyeButton.dataset.state = item.eye
+                    eyeButton.hidden = !item.eye
+                    eyeButton.innerHTML = item.eye === 'off' ? ICONS.eyeOff : ICONS.eye
+                    eyeButton.title = item.eye === 'off' ? t('show', 'Show') : t('hide', 'Hide')
+                    eyeButton.setAttribute('aria-label', eyeButton.title)
+                    eyeButton.setAttribute('aria-pressed', String(item.eye === 'off'))
+                }
                 button.querySelector('.sx-row__badge').textContent = zone.badge
 
                 if (kind.key === 'colors') {
@@ -493,7 +550,6 @@
                 if (kind.key === 'text') title.style.fontFamily = item.font || ''
 
                 button.querySelector('.sx-row__meta').textContent = item.meta
-                button.querySelector('.sx-row__end').innerHTML = item.end
 
                 if (on) currentRow = button
             })
@@ -502,14 +558,26 @@
             if (currentRow) {
                 if (currentRow.nextElementSibling !== editor) currentRow.after(editor)
 
-                editor.hidden = false
+                editor.hidden = !!collapsed[kind.key]
             } else {
                 editor.hidden = true
             }
         }
 
-        ;['color:change', 'text:change', 'text:moved', 'logo:placed', 'logo:removed', 'logo:hidden', 'logo:text-mode', 'logo:resized'].forEach(function (name) {
+        ;['color:change', 'text:change', 'text:moved', 'logo:placed', 'logo:removed', 'logo:hidden', 'logo:text-mode', 'logo:resized', 'logo:scaled'].forEach(function (name) {
             MmCustom.on(name, refreshRows)
+        })
+
+        // Undo, reset (MmCustom.history): the mat went back to an earlier state, the rows and the tools read it again
+        MmCustom.on('history:restore', function () {
+            ;['color', 'text', 'logo'].forEach(function (type) { if (current[type] && !current[type].isConnected) current[type] = null })
+
+            if (ui.colorPicker) ui.colorPicker.close()
+            if (current.color) syncColor()
+            if (current.text) syncText()
+            if (current.logo) syncLogo()
+
+            refreshRows()
         })
 
         /* ------------------------------------------------------------- repères */
@@ -541,6 +609,25 @@
             paintMarkersButton()
         } else {
             markersButton.hidden = true
+        }
+
+        /* ------------------------------------------------------------- annuler, réinitialiser */
+
+        const undoButton = $('.sx-hist--undo')
+        const resetButton = $('.sx-hist--reset')
+
+        if (MmCustom.history && undoButton && resetButton) {
+            const paintHistory = function () {
+                undoButton.disabled = !MmCustom.history.canUndo()
+                resetButton.disabled = !MmCustom.history.canReset()
+            }
+
+            undoButton.addEventListener('click', function () { MmCustom.history.undo() })
+            resetButton.addEventListener('click', function () { MmCustom.history.reset() }) // can be undone
+            MmCustom.on('history', paintHistory)
+            paintHistory()
+        } else {
+            ;[undoButton, resetButton].forEach(function (b) { if (b) b.hidden = true })
         }
 
         /* ------------------------------------------------------------- couleurs */
@@ -683,6 +770,16 @@
         const textArea = textBlock ? $('.inputTextDesign', textBlock) : null
         const hideText = textBlock ? $('#sx-hide-text', textBlock) : null
         let fontMenu = null
+
+        // The switches of the editors follow what the eyes of the rows did
+        function syncHides() {
+            if (hideText && current.text) hideText.checked = MmCustom.texts.isHidden(current.text)
+
+            const hideLogo = logoBlock ? $('#sx-hide-logo', logoBlock) : null
+            const zone = hideLogo && current.logo ? MmCustom.zones.of(current.logo) : null
+
+            if (zone) hideLogo.checked = !!zone.hidden
+        }
 
         function syncText() {
             if (!current.text) return
@@ -941,8 +1038,20 @@
             const size = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
             const lengthCm = size ? size.length : 0
 
+            // Logo drawn in the template (not placed by the customer): its size and its offset are its free transform
+            const freeOf = function (logo) { return logo && MmCustom.logos.freeTransform ? MmCustom.logos.freeTransform(logo) : null }
+            const sizeOfFree = function (free) { return Math.round((free.s - 1) * 100) }
+            const widen = function (value) {
+                if (value > parseFloat(sizeSlider.max)) sizeSlider.max = String(value)
+                if (value < parseFloat(sizeSlider.min)) sizeSlider.min = String(value)
+            }
+
             // Offset along the mat: centre of the logo minus centre of its slot, in template units
             const offsetOf = function (logo) {
+                const free = freeOf(logo)
+
+                if (free) return Math.round(free.tx)
+
                 const slot = MmCustom.logos.slotBox(logo)
 
                 if (!slot) return 0
@@ -964,13 +1073,14 @@
             refreshLogoEditor = function () {
                 const logo = current.logo
                 const placed = !!logo && MmCustom.logos.isPlaced(logo)
+                const shown = placed || !!freeOf(logo) // a logo of the template has its size and its offset too
                 const zone = logo ? MmCustom.zones.all('logo').find(function (z) { return z.element === logo }) : null
 
-                if (dropTitle) dropTitle.textContent = placed ? t('dropNew', 'Drop a new logo') : t('dropLogo', 'Drop your logo here')
+                if (dropTitle) dropTitle.textContent = shown ? t('dropNew', 'Drop a new logo') : t('dropLogo', 'Drop your logo here')
 
-                thumb.classList.toggle('sx-thumb--empty', !placed)
-                sizeBox.classList.toggle('hide', !placed)
-                offset.disabled = !placed
+                thumb.classList.toggle('sx-thumb--empty', !shown)
+                sizeBox.classList.toggle('hide', !shown)
+                offset.disabled = !shown
                 removeButton.hidden = !MmCustom.logos.canRemove(logo)
                 tooBig.hidden = !(placed && MmCustom.logos.overflows(logo))
 
@@ -980,7 +1090,7 @@
 
                 $$('.sx-logo--library, .sx-logo--import', logoBlock).forEach(function (box) { box.hidden = noSlot })
 
-                if (!placed || !zone) {
+                if (!shown || !zone) {
                     thumb.dataset.thumb = ''
                     thumb.innerHTML = emptyThumb
                     metaName.textContent = emptyName
@@ -1009,12 +1119,12 @@
             syncLogo = function () {
                 const logo = current.logo
 
-                if (MmCustom.logos.isPlaced(logo)) {
-                    const value = MmCustom.logos.sizeOf(logo)
+                const free = freeOf(logo)
 
-                    if (value > parseFloat(sizeSlider.max)) sizeSlider.max = String(value)
-                    if (value < parseFloat(sizeSlider.min)) sizeSlider.min = String(value)
+                if (free || MmCustom.logos.isPlaced(logo)) {
+                    const value = free ? sizeOfFree(free) : MmCustom.logos.sizeOf(logo)
 
+                    widen(value)
                     sizeSlider.value = value
                 }
 
@@ -1062,14 +1172,28 @@
                 sizeSlider.value = value
             })
 
+            // The handles scale a logo of the template: the slider follows
+            MmCustom.on('logo:scaled', function (event) {
+                const free = event.detail.element === current.logo ? freeOf(current.logo) : null
+
+                if (!free || document.activeElement === sizeSlider) return
+
+                widen(sizeOfFree(free))
+                sizeSlider.value = sizeOfFree(free)
+            })
+
             sizeSlider.addEventListener('input', function () {
-                if (current.logo) MmCustom.logos.resize(current.logo, sizeSlider.value)
+                const free = freeOf(current.logo)
+
+                // Logo of the template: the slider value is its scale (0 = as drawn, 100 = twice as big)
+                if (free) MmCustom.logos.scaleBy(current.logo, Math.max(0.05, 1 + parseFloat(sizeSlider.value) / 100) / free.s)
+                else if (current.logo) MmCustom.logos.resize(current.logo, sizeSlider.value)
             })
 
             offset.addEventListener('input', function () {
                 const logo = current.logo
 
-                if (!MmCustom.logos.isPlaced(logo)) return
+                if (!MmCustom.logos.isPlaced(logo) && !freeOf(logo)) return
 
                 const dx = parseFloat(offset.value) || 0
 
@@ -1161,10 +1285,7 @@
                 const wrap = document.createElement(isDesign ? 'div' : 'label')
                 const name = document.createElement('span')
                 const select = document.createElement('select')
-                const values = group.values.slice()
-
-                // Sizes: biggest first (4 m before 3 m), like the product page
-                if (values.every(function (v) { return parseFloat(v.name) > 0 })) values.sort(function (a, b) { return parseFloat(b.name) - parseFloat(a.name) })
+                const values = group.values // in the order of the attribute's values in PrestaShop (MmCustomCombination::variants)
 
                 wrap.className = 'sx-variant'
                 name.className = 'sx-variant__label'
