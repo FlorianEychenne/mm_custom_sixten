@@ -141,22 +141,12 @@ body#module-mm_custom-customModule .inputTextDesign{display:flex;flex-direction:
 
 body#module-mm_custom-customModule .sx-text-bar{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem}
 
-body#module-mm_custom-customModule .sx-fontmenu{display:inline-flex;flex:1 1 9rem;min-width:0}
-body#module-mm_custom-customModule .sx-fontmenu__btn{display:flex;flex:1;align-items:center;justify-content:space-between;gap:.75rem;width:100%;height:2.75rem;min-width:0;max-width:none;padding:0 .75rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right .75rem center;color:#000;cursor:pointer;transition:box-shadow .2s}
-body#module-mm_custom-customModule .sx-fontmenu__btn:hover,body#module-mm_custom-customModule .sx-fontmenu__btn:focus-visible,body#module-mm_custom-customModule .sx-fontmenu__btn[aria-expanded=true]{box-shadow:inset 0 0 0 2px var(--sx-red);outline:0}
-body#module-mm_custom-customModule .sx-fontmenu__btn span{overflow:hidden;padding-right:1.25rem;color:#000;font-size:1.0625rem;line-height:1;white-space:nowrap;text-overflow:ellipsis;text-align:left}
 body#module-mm_custom-customModule .sx-fontlist{position:fixed;z-index:1300;margin:0;padding:.25rem;list-style:none;overflow-y:auto;overscroll-behavior:contain;background:#fff;border:1.5px solid #000;box-shadow:0 1.5rem 4rem rgba(0,0,0,.25);scrollbar-width:thin}
 body#module-mm_custom-customModule .sx-fontlist[hidden]{display:none}
 body#module-mm_custom-customModule .sx-fontlist li{padding:.5rem .75rem;overflow:hidden;color:#000;font-size:1.25rem;line-height:1.2;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
 body#module-mm_custom-customModule .sx-fontlist li:hover{background:var(--mmx-surface-2)}
 body#module-mm_custom-customModule .sx-fontlist li[aria-selected=true]{background:#000;color:#fff}
-body#module-mm_custom-customModule .sx-text-bar .sx-size{display:inline-flex;flex:none;align-items:stretch;height:2.75rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff}
-body#module-mm_custom-customModule .sx-text-bar .sx-size button{width:2.5rem;height:auto;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:1.125rem;line-height:1;cursor:pointer;font-weight:600}
-body#module-mm_custom-customModule .sx-text-bar .sx-size button:hover{background:var(--mmx-surface-2)}
 body#module-mm_custom-customModule .module-container .tools .text-design .inputTextDesign .sx-size input{flex:none;width:3.25rem;min-width:0;height:auto;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;text-align:center;-moz-appearance:textfield}
-body#module-mm_custom-customModule .sx-text-bar .sx-size input::-webkit-outer-spin-button,body#module-mm_custom-customModule .sx-text-bar .sx-size input::-webkit-inner-spin-button{appearance:none;margin:0}
-body#module-mm_custom-customModule .sx-text-bar .sx-size input:focus{outline:0}
 body#module-mm_custom-customModule .sx-text-bar i{width:1px;height:1.25rem;margin:0 .25rem;background:var(--mmx-border)}
 body#module-mm_custom-customModule .sx-text-bar button[data-act],body#module-mm_custom-customModule .sx-text-bar button[data-align]{flex:none;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
 body#module-mm_custom-customModule .sx-text-bar button svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
@@ -624,7 +614,6 @@ body#module-mm_custom-customModule .mmc-site-sixten [hidden]{display:none!import
 
 /* focus au clavier : liseré rouge à la place du contour retiré plus haut */
 body#module-mm_custom-customModule .mm-wheel-preview:focus-within,
-body#module-mm_custom-customModule .sx-text-bar .sx-size:focus-within{box-shadow:inset 0 0 0 2px var(--sx-red)}
 body#module-mm_custom-customModule .sx-fontlist li:focus{outline:0;background:var(--mmx-surface-2)}
 body#module-mm_custom-customModule .sx-fontlist li[aria-selected=true]:focus{background:#333}
 body#module-mm_custom-customModule .sx-row:focus-visible,body#module-mm_custom-customModule .sx-steps button:focus-visible,
@@ -684,7 +673,7 @@ body#module-mm_custom-customModule .save-auth-form input:-webkit-autofill,body#m
 body#module-mm_custom-customModule .save-auth-form a{display:inline-block;color:#000;font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:.35em}
 body#module-mm_custom-customModule .save-auth-form a:hover{color:var(--sx-red)}
 /* 3. survol des boutons d'outils */
-body#module-mm_custom-customModule .sx-zoom button:not(.mmc-zoom__level):is(:hover,:focus-visible),body#module-mm_custom-customModule .sx-text-bar .sx-size button:is(:hover,:focus-visible){background:#000;color:#fff;outline:0}
+body#module-mm_custom-customModule .sx-zoom button:not(.mmc-zoom__level):is(:hover,:focus-visible){background:#000;color:#fff;outline:0}
 body#module-mm_custom-customModule .sx-zoom button:last-child:is(:hover,:focus-visible){border-left-color:#000}
 
 /* ==========================================================================================================================================
@@ -730,3 +719,83 @@ html.sx3d-on{overflow:hidden}
 .sx3d-ar__btn--turn{font-size:1.25rem;letter-spacing:0}
 .sx3d-ar__btn--close{background:#fff;color:#000}
 @media (max-width:420px){.sx3d__tool{width:2.5rem}.sx3d__ar{padding:0 .75rem}}
+
+
+/* ---------- Champ du texte et police (2026-11-13) : un seul champ ; le texte s'y écrit dans sa police, le nom de la police et ▾ à droite ;
+   la liste des polices (chacune écrit le texte saisi) se déroule dessous dès que le champ est utilisé ---------- */
+body#module-mm_custom-customModule .sx-textfield{position:relative;display:flex;align-items:stretch;box-shadow:inset 0 0 0 1.5px #000;background:#fff}
+body#module-mm_custom-customModule .sx-textfield:focus-within,body#module-mm_custom-customModule .sx-textfield.is-open{box-shadow:inset 0 0 0 2px var(--sx-red)}
+body#module-mm_custom-customModule .sx-textfield textarea,body#module-mm_custom-customModule .mmc-text-editor .sx-textfield textarea{flex:1;min-width:0;font-size:1.0625rem;letter-spacing:0;box-shadow:none!important;background:transparent!important}
+body#module-mm_custom-customModule .sx-textfield textarea:focus{box-shadow:none!important}
+body#module-mm_custom-customModule .sx-textfield__font{flex:none;display:flex;align-items:center;gap:.375rem;max-width:45%;min-height:2.75rem;margin:1.5px 1.5px 1.5px 0;padding:0 .625rem 0 .75rem;border:0;border-left:1px solid var(--mmx-border);border-radius:0;background:transparent;color:var(--mmx-text-2);font-family:var(--mmx-caps);font-size:.625rem;font-weight:700;letter-spacing:.08em;line-height:1.2;text-transform:uppercase;cursor:pointer}
+body#module-mm_custom-customModule .sx-textfield__font span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+body#module-mm_custom-customModule .sx-textfield__font svg{flex:none;width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transform:rotate(90deg);transition:transform .15s}
+body#module-mm_custom-customModule .sx-textfield.is-open .sx-textfield__font svg{transform:rotate(-90deg)}
+body#module-mm_custom-customModule .sx-textfield__font:hover,body#module-mm_custom-customModule .sx-textfield__font:focus-visible{background:var(--mmx-surface-2);color:#000;outline:0}
+body#module-mm_custom-customModule .sx-fontlist{border:2px solid var(--sx-red);border-top-width:0;box-shadow:0 1rem 2.5rem rgba(0,0,0,.2)}
+body#module-mm_custom-customModule .sx-fontlist.is-up{border-top-width:2px;border-bottom-width:0}
+body#module-mm_custom-customModule .sx-fontlist li{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+body#module-mm_custom-customModule .sx-fontlist__sample{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+body#module-mm_custom-customModule .sx-fontlist li small{flex:none;color:var(--mmx-text-2);font-family:var(--mmx-caps);font-size:.5625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+body#module-mm_custom-customModule .sx-fontlist li[aria-selected=true] small{color:rgba(255,255,255,.7)}
+
+/* Taille en chiffres (2026-11-13) : un champ en cm à côté du libellé du curseur, pour la taille des logos et celle des textes ;
+   les deux colonnes (taille, décalage) gardent leurs curseurs alignés */
+body#module-mm_custom-customModule .sx-num{display:inline-flex;align-items:center;gap:.25rem;height:1.875rem;padding:0 .4375rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff;cursor:text}
+body#module-mm_custom-customModule .sx-num:focus-within{box-shadow:inset 0 0 0 2px var(--sx-red)}
+body#module-mm_custom-customModule .sx-num input{width:2.375rem;height:100%;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:700;text-align:right;appearance:textfield;-moz-appearance:textfield}
+body#module-mm_custom-customModule .sx-num input::-webkit-outer-spin-button,body#module-mm_custom-customModule .sx-num input::-webkit-inner-spin-button{appearance:none;margin:0}
+body#module-mm_custom-customModule .sx-num input:focus{outline:0}
+body#module-mm_custom-customModule .sx-num i{color:var(--mmx-text-2);font-family:var(--mmx-caps);font-size:.625rem;font-style:normal;font-weight:700;letter-spacing:.06em}
+body#module-mm_custom-customModule .module-container .tools .sx-text-sliders{margin-top:1rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1.875rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>label{grid-column:1/-1;grid-row:1}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>input[type=range]{grid-column:1;grid-row:2}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>.sx-num{grid-column:2;grid-row:2}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty input{height:1.875rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1.875rem;align-items:center;gap:.375rem .5rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row{display:contents}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .mm-tools-title{grid-column:1/-1;grid-row:1}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{grid-column:2;grid-row:2;min-width:3.5rem;text-align:right}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos>input{grid-column:1;grid-row:2;margin:0}
+body#module-mm_custom-customModule:not(.sx-text-multi) .sx-text-bar{display:none}
+
+/* Téléphone (2026-11-13) : bibliothèque et import en deux boutons (rien à déposer) ; volets moins hauts, le tapis garde la moitié de l'écran */
+body#module-mm_custom-customModule .module-container .tools .sx-logo-btns{display:none}
+@media (max-width:767.98px){
+  body#module-mm_custom-customModule .module-container .tools .sx-logo-btns:not([hidden]){display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+  body#module-mm_custom-customModule .module-container .tools .sx-logo--library,body#module-mm_custom-customModule .module-container .tools .sx-logo--import{display:none!important}
+  body#module-mm_custom-customModule .module-container .tools .sx-logo-btn{min-height:2.75rem;padding:.25rem .75rem;border:0;border-radius:0;background:#000;color:#fff;font-family:var(--mmx-font);font-size:.6875rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule .module-container .tools .sx-logo-btn--upload{background:#fff;color:#000;box-shadow:inset 0 0 0 1.5px #000}
+  body#module-mm_custom-customModule .module-container .tools .sx-logo-btn:is(:hover,:focus-visible){background:var(--sx-red);color:#fff;box-shadow:none;outline:0}
+  body#module-mm_custom-customModule.sx-dock-open{--mm-stage-h:50svh}
+}
+
+/* Téléphone (2026-11-13) : pas de poignées sur un texte sélectionné (elles cachent le dessin) ; le cadre reste, le texte se déplace au doigt */
+@media (max-width:767.98px){
+  body#module-mm_custom-customModule.sx-sel-text .mmc-overlay :is(.mmc-handles__corner,.mmc-handles__rotate,.mmc-handles__stem){display:none}
+}
+
+/* Outils de la scène en colonnes (2026-11-13) : à gauche repères, image, story, annuler, réinitialiser ; à droite 3D, rotation et zoom
+   (+, 100 %, −, ⤢), l'un sous l'autre, sur téléphone comme sur ordinateur */
+body#module-mm_custom-customModule .sx-stage-hint{flex-direction:column;align-items:flex-start}
+body#module-mm_custom-customModule .sx-zoomwrap{flex-direction:column;align-items:center}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d{display:inline-flex;align-items:center;justify-content:center;width:2.5rem;height:2.5rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d:is(:hover,:focus-visible){background:#000;color:#fff;outline:0}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d span{font-family:var(--mmx-font);font-size:.6875rem;font-weight:800;letter-spacing:.02em;line-height:1}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d.is-busy span{animation:sx3d-busy .9s ease-in-out infinite}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom{flex-direction:column;width:2.5rem;height:auto}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom button{width:100%;height:2.5rem}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .mmc-zoom__in{order:1}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .mmc-zoom__level{order:2;min-width:0;height:2rem;font-size:.5625rem}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .mmc-zoom__out{order:3}
+body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .sx-zoom__fit{order:4;border-left:0;border-top:1.5px solid #000}
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d,body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom{width:2rem}
+  body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d{height:2rem}
+  body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom button{height:2rem}
+  body#module-mm_custom-customModule .sx-zoomwrap .sx-zoom .mmc-zoom__level{height:1.75rem;font-size:.5rem}
+}
+@media (prefers-reduced-motion:reduce){body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d.is-busy span{animation:none}}
+/* les deux colonnes alignées par le bas : un libellé sur deux lignes (téléphone) ne décale pas les curseurs */
+body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{align-items:end}

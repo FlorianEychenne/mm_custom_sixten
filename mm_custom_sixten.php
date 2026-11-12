@@ -184,6 +184,10 @@ class Mm_custom_sixten extends Module
             'designsAvailable' => $this->l('%d available in %s'),
             'logoNotPlaced' => $this->l('The logo could not be placed. Choose a logo slot on the mat, then try again.'),
             'designNote' => $this->l('Previews in the original colours. If you have already changed the mat, you will be asked to confirm before switching.'),
+            'textSize' => $this->l('Text size'),
+            'textSizeCm' => $this->l('Height of the capital letters, in cm'),
+            'offset' => $this->l('Left / right offset'),
+            'logoSizeCm' => $this->l('Width of the logo, in cm'),
         ];
     }
 

@@ -59,6 +59,8 @@
 
         // Logos: dragged anywhere on the mat (as on new.sixten), size handles and free rotation
         if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true })
+        // The kind of the selection, for the styles (on a phone a text has no handles: it is still dragged with the finger)
+        MmCustom.on('select', function (event) { document.body.classList.toggle('sx-sel-text', !!event.detail && event.detail.type === 'text') })
         // Ink of the print on the felt, flat 2 cm sole
         if (MmCustom.effects) MmCustom.effects.configure({ ink: true, sole: { cm: 2, fill: '#333333' } })
 
@@ -764,10 +766,63 @@
 
         MmCustom.on('color:change', function () { if (current.color && wheels.color) wheels.color.sync() })
 
+        /* ------------------------------------------------------------- mesures en cm (textes et logos) */
+
+        // Template units to cm, from the size in the SKU (SIXCUST-HON-95X200-CLASSIC = 95 x 200 cm); 0 when unknown
+        const matCm = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
+        const cmPerUnit = function () {
+            const box = MmCustom.svg.viewBox()
+
+            return matCm && matCm.length && box ? matCm.length / Math.max(box.width, box.height) : 0
+        }
+        const roundCm = function (value) { return Math.round(value * 10) / 10 }
+        const formatOffset = function (dx) {
+            const k = cmPerUnit()
+
+            if (!dx || (k && !Math.round(Math.abs(dx) * k))) return '0'
+
+            const sign = dx > 0 ? '+' : '−'
+
+            return k ? sign + ' ' + Math.round(Math.abs(dx) * k) + ' cm' : sign + ' ' + Math.round(Math.abs(dx))
+        }
+
+        // A figure in cm next to a slider's label: applied on Enter or when the field is left
+        function numberField(id, label, onSet) {
+            const box = document.createElement('span')
+
+            box.className = 'sx-num'
+            box.innerHTML = '<input type="number" inputmode="decimal" min="0.5" max="999" step="0.1"><i>cm</i>'
+            box.title = label
+
+            const input = box.querySelector('input')
+
+            input.id = id
+            input.setAttribute('aria-label', label)
+            box.querySelector('i').hidden = !cmPerUnit()
+
+            const set = function () {
+                const value = parseFloat(String(input.value).replace(',', '.'))
+
+                if (value > 0) onSet(value)
+            }
+
+            input.addEventListener('change', set)
+            input.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') { event.preventDefault(); set(); input.select() }
+            })
+
+            return {
+                box: box,
+                input: input,
+                show: function (value) { if (document.activeElement !== input) input.value = value > 0 ? String(roundCm(value)) : '' },
+            }
+        }
+
         /* ------------------------------------------------------------- textes */
 
         const textArea = textBlock ? $('.inputTextDesign', textBlock) : null
-        let fontMenu = null
+        let fontField = null
+        let textSliders = null
 
         function syncText() {
             if (!current.text) return
@@ -777,7 +832,8 @@
             markPicked(textBlock, [window.getComputedStyle(current.text).fill])
 
             if (wheels.text) wheels.text.sync()
-            if (fontMenu) fontMenu.sync()
+            if (fontField) fontField.sync()
+            if (textSliders) textSliders.sync()
 
             fitTextField()
         }
@@ -795,28 +851,23 @@
             })
         }
 
-        // Field (several lines when the text allows it), alignment, size: ui/text-editor.js of mm_custom, in the Sixten bar
+        // Field (several lines when the text allows it) and alignment: ui/text-editor.js of mm_custom, in the Sixten bar.
+        // The font is chosen from the field itself; size and offset are sliders with a figure in cm, as for the logos.
         let editor = null
 
         if (textArea && ui.textEditor) {
-            editor = ui.textEditor.mount(textArea, { text: true, align: true, size: true, fonts: [] })
+            editor = ui.textEditor.mount(textArea, { text: true, align: true, size: false, fonts: [] })
         }
 
         if (editor) {
             const root = editor.root
             const bar = root.querySelector('.mmc-text-editor__bar')
             const align = root.querySelector('.mmc-text-editor__align')
-            const size = root.querySelector('.mmc-text-editor__size')
             const field = root.querySelector('textarea')
+            const foot = textArea.querySelector('.sx-text-foot')
 
-            textArea.insertBefore(root, textArea.querySelector('.sx-text-foot'))
+            textArea.insertBefore(root, foot)
             bar.classList.add('sx-text-bar')
-
-            if (field) {
-                field.classList.remove('form-control')
-                field.placeholder = t('yourText', 'Your text')
-                field.addEventListener('input', fitTextField)
-            }
 
             if (align) {
                 align.className = 'sx-text-bar__align'
@@ -826,18 +877,172 @@
                 })
             }
 
-            if (size) {
-                size.className = 'sx-size'
-                size.querySelectorAll('button, input').forEach(function (el) { el.className = '' })
-                size.title = MmCustom.t('textSize', 'Text size')
-            }
-
-            // Font menu with a preview: each font written in itself, with the text of the selected zone
             let fonts = []
 
             try { fonts = JSON.parse(textArea.dataset.mmcFonts || '[]') } catch (e) { fonts = [] }
 
-            if (fonts.length) fontMenu = mountFontMenu(bar, size, fonts)
+            if (field) {
+                field.classList.remove('form-control')
+                field.placeholder = t('yourText', 'Your text')
+                field.addEventListener('input', fitTextField)
+
+                if (fonts.length) fontField = mountFontField(field, fonts)
+            }
+
+            textSliders = mountTextSliders(textArea, foot)
+        }
+
+        // Size of the text (height of its capitals, in cm) and its offset along the mat, built like the logo's sliders
+        function mountTextSliders(container, before) {
+            const box = document.createElement('div')
+            const root = MmCustom.svg.root()
+            const view = MmCustom.svg.viewBox()
+            const half = view ? Math.round(Math.max(view.width, view.height) / 2) : 500
+            const origins = new WeakMap() // anchor of each text when first seen: the offset is measured from it
+            const capRatios = {}
+
+            box.className = 'sx-logo-sliders sx-text-sliders'
+            box.innerHTML = '<div class="sx-logo-size"><div class="logo-design">'
+                + '<label class="mm-tools-title" for="sx-text-size"></label>'
+                + '<input type="range" id="sx-text-size" min="1" max="40" step="0.5" value="5">'
+                + '</div></div>'
+                + '<div class="sx-logo-pos"><div class="sx-logo-pos__row">'
+                + '<span class="mm-tools-title" id="sx-text-pos-label"></span><span class="sx-logo-pos__val">0</span>'
+                + '</div><input type="range" min="' + (-half) + '" max="' + half + '" step="5" value="0" aria-labelledby="sx-text-pos-label"></div>'
+            container.insertBefore(box, before)
+
+            const design = box.querySelector('.logo-design')
+            const slider = box.querySelector('#sx-text-size')
+            const offset = box.querySelector('.sx-logo-pos input')
+            const offsetValue = box.querySelector('.sx-logo-pos__val')
+            const number = numberField('sx-text-size-cm', t('textSizeCm', 'Height of the capital letters, in cm'), function (cm) { setCm(cm) })
+
+            box.querySelector('label').textContent = t('textSize', 'Text size')
+            box.querySelector('#sx-text-pos-label').textContent = t('offset', 'Left / right offset')
+            design.insertBefore(number.box, slider)
+
+            // Template units of one unit of the text's own space (its matrix and its groups may scale it)
+            const scaleOf = function (el) {
+                const m = root.getScreenCTM().inverse().multiply(el.getScreenCTM())
+
+                return Math.hypot(m.a, m.b) || 1
+            }
+
+            // Height of a capital letter for 1 of font size, measured once per loaded font (0.7 until then)
+            const capRatio = function (el) {
+                const style = window.getComputedStyle(el)
+                const font = style.fontStyle + ' ' + style.fontWeight + ' 100px "' + familyOf(style.fontFamily) + '"'
+
+                if (capRatios[font]) return capRatios[font]
+
+                const loaded = document.fonts && document.fonts.check ? document.fonts.check(font, 'H') : true
+                const ctx = document.createElement('canvas').getContext('2d')
+                let ratio = 0.7
+
+                if (ctx && loaded) {
+                    ctx.font = font
+
+                    const m = ctx.measureText('H')
+
+                    if (m.actualBoundingBoxAscent > 10) ratio = Math.min(1.2, (m.actualBoundingBoxAscent + (m.actualBoundingBoxDescent || 0)) / 100)
+                    capRatios[font] = ratio
+                }
+
+                return ratio
+            }
+
+            const sizeCm = function (el) { return (MmCustom.texts.size(el) || 0) * scaleOf(el) * capRatio(el) * (cmPerUnit() || 1) }
+
+            function setCm(cm) {
+                const el = current.text
+
+                if (!el) return
+
+                MmCustom.texts.setSize(el, cm / (scaleOf(el) * capRatio(el) * (cmPerUnit() || 1)))
+                sync()
+                number.input.value = String(roundCm(sizeCm(el))) // what was drawn (the slot may hold the text smaller)
+            }
+
+            // Anchor of the text along the mat: its left edge, centre or right edge, as it is aligned
+            const anchorX = function (el, anchor) {
+                const c = MmCustom.texts.frame(el)
+
+                if (anchor === 'start') return (c[0].x + c[3].x) / 2
+                if (anchor === 'end') return (c[1].x + c[2].x) / 2
+
+                return (c[0].x + c[1].x + c[2].x + c[3].x) / 4
+            }
+            const offsetOf = function (el) {
+                const anchor = MmCustom.texts.align(el)
+                let origin = origins.get(el)
+
+                if (!origin) {
+                    origin = { x: anchorX(el, anchor), anchor: anchor }
+                    origins.set(el, origin)
+                } else if (origin.anchor !== anchor) {
+                    // Aligned differently: the reference follows, the text has not moved
+                    origin.x += anchorX(el, anchor) - anchorX(el, origin.anchor)
+                    origin.anchor = anchor
+                }
+
+                return anchorX(el, anchor) - origin.x
+            }
+
+            slider.addEventListener('input', function () { setCm(parseFloat(slider.value)) })
+
+            offset.addEventListener('input', function () {
+                const el = current.text
+
+                if (!el) return
+
+                const dx = parseFloat(offset.value) || 0
+
+                MmCustom.texts.moveBy(el, dx - offsetOf(el), 0)
+                offsetValue.textContent = formatOffset(dx)
+            })
+            offset.addEventListener('change', sync)
+
+            function sync() {
+                const el = current.text
+
+                if (!el || !el.isConnected) return
+
+                let cm = 0
+                let dx = 0
+
+                try {
+                    cm = sizeCm(el)
+                    dx = offsetOf(el)
+                } catch (e) {
+                    return // not drawn (hidden step): read again when shown
+                }
+
+                number.show(cm)
+
+                if (document.activeElement !== slider) {
+                    if (cm > parseFloat(slider.max)) slider.max = String(Math.ceil(cm))
+                    if (cm < parseFloat(slider.min)) slider.min = String(Math.floor(cm * 2) / 2)
+                    slider.value = String(cm)
+                }
+
+                if (document.activeElement !== offset) {
+                    if (Math.abs(dx) > parseFloat(offset.max)) {
+                        offset.max = String(Math.ceil(Math.abs(dx)))
+                        offset.min = String(-Math.ceil(Math.abs(dx)))
+                    }
+                    offset.value = String(Math.round(dx))
+                    offsetValue.textContent = formatOffset(dx)
+                }
+            }
+
+            ;['text:moved', 'text:change'].forEach(function (name) {
+                MmCustom.on(name, function (event) { if (event.detail && event.detail.element === current.text) sync() })
+            })
+
+            // A font that finishes loading changes the height of the capitals
+            if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', sync)
+
+            return { sync: sync }
         }
 
         function fitTextField() {
@@ -852,88 +1057,122 @@
             body.classList.toggle('sx-text-multi', lines > 1 || !!MmCustom.texts.slotOf(current.text))
         }
 
-        function mountFontMenu(bar, before, fonts) {
-            const menu = document.createElement('div')
+        // Font chosen in the text field itself: the field writes the text in its font, and the list of the fonts (each one
+        // writing the text being typed) unrolls under it as soon as it is used; the font name and ▾ at its right toggle it
+        function mountFontField(field, fonts) {
+            const wrap = document.createElement('div')
+            const button = document.createElement('button')
             const list = document.createElement('ul')
 
-            menu.className = 'sx-fontmenu'
-            menu.innerHTML = '<button type="button" class="sx-fontmenu__btn" aria-haspopup="listbox" aria-expanded="false"><span></span></button>'
+            wrap.className = 'sx-textfield'
+            field.parentNode.insertBefore(wrap, field)
+            wrap.appendChild(field)
+
+            button.type = 'button'
+            button.className = 'sx-textfield__font'
+            button.setAttribute('aria-haspopup', 'listbox')
+            button.setAttribute('aria-expanded', 'false')
+            button.setAttribute('aria-controls', 'sx-fontlist')
+            button.innerHTML = '<span></span>' + ICONS.chevron
+            wrap.appendChild(button)
+
+            const name = button.querySelector('span')
+
             list.className = 'sx-fontlist'
+            list.id = 'sx-fontlist'
             list.setAttribute('role', 'listbox')
+            list.setAttribute('aria-label', t('font', 'Font'))
             list.hidden = true
-
-            const button = menu.querySelector('button')
-            const preview = button.querySelector('span')
-
-            button.title = t('font', 'Font')
-            button.setAttribute('aria-label', button.title)
 
             fonts.forEach(function (font) {
                 const item = document.createElement('li')
+                const sample = document.createElement('span')
+                const label = document.createElement('small')
 
                 item.setAttribute('role', 'option')
                 item.tabIndex = -1
                 item.dataset.font = font
-                item.style.fontFamily = '"' + font + '"'
-                item.title = prettyFamily(font)
+                sample.className = 'sx-fontlist__sample'
+                sample.style.fontFamily = '"' + font + '"'
+                label.textContent = prettyFamily(font)
+                item.append(sample, label)
                 list.appendChild(item)
             })
 
-            bar.insertBefore(menu, before)
-            page.appendChild(list) // a fixed layer: the tools column clips its content
+            document.body.appendChild(list) // a fixed layer above everything: the tools column clips its content
 
-            const sample = function () {
-                return (textOf(current.text) || 'Aa Bb 123').slice(0, 40)
+            const isOpen = function () { return !list.hidden }
+            const inside = function (node) { return !!node && (wrap.contains(node) || list.contains(node)) }
+
+            const place = function () {
+                const rect = wrap.getBoundingClientRect()
+                const vv = window.visualViewport
+                const bottom = vv ? vv.offsetTop + vv.height : window.innerHeight
+                const below = bottom - rect.bottom - 12
+                const above = rect.top - 12
+                const down = below >= 200 || below >= above
+                const room = Math.max(140, Math.min(down ? below : above, 380))
+
+                list.style.cssText = 'left:' + rect.left + 'px;width:' + rect.width + 'px;max-height:' + room + 'px;'
+                    + (down ? 'top:' + (rect.bottom - 1.5) + 'px' : 'bottom:' + (window.innerHeight - rect.top - 1.5) + 'px')
+                list.classList.toggle('is-up', !down)
             }
 
-            const close = function (focusButton) {
-                if (list.hidden) return
+            const open = function () {
+                if (isOpen() || !current.text) return
+
+                sync()
+                list.hidden = false
+                wrap.classList.add('is-open')
+                button.setAttribute('aria-expanded', 'true')
+                place()
+
+                const selected = list.querySelector('[aria-selected="true"]')
+
+                if (selected) list.scrollTop = selected.offsetTop - list.clientHeight / 2 + selected.offsetHeight / 2
+            }
+            const close = function (focusField) {
+                if (!isOpen()) return
 
                 list.hidden = true
+                wrap.classList.remove('is-open')
                 button.setAttribute('aria-expanded', 'false')
 
-                if (focusButton === true) button.focus()
-            }
-            const open = function () {
-                const rect = button.getBoundingClientRect()
-                const width = Math.max(rect.width, 300)
-
-                list.hidden = false
-                button.setAttribute('aria-expanded', 'true')
-                list.style.cssText = 'left:' + Math.min(rect.left, window.innerWidth - width - 8) + 'px;bottom:' + (window.innerHeight - rect.top + 6)
-                    + 'px;width:' + width + 'px;max-height:' + Math.min(Math.max(160, rect.top - 16), 360) + 'px'
-
-                const selected = list.querySelector('[aria-selected="true"]') || list.firstElementChild
-
-                if (selected) {
-                    selected.scrollIntoView({ block: 'nearest' })
-                    selected.focus({ preventScroll: true })
-                }
+                if (focusField === true) field.focus()
             }
 
             const sync = function () {
                 const family = current.text ? familyOf(window.getComputedStyle(current.text).fontFamily) : ''
-                const text = sample()
+                const text = (textOf(current.text) || 'Aa Bb 123').slice(0, 40)
 
-                preview.textContent = text
-                preview.style.fontFamily = family ? '"' + family + '"' : ''
-                button.title = family ? prettyFamily(family) : t('font', 'Font')
+                field.style.fontFamily = family ? '"' + family + '", var(--mmx-caps)' : ''
+                name.textContent = family ? prettyFamily(family) : t('font', 'Font')
+                button.title = t('font', 'Font') + (family ? ' : ' + prettyFamily(family) : '')
+                button.setAttribute('aria-label', button.title)
                 list.querySelectorAll('li').forEach(function (item) {
-                    item.textContent = text
+                    item.firstChild.textContent = text
                     item.setAttribute('aria-selected', String(item.dataset.font.toLowerCase() === family.toLowerCase()))
                 })
             }
 
-            button.addEventListener('click', function (event) {
-                event.stopPropagation()
+            // The list unrolls by itself when the field is used, and stays open while typing (the samples follow the text)
+            field.addEventListener('focus', open)
+            field.addEventListener('click', open)
+            field.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && isOpen()) { event.preventDefault(); event.stopPropagation(); close() }
+                else if (event.key === 'ArrowDown' && field.selectionStart === field.value.length) {
+                    open()
 
-                if (list.hidden) open()
-                else close()
+                    const target = list.querySelector('[aria-selected="true"]') || list.firstElementChild
+
+                    if (target) { event.preventDefault(); target.focus() }
+                }
             })
 
-            button.addEventListener('keydown', function (event) {
-                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); open() }
-            })
+            // Clicks on ▾ and in the list keep the focus in the field (the keyboard stays up on a phone)
+            button.addEventListener('mousedown', function (event) { event.preventDefault() })
+            list.addEventListener('mousedown', function (event) { event.preventDefault() })
+            button.addEventListener('click', function () { if (isOpen()) close(); else open() })
 
             list.addEventListener('keydown', function (event) {
                 const items = Array.from(list.children)
@@ -941,13 +1180,14 @@
                 let next = null
 
                 if (event.key === 'ArrowDown') next = items[Math.min(items.length - 1, at + 1)]
-                else if (event.key === 'ArrowUp') next = items[Math.max(0, at - 1)]
+                else if (event.key === 'ArrowUp') next = at <= 0 ? null : items[at - 1]
                 else if (event.key === 'Home') next = items[0]
                 else if (event.key === 'End') next = items[items.length - 1]
                 else if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (items[at]) choose(items[at]); return }
                 else if (event.key === 'Escape') { event.preventDefault(); close(true); return }
                 else if (event.key === 'Tab') { close(); return }
 
+                if (event.key === 'ArrowUp' && at <= 0) { event.preventDefault(); field.focus(); return }
                 if (next) { event.preventDefault(); next.focus() }
             })
 
@@ -964,23 +1204,33 @@
                 const font = item.dataset.font
 
                 MmCustom.texts.setFont(element, font)
-                close(true)
+                close()
                 sync()
 
+                if (document.activeElement !== field) field.focus({ preventScroll: true })
+
                 // The new glyphs change the line spacing and the slot fit: measure again once the font is loaded
-                const refit = function () { if (element.querySelector('tspan')) MmCustom.texts.setLines(element, MmCustom.texts.lines(element)) }
+                const refit = function () {
+                    if (element.querySelector('tspan')) MmCustom.texts.setLines(element, MmCustom.texts.lines(element))
+                    if (textSliders) textSliders.sync()
+                }
 
                 if (document.fonts && document.fonts.load) {
                     Promise.race([document.fonts.load('100px "' + font + '"', 'Hg'), new Promise(function (r) { setTimeout(r, 2500) })]).then(refit, refit)
                 }
             }
 
-            document.addEventListener('click', function (event) { if (!list.hidden && !list.contains(event.target)) close() })
-            document.addEventListener('keydown', function (event) { if (event.key === 'Escape') close() })
-            window.addEventListener('resize', close)
+            // Closed when the focus or a click goes elsewhere
+            wrap.addEventListener('focusout', function (event) { if (!inside(event.relatedTarget)) close() })
+            list.addEventListener('focusout', function (event) { if (!inside(event.relatedTarget)) close() })
+            document.addEventListener('click', function (event) { if (isOpen() && !inside(event.target)) close() })
+            document.addEventListener('scroll', function (event) { if (isOpen() && event.target !== list) place() }, true)
+            window.addEventListener('resize', function () { if (isOpen()) place() })
+            if (window.visualViewport) window.visualViewport.addEventListener('resize', function () { if (isOpen()) place() })
             MmCustom.on('text:change', function (event) { if (event.detail.element === current.text) sync() })
+            MmCustom.on('select', function (event) { if (!event.detail || event.detail.type !== 'text') close() })
 
-            return { sync: sync }
+            return { sync: sync, close: close }
         }
 
         /* ------------------------------------------------------------- logos */
@@ -1013,10 +1263,6 @@
             const emptyFrom = metaFrom.textContent
             let pending = null // name and origin of the logo being placed
 
-            // Length of the mat in cm, from the SKU (SIXCUST-HON-95X200-CLASSIC = 95 x 200 cm): the offset is shown in cm
-            const size = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
-            const lengthCm = size ? size.length : 0
-
             // Logo drawn in the template (not placed by the customer): its size and its offset are its free transform
             const freeOf = function (logo) { return logo && MmCustom.logos.freeTransform ? MmCustom.logos.freeTransform(logo) : null }
             const sizeOfFree = function (free) { return Math.round((free.s - 1) * 100) }
@@ -1039,14 +1285,63 @@
 
                 return Math.round((box.x + box.width / 2) - (slot.x + slot.width / 2))
             }
-            const formatOffset = function (dx) {
-                const box = MmCustom.svg.viewBox()
 
-                if (!dx) return '0'
+            // Width of the logo in cm (its own width: a logo turned on a side slot keeps it), set from a figure
+            const widthCm = function (logo) {
+                const c = MmCustom.logos.frame(logo)
 
-                const sign = dx > 0 ? '+' : '−'
+                return Math.hypot(c[1].x - c[0].x, c[1].y - c[0].y) * (cmPerUnit() || 1)
+            }
+            const setWidthCm = function (cm) {
+                const logo = current.logo
+                const free = freeOf(logo)
 
-                return lengthCm && box ? sign + ' ' + Math.round(Math.abs(dx) * lengthCm / Math.max(box.width, box.height)) + ' cm' : sign + ' ' + Math.abs(dx)
+                if (!logo || (!free && !MmCustom.logos.isPlaced(logo))) return
+
+                const close = function (width) { return !width || Math.abs(width / cm - 1) < 0.005 }
+
+                if (free) {
+                    // Logo of the template: a scale, proportional
+                    for (let i = 0; i < 2 && !close(widthCm(logo)); i++) MmCustom.logos.scaleBy(logo, cm / widthCm(logo))
+                } else {
+                    // Placed logo: its width follows the slider value but not in proportion (an imported image grows by the
+                    // same amount in width and height, then fits its ratio): first guess in proportion, then the secant
+                    let v0 = MmCustom.logos.sizeOf(logo)
+                    let w0 = widthCm(logo)
+
+                    if (!close(w0)) {
+                        let v1 = Math.round(((100 + v0) * cm / w0 - 100) * 10) / 10
+
+                        if (MmCustom.logos.resize(logo, v1)) {
+                            let w1 = widthCm(logo)
+
+                            for (let i = 0; i < 6 && !close(w1) && w1 !== w0; i++) {
+                                const v2 = Math.round((v1 + (cm - w1) * (v1 - v0) / (w1 - w0)) * 10) / 10
+
+                                if (v2 === v1 || !MmCustom.logos.resize(logo, v2)) break
+
+                                v0 = v1
+                                w0 = w1
+                                v1 = v2
+                                w1 = widthCm(logo)
+                            }
+                        }
+                    }
+                }
+
+                syncLogo()
+                logoNumber.input.value = String(roundCm(widthCm(logo))) // what was drawn
+            }
+            const logoNumber = numberField('sx-logo-size-cm', t('logoSizeCm', 'Width of the logo, in cm'), setWidthCm)
+
+            sizeBox.insertBefore(logoNumber.box, sizeSlider)
+
+            const showWidth = function () {
+                const logo = current.logo
+
+                try {
+                    logoNumber.show(logo && (freeOf(logo) || MmCustom.logos.isPlaced(logo)) ? widthCm(logo) : 0)
+                } catch (e) { /* not drawn */ }
             }
 
             refreshLogoEditor = function () {
@@ -1067,7 +1362,7 @@
                 // from the mat, resized, moved), so the library and the drop zone are not offered for it
                 const noSlot = placed && !MmCustom.logos.slotBox(logo)
 
-                $$('.sx-logo--library, .sx-logo--import', logoBlock).forEach(function (box) { box.hidden = noSlot })
+                $$('.sx-logo--library, .sx-logo--import, .sx-logo-btns', logoBlock).forEach(function (box) { box.hidden = noSlot })
 
                 if (!shown || !zone) {
                     thumb.dataset.thumb = ''
@@ -1081,6 +1376,7 @@
                 }
 
                 paintThumb(thumb, zone)
+                showWidth()
 
                 const info = logoInfo(zone)
 
@@ -1146,13 +1442,18 @@
                 if (value < parseFloat(sizeSlider.min)) sizeSlider.min = String(value)
 
                 sizeSlider.value = value
+                showWidth()
             })
 
             // The handles scale a logo of the template: the slider follows
             MmCustom.on('logo:scaled', function (event) {
                 const free = event.detail.element === current.logo ? freeOf(current.logo) : null
 
-                if (!free || document.activeElement === sizeSlider) return
+                if (!free) return
+
+                showWidth()
+
+                if (document.activeElement === sizeSlider) return
 
                 widen(sizeOfFree(free))
                 sizeSlider.value = sizeOfFree(free)
@@ -1164,6 +1465,8 @@
                 // Logo of the template: the slider value is its scale (0 = as drawn, 100 = twice as big)
                 if (free) MmCustom.logos.scaleBy(current.logo, Math.max(0.05, 1 + parseFloat(sizeSlider.value) / 100) / free.s)
                 else if (current.logo) MmCustom.logos.resize(current.logo, sizeSlider.value)
+
+                showWidth()
             })
 
             offset.addEventListener('input', function () {
@@ -1196,6 +1499,13 @@
 
             // Library: the button opens the module's window; a logo placed from it in the current slot
             $('.sx-lib-btn', logoBlock).addEventListener('click', function () { openModal(libraryModal) })
+
+            // On a phone (nothing to drop): two buttons, the library then the file picker of the drop zone
+            const phoneLibrary = $('.sx-logo-btn--library', logoBlock)
+            const phoneUpload = $('.sx-logo-btn--upload', logoBlock)
+
+            if (phoneLibrary) phoneLibrary.addEventListener('click', function () { openModal(libraryModal) })
+            if (phoneUpload && drop) phoneUpload.addEventListener('click', function () { drop.click() })
 
             if (libraryModal) {
                 $$('.logos-block img', libraryModal).forEach(function (img) {
@@ -1422,7 +1732,72 @@
                 }
 
                 zoomWrap.appendChild(bar)
+
+                if (rotate) turnOnPhones(rotate)
             }
+        }
+
+        // Quarter turn on a phone: the stage is taller than wide, so a long mat is turned as soon as the page opens, and
+        // turned it fills the stage (the module stops the turned view at the flat size, 100 %)
+        function turnOnPhones(rotate) {
+            const phone = window.matchMedia('(max-width: 767.98px)')
+            const turnedBase = function () {
+                const svg = MmCustom.svg.root()
+                const box = MmCustom.svg.viewBox()
+                const style = window.getComputedStyle(stageBox)
+                const width = stageBox.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+                const height = stageBox.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+                const ratio = box ? box.width / box.height : svg.clientWidth / svg.clientHeight
+                const drawnWidth = Math.min(svg.clientWidth, svg.clientHeight * ratio)
+                const drawnHeight = drawnWidth / ratio
+
+                return drawnWidth && drawnHeight ? Math.min(3, width / drawnHeight, height / drawnWidth) * 0.97 : 0
+            }
+            const fill = function () {
+                const base = MmCustom.stage.state().rotation % 180 === 90 ? turnedBase() : 0
+
+                if (base > MmCustom.stage.base()) MmCustom.stage.setBase(base)
+            }
+
+            rotate.addEventListener('click', fill) // after the module's own handler: it has turned the mat and set its view
+
+            // The stage changes size (a panel opens or closes, the phone turns): the turned mat is fitted again
+            let last = stageBox.clientWidth + 'x' + stageBox.clientHeight
+
+            if (window.ResizeObserver) {
+                new ResizeObserver(function () {
+                    const now = stageBox.clientWidth + 'x' + stageBox.clientHeight
+
+                    if (now === last) return
+
+                    last = now
+
+                    if (MmCustom.stage.state().rotation % 180 === 90) {
+                        const base = turnedBase()
+
+                        if (base) MmCustom.stage.setBase(base)
+                    }
+                }).observe(stageBox)
+            }
+
+            const box = MmCustom.svg.viewBox()
+            const long = box && box.width > box.height
+
+            if (!phone.matches || !long) return
+
+            let tries = 0
+            const turn = function () {
+                const svg = MmCustom.svg.root()
+
+                if ((!svg.clientWidth || stageBox.clientHeight <= stageBox.clientWidth) && ++tries < 20) {
+                    window.setTimeout(turn, 150) // laid out once the loading screen is gone
+                    return
+                }
+
+                if (stageBox.clientHeight > stageBox.clientWidth && MmCustom.stage.state().rotation === 0) rotate.click()
+            }
+
+            window.requestAnimationFrame(turn)
         }
 
         if (ui.tooltips) ui.tooltips.watch('.sx-stage-hint button, .sx-zoomwrap button, .sx-design-btn')
@@ -1486,7 +1861,9 @@
             view3d.innerHTML = '<span aria-hidden="true">3D</span>'
             view3d.title = t('view3d', 'See the mat in 3D')
             view3d.setAttribute('aria-label', view3d.title)
-            story.insertAdjacentElement('afterend', view3d)
+            // With the view controls (rotation, zoom), at their head: on a phone as on a computer
+            if (zoomWrap) zoomWrap.insertBefore(view3d, zoomWrap.firstChild)
+            else story.insertAdjacentElement('afterend', view3d)
 
             let viewerModule = null
 

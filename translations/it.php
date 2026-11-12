@@ -99,3 +99,9 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6bc362dbf494c61ea117fe3
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_99a562fafc1067cc1ef34d3548ae9813'] = 'Ruota a sinistra';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d83615d44ccee1d67942b4005c28f61'] = 'Ruota a destra';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dbfe595c31d00abd919445549641e4b9'] = 'Impossibile avviare la fotocamera AR su questo dispositivo.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_185d266213d67ce43791f4364cb845bc'] = 'Dimensione del testo';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5cbb1f2334614765892923de63f7a571'] = 'Altezza delle maiuscole, in cm';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9f58e53d79c72980ae1c3f6ed3a05835'] = 'Spostamento sinistra / destra';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5bc638072849069506917d69e6775479'] = 'Larghezza del logo, in cm';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_4d70254b3a8e2bc38b6147fa6ee813be'] = 'Libreria';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_630f1e08a8ca05e1d233e3c9a270c1e0'] = 'Carica un logo';

@@ -120,6 +120,11 @@
                             <button type="button" class="sx-logo-hint" hidden>{l s='Logo larger than its slot: fit it back' mod='mm_custom_sixten'}</button>
                         </div>
                     </div>
+                    {* Téléphone : rien à déposer, deux boutons (bibliothèque, puis fichier) à la place des deux blocs ci-dessous *}
+                    <div class="sx-logo-btns">
+                        <button type="button" class="sx-logo-btn sx-logo-btn--library">{l s='Library' mod='mm_custom_sixten'}</button>
+                        <button type="button" class="sx-logo-btn sx-logo-btn--upload">{l s='Upload a logo' mod='mm_custom_sixten'}</button>
+                    </div>
                     <div class="sx-logo sx-logo--library">
                         <p class="mm-tools-title">{l s='Logo library' mod='mm_custom_sixten'}</p>
                         <button type="button" class="sx-lib-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>{l s='Open the library' mod='mm_custom_sixten'}{if $logos|count} · +{$logos|count}{/if}</button>

@@ -4,6 +4,32 @@ Une entrée par commit, la plus récente en haut.
 
 ---
 
+## 13/11/2026
+
+### Configurateur (Mathieu) : police dans le champ du texte, tailles en cm, tapis tourné et outils en colonnes sur téléphone
+
+- **Texte, police** (`views/js/layout.js`, `site.css`) : un seul champ ; le texte s'y écrit dans sa police, le nom de la police
+  et ▾ sont à sa droite. La liste des polices (chacune écrit le texte saisi, son nom à droite) se déroule sous le champ dès
+  qu'on l'utilise, reste ouverte pendant la saisie, se ferme au choix, à Échap ou en cliquant ailleurs ; ↓ en fin de texte y
+  entre au clavier. Elle remplace le menu séparé de la barre. Calque fixe ajouté à `body` (il passait sous le volet).
+- **Texte, taille et décalage** : comme pour les logos, deux curseurs. Taille du texte = hauteur des majuscules en cm
+  (mesurée par police, « Hauteur des majuscules, en cm »), avec un champ en chiffres ; décalage gauche / droite en cm, mesuré
+  depuis la position du texte à sa première sélection (bord gauche, centre ou bord droit selon l'alignement). Le « − 176 + »
+  du moteur n'est plus monté (`size: false`). Vérifié : 6 cm saisis = 6,00 cm de majuscules mesurées.
+- **Logo, taille en chiffres** : largeur du logo en cm à côté du curseur. Logo du modèle : mise à l'échelle ; logo posé : la
+  valeur du curseur est cherchée par la sécante (une image importée grandit d'autant en largeur et en hauteur, pas en
+  proportion). Le chiffre affiché après saisie est la largeur dessinée.
+- **Téléphone** :
+  - le tapis long est tourné d'un quart de tour à l'ouverture et remplit la scène (le module bornait la vue tournée à 100 %),
+    recalé quand la scène change de taille (volet ouvert ou fermé) ; le bouton « pivoter » fait de même partout ;
+  - volets Couleurs / Textes / Logos moins hauts : le tapis garde 50 % de l'écran (34 % avant) ;
+  - logos : boutons « Bibliothèque » puis « Importer un logo » à la place de la zone de dépôt (`configurator.tpl`) ;
+  - pas de poignées sur un texte sélectionné (classe `sx-sel-text` sur `body`) : le cadre reste, le texte se déplace au doigt.
+- **Outils de la scène en colonnes**, sur téléphone comme sur ordinateur : à gauche repères, image, story, annuler,
+  réinitialiser ; à droite 3D, rotation et zoom (+, 100 %, −, ⤢).
+- Libellés des curseurs sur leur ligne, chiffre ou valeur à droite du curseur, colonnes alignées par le bas.
+- Chaînes ajoutées en 5 langues (`textSize`, `textSizeCm`, `offset`, `logoSizeCm`, « Library », « Upload a logo »).
+
 ## 12/11/2026
 
 ### Vue 3D (Mathieu) : texture de la démo 3dmat, flou d'encre, zoom arrêté à la surface
