@@ -59,8 +59,6 @@
 
         // Logos: dragged anywhere on the mat (as on new.sixten), size handles and free rotation
         if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true })
-        // The kind of the selection, for the styles (on a phone a text has no handles: it is still dragged with the finger)
-        MmCustom.on('select', function (event) { document.body.classList.toggle('sx-sel-text', !!event.detail && event.detail.type === 'text') })
         // Ink of the print on the felt, flat 2 cm sole
         if (MmCustom.effects) MmCustom.effects.configure({ ink: true, sole: { cm: 2, fill: '#333333' } })
 

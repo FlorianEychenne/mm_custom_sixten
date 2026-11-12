@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : pas de poignées sur les logos non plus
+
+- `views/css/site.css` : sous 768 px, les coins et la poignée de rotation sont masqués pour toute sélection, texte ou logo ;
+  le cadre reste, l'élément se déplace au doigt. La classe `sx-sel-text` posée sur `body` (`layout.js`) n'a plus d'usage : retirée.
+- Vérifié à 390 px (coins et rotation masqués, cadre affiché, pour un logo et un texte) et à 1440 px (poignées inchangées).
+
 ### Configurateur (Mathieu) : police dans le champ du texte, tailles en cm, tapis tourné et outils en colonnes sur téléphone
 
 - **Texte, police** (`views/js/layout.js`, `site.css`) : un seul champ ; le texte s'y écrit dans sa police, le nom de la police
