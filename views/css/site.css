@@ -164,6 +164,7 @@ body#module-mm_custom-customModule .sx-text-bar button[data-align].on{background
 body#module-mm_custom-customModule .sx-text-bar button:disabled{opacity:.35;pointer-events:none}
 
 body#module-mm_custom-customModule .module-container .tools .sx-text-foot{display:flex;align-items:center;gap:1rem;margin-top:.25rem}
+body#module-mm_custom-customModule .module-container .tools .sx-text-foot:empty{display:none}
 /* couleurs du texte : « Texte / Contour » et le contour ne sont pas proposés ; palette (pastille + code), marques, tendances */
 body#module-mm_custom-customModule .module-container .tools .text-design .font-colors{display:flex;flex-direction:column;gap:.875rem}
 
@@ -249,10 +250,8 @@ body#module-mm_custom-customModule .module-container .tools input[type=range]::-
 body#module-mm_custom-customModule .module-container .tools input[type=range]::-webkit-slider-thumb{appearance:none;width:1rem;height:1rem;margin-top:-.4375rem;border:0;border-radius:0;background:#000}
 body#module-mm_custom-customModule .module-container .tools input[type=range]::-moz-range-thumb{width:1rem;height:1rem;border:0;border-radius:0;background:#000}
 
-body#module-mm_custom-customModule .module-container .tools .leave-empty-logo,
-body#module-mm_custom-customModule .module-container .tools .leave-empty-text{display:flex;align-items:center;gap:.75rem;width:auto;margin:0!important;padding:0!important;border:0!important;transform:none}
-body#module-mm_custom-customModule .module-container .tools .leave-empty-logo p,
-body#module-mm_custom-customModule .module-container .tools .leave-empty-text p{margin:0;font-family:var(--mmx-caps);font-size:.625rem!important;letter-spacing:.12em;text-transform:uppercase;color:#000!important}
+body#module-mm_custom-customModule .module-container .tools .leave-empty-logo{display:flex;align-items:center;gap:.75rem;width:auto;margin:0!important;padding:0!important;border:0!important;transform:none}
+body#module-mm_custom-customModule .module-container .tools .leave-empty-logo p{margin:0;font-family:var(--mmx-caps);font-size:.625rem!important;letter-spacing:.12em;text-transform:uppercase;color:#000!important}
 /* « Cacher » : la case est cochée quand le texte / le logo est caché (rouge, carré blanc à droite), grise sinon (carré noir à gauche) */
 body#module-mm_custom-customModule .leave-empty-slider{border-radius:0;background-color:var(--mmx-surface-3)}
 body#module-mm_custom-customModule .leave-empty-slider:before{border-radius:0;background-color:#000}

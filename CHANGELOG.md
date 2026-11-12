@@ -6,6 +6,16 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Textes (Mathieu) : interrupteur « Cacher le texte » retiré, l'œil de la ligne suffit
+
+- `views/templates/front/configurator.tpl` : le bloc « Cacher le texte » (`#sx-hide-text`) de l'éditeur de texte est retiré ;
+  `.sx-text-foot` reste, vide, comme repère d'insertion de la barre du texte. L'œil de la ligne cache et montre le texte.
+- `views/js/layout.js` : plus de `hideText` (synchronisation et écouteur retirés) ; `syncHides()` ne suit plus que
+  l'interrupteur du logo. `views/css/site.css` : règles `.leave-empty-text` retirées, `.sx-text-foot:empty` masqué.
+- Chaîne `Hide the text` retirée des 5 langues ; `tests/e2e/run.mjs` clique l'œil de la ligne au lieu de l'interrupteur
+  (suite non relancée). L'interrupteur « Cacher le logo » n'est pas touché.
+- Vérifié au navigateur sur new.sixten (Ducati 95x240 Racer) : éditeur de texte sans interrupteur, œil de la ligne.
+
 ### Téléphone (Mathieu) : volet d'outils moins haut
 
 - `views/css/site.css` (sous 992 px, volet ouvert) : le tapis garde 34 % de la hauteur de l'écran au lieu de 28 %

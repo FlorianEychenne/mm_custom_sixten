@@ -127,10 +127,10 @@ const scenarios = {
       const size0 = await page.evaluate(() => MmCustom.texts.size(MmCustom.zones.all('text')[2].element));
       await page.locator('.sx-size button').last().click();
       expect('taille du texte +10 %', await page.evaluate(() => MmCustom.texts.size(MmCustom.zones.all('text')[2].element)), (v) => v > size0);
-      await page.locator('.sx-editor--text .leave-empty').click();
+      await page.locator('.sx-rows--text .sx-row.on .sx-row__eye').click();
       expect('texte caché', await page.evaluate(() => MmCustom.texts.isHidden(MmCustom.zones.all('text')[2].element)), true);
       expect('œil barré sur la ligne', await page.locator('.sx-rows--text .sx-row.on').evaluate((r) => r.classList.contains('is-hidden')), true);
-      await page.locator('.sx-editor--text .leave-empty').click();
+      await page.locator('.sx-rows--text .sx-row.on .sx-row__eye').click();
       expect('texte remontré', await page.evaluate(() => MmCustom.texts.isHidden(MmCustom.zones.all('text')[2].element)), false);
 
       // Couleurs (« Suivant » passe aux logos, puis le rail revient aux couleurs)

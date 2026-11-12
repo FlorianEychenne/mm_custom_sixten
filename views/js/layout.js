@@ -768,13 +768,10 @@
         /* ------------------------------------------------------------- textes */
 
         const textArea = textBlock ? $('.inputTextDesign', textBlock) : null
-        const hideText = textBlock ? $('#sx-hide-text', textBlock) : null
         let fontMenu = null
 
-        // The switches of the editors follow what the eyes of the rows did
+        // The switch of the logo editor follows what the eye of its row did (a text has no switch: the eye of its row is enough)
         function syncHides() {
-            if (hideText && current.text) hideText.checked = MmCustom.texts.isHidden(current.text)
-
             const hideLogo = logoBlock ? $('#sx-hide-logo', logoBlock) : null
             const zone = hideLogo && current.logo ? MmCustom.zones.of(current.logo) : null
 
@@ -786,20 +783,12 @@
 
             MmCustom.texts.select(current.text, { silent: true }) // reads its matrix again (the text editor writes through it)
 
-            if (hideText) hideText.checked = MmCustom.texts.isHidden(current.text)
-
             markPicked(textBlock, [window.getComputedStyle(current.text).fill])
 
             if (wheels.text) wheels.text.sync()
             if (fontMenu) fontMenu.sync()
 
             fitTextField()
-        }
-
-        if (hideText) {
-            hideText.addEventListener('change', function () {
-                if (current.text) MmCustom.texts.setHidden(current.text, hideText.checked)
-            })
         }
 
         if (textBlock) {

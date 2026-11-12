@@ -72,12 +72,8 @@
                 <div class="sx-editor sx-editor--text">
                     <div class="inputTextDesign" data-mmc-fonts='{$mm_font_families|json_encode|escape:"html":"UTF-8"}'>
                         {* champ, barre (alignement, police, taille) : views/js/layout.js, sur ui/text-editor.js de mm_custom *}
-                        <div class="sx-text-foot">
-                            <div class="leave-empty-text">
-                                <p id="sx-hide-text-label">{l s='Hide the text' mod='mm_custom_sixten'}</p>
-                                <label class="leave-empty"><input type="checkbox" id="sx-hide-text" aria-labelledby="sx-hide-text-label"><span class="leave-empty-slider"></span></label>
-                            </div>
-                        </div>
+                        {* repère d'insertion de la barre du texte (layout.js). L'interrupteur « Cacher le texte » est retiré : l'œil de la ligne suffit. *}
+                        <div class="sx-text-foot"></div>
                     </div>
                     <div class="font-colors">
                         <label class="mm-tools-title">{l s='Colour choice' mod='mm_custom_sixten'}</label>

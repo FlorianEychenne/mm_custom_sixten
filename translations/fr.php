@@ -50,7 +50,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>configurator_2d0f6b8300be19cf35e89e66f06
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_d3d2e617335f08df83599665eef8a418'] = 'Fermer';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_10ac3d04253ef7e1ddc73e6091c0cd55'] = 'Suivant';
-$_MODULE['<{mm_custom_sixten}prestashop>configurator_b0e61254f59eb7ca8c6c6cd343c5723d'] = 'Cacher le texte';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_9590ddc0e340da9ac2be3bc03a21f00c'] = 'Choix de la couleur';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_28786ccbb8a4b82f0499abb0ce916513'] = 'Votre logo';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_f16535c070516568e86b5045a984951d'] = 'Aucun logo';
