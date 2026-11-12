@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Logos (Mathieu) : interrupteur « Cacher le logo » retiré, l'œil de la ligne suffit
+
+- `views/templates/front/configurator.tpl` : le bloc « Cacher le logo » (`#sx-hide-logo`) de l'éditeur de logo est retiré ;
+  `.sx-logo-foot` ne garde que l'avertissement « logo plus grand que son emplacement ». L'œil de la ligne cache et montre
+  le logo (`MmCustom.logos.setVisible`, inchangé).
+- `views/js/layout.js` : plus de `hideLogo` ni de `syncHides()`. `views/css/site.css` : toutes les règles `.leave-empty*`
+  (l'interrupteur n'est plus utilisé nulle part dans l'interface Sixten) retirées. Chaîne `Hide the logo` retirée des 5 langues.
+- Vérifié au navigateur sur new.sixten (Ducati 95x240 Racer) : éditeur de logo sans interrupteur, œil de la ligne.
+
 ### Textes (Mathieu) : interrupteur « Cacher le texte » retiré, l'œil de la ligne suffit
 
 - `views/templates/front/configurator.tpl` : le bloc « Cacher le texte » (`#sx-hide-text`) de l'éditeur de texte est retiré ;

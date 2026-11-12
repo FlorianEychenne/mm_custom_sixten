@@ -58,7 +58,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>configurator_15747661fee0643ad9d8118a31c
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_1063e38cb53d94d386f21227fcd84717'] = 'Retirer';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c83b9cf6f25fbab8cdb5d84c094c014e'] = 'Taille du logo';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_9f58e53d79c72980ae1c3f6ed3a05835'] = 'Décalage gauche / droite';
-$_MODULE['<{mm_custom_sixten}prestashop>configurator_046d19bb32a939d0d14f453a9651dd7e'] = 'Cacher le logo';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_35d33984665698014d35b38fd508547d'] = 'Logo plus grand que l’emplacement : le réduire';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_273bb3ae133a34434d9b20f699da7aef'] = 'Bibliothèque de logos';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_41fbe77eb14c26fba1d0c421adecddd0'] = 'Ouvrir la bibliothèque';

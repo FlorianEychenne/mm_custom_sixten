@@ -437,7 +437,6 @@
                 refreshing = false
                 KINDS.forEach(renderRows)
                 refreshLogoEditor()
-                syncHides()
             })
         }
 
@@ -770,14 +769,6 @@
         const textArea = textBlock ? $('.inputTextDesign', textBlock) : null
         let fontMenu = null
 
-        // The switch of the logo editor follows what the eye of its row did (a text has no switch: the eye of its row is enough)
-        function syncHides() {
-            const hideLogo = logoBlock ? $('#sx-hide-logo', logoBlock) : null
-            const zone = hideLogo && current.logo ? MmCustom.zones.of(current.logo) : null
-
-            if (zone) hideLogo.checked = !!zone.hidden
-        }
-
         function syncText() {
             if (!current.text) return
 
@@ -1014,7 +1005,6 @@
             const sizeSlider = $('.slider-logo-size', logoBlock)
             const offset = $('.sx-logo-pos input', logoBlock)
             const offsetValue = $('.sx-logo-pos__val', logoBlock)
-            const hideLogo = $('#sx-hide-logo', logoBlock)
             const tooBig = $('.sx-logo-hint', logoBlock)
             const drop = $('.sx-drop', logoBlock)
             const dropTitle = drop ? drop.querySelector('strong') : null
@@ -1117,9 +1107,6 @@
                     sizeSlider.value = value
                 }
 
-                const zone = logo ? MmCustom.zones.of(logo) : null
-
-                hideLogo.checked = !!zone && !!zone.hidden
                 refreshLogoEditor()
             }
 
@@ -1190,10 +1177,6 @@
                 offsetValue.textContent = formatOffset(dx)
             })
             offset.addEventListener('change', refreshLogoEditor)
-
-            hideLogo.addEventListener('change', function () {
-                if (current.logo) MmCustom.logos.setVisible(current.logo, !hideLogo.checked)
-            })
 
             removeButton.addEventListener('click', function () {
                 const fresh = MmCustom.logos.remove(current.logo)

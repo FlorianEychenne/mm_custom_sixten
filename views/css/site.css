@@ -250,13 +250,6 @@ body#module-mm_custom-customModule .module-container .tools input[type=range]::-
 body#module-mm_custom-customModule .module-container .tools input[type=range]::-webkit-slider-thumb{appearance:none;width:1rem;height:1rem;margin-top:-.4375rem;border:0;border-radius:0;background:#000}
 body#module-mm_custom-customModule .module-container .tools input[type=range]::-moz-range-thumb{width:1rem;height:1rem;border:0;border-radius:0;background:#000}
 
-body#module-mm_custom-customModule .module-container .tools .leave-empty-logo{display:flex;align-items:center;gap:.75rem;width:auto;margin:0!important;padding:0!important;border:0!important;transform:none}
-body#module-mm_custom-customModule .module-container .tools .leave-empty-logo p{margin:0;font-family:var(--mmx-caps);font-size:.625rem!important;letter-spacing:.12em;text-transform:uppercase;color:#000!important}
-/* « Cacher » : la case est cochée quand le texte / le logo est caché (rouge, carré blanc à droite), grise sinon (carré noir à gauche) */
-body#module-mm_custom-customModule .leave-empty-slider{border-radius:0;background-color:var(--mmx-surface-3)}
-body#module-mm_custom-customModule .leave-empty-slider:before{border-radius:0;background-color:#000}
-body#module-mm_custom-customModule input:checked + .leave-empty-slider{background-color:var(--sx-red)}
-body#module-mm_custom-customModule input:checked + .leave-empty-slider:before{background-color:#fff}
 
 /* prix + ajout au panier : dans l'en-tête, avant Sauvegarder (0.10.10) */
 body#module-mm_custom-customModule .module-footer{position:static;flex:0 0 auto;display:block;margin-right:.5rem;padding:0;border:0;border-radius:0;background:transparent;backdrop-filter:none}
@@ -536,12 +529,6 @@ body#module-mm_custom-customModule .sx-design-btn[aria-expanded="true"],body#mod
 body#module-mm_custom-customModule .module-page .hide{display:none!important}
 /* prix : 22 px, très gras (règle « p.price » du module 2.x, qui l'emportait par son !important sur new.sixten) */
 body#module-mm_custom-customModule .module-footer .add-to-shopping-cart p.price{font-weight:800;font-size:22px!important}
-body#module-mm_custom-customModule .leave-empty{position:relative;display:inline-block;flex:none;width:60px;height:34px;margin:0}
-body#module-mm_custom-customModule .leave-empty input{position:absolute;opacity:0;width:0;height:0}
-body#module-mm_custom-customModule .leave-empty-slider{position:absolute;inset:0;cursor:pointer;transition:background-color .4s}
-body#module-mm_custom-customModule .leave-empty-slider:before{content:"";position:absolute;left:4px;bottom:4px;width:26px;height:26px;transition:transform .4s}
-body#module-mm_custom-customModule .leave-empty input:checked+.leave-empty-slider:before{transform:translateX(26px)}
-body#module-mm_custom-customModule .leave-empty input:focus-visible+.leave-empty-slider{outline:2px solid #000;outline-offset:2px}
 body#module-mm_custom-customModule .module-container .tools .colors-grid button{padding:0}
 body#module-mm_custom-customModule .module-container .tools .colors-section-title{display:block}
 

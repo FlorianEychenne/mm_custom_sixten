@@ -115,11 +115,8 @@
                                 <input type="range" min="-500" max="500" step="5" value="0" disabled aria-labelledby="sx-logo-pos-label">
                             </div>
                         </div>
+                        {* L'interrupteur « Cacher le logo » est retiré, comme celui du texte : l'œil de la ligne suffit. *}
                         <div class="sx-logo-foot">
-                            <div class="leave-empty-logo">
-                                <p id="sx-hide-logo-label">{l s='Hide the logo' mod='mm_custom_sixten'}</p>
-                                <label class="leave-empty"><input type="checkbox" id="sx-hide-logo" aria-labelledby="sx-hide-logo-label"><span class="leave-empty-slider"></span></label>
-                            </div>
                             <button type="button" class="sx-logo-hint" hidden>{l s='Logo larger than its slot: fit it back' mod='mm_custom_sixten'}</button>
                         </div>
                     </div>
