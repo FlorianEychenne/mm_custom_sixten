@@ -6,6 +6,20 @@ Une entrée par commit, la plus récente en haut.
 
 ## 12/11/2026
 
+### Vue 3D (Mathieu) : texture de la démo 3dmat, flou d'encre, zoom arrêté à la surface
+
+- **Texture** (`views/js/viewer3d.js`) : comme la démo, photo de feutre (`views/img/felt.webp`, nouvelle, 2400 px = 200 cm,
+  700 Ko, chargée au premier clic seulement) répétée à l'échelle réelle, impression posée en « overlay » à 95 % avec un léger
+  flou d'encre (2 unités du gabarit, rayon calculé par `layout.js`), relief tiré du même feutre répété. L'impression vient de
+  `MmCustom.export.canvas({ texture: false })` (le design sans feutre). L'assemblage est fait par la carte graphique (shader,
+  noyau gaussien 5 × 5, formules de fusion du canvas, rendu dans une texture sRGB) : quelques millisecondes et le même
+  résultat dans tous les navigateurs, alors que le filtre `blur` du canvas diffère selon les navigateurs (absent des anciens
+  Safari) et qu'un flou en JavaScript prenait 2 à 4 s. Pour Quick Look, la texture est relue en canvas.
+- **Zoom** : le point visé est ramené sur le dessus du tapis et la caméra reste au-dessus (au plus près 30 cm) ; le
+  déplacement (clic droit, deux doigts) reste dans le plan du tapis. On ne passe plus au travers.
+- Vérifié au navigateur (rendu logiciel) : fond orange #FD5100 en vue de dessus à 6 % de l'image 2D, grain du feutre
+  visible de près, zoom maximal arrêté sur la surface, export USDZ réussi en simulant un iPhone, aucune erreur.
+
 ### Vue 3D (Mathieu) : réalité augmentée « Voir chez moi »
 
 Reprise de la démo `_assets/3dmat` : poser le tapis personnalisé au sol, en taille réelle, avec le téléphone.

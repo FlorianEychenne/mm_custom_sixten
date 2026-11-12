@@ -5,9 +5,13 @@
  * three.js 0.170 vient de jsDelivr (version figée, modules +esm qui partagent la même instance de three).
  *
  * Reprise de la démo `_assets/3dmat` (rendu validé par Mathieu) :
- *   - texture : l'image que produit déjà le configurateur (MmCustom.export.canvas : feutre de la taille, impression en
- *     « overlay » à 95 %, polices et logos incorporés, bordure à plat), passée par layout.js ;
- *   - relief du feutre : la même photo de feutre (img.mat-pattern de la scène), contraste étiré ;
+ *   - texture, comme la démo : photo de feutre (views/img/felt.webp, 2400 px = 200 cm) répétée à l'échelle réelle, puis
+ *     l'impression posée en « overlay » à 95 % avec un léger flou d'encre. L'impression est l'image du design sans feutre que
+ *     produit le configurateur (MmCustom.export.canvas({ texture: false }) : polices et logos incorporés, bordure), passée par
+ *     layout.js. L'assemblage (feutre répété, encre floutée, fusion overlay) est calculé par la carte graphique (shader, rendu
+ *     dans une texture) : quelques millisecondes, et le même résultat partout, alors que le filtre « blur » du canvas ne rend
+ *     pas pareil selon les navigateurs (absent des anciens Safari) et qu'un flou calculé en JavaScript prend 2 à 4 s ;
+ *   - relief du feutre : la même photo de feutre répétée, contraste étiré ;
  *   - géométrie : base caoutchouc de 2 mm à coins arrondis, insert feutre en retrait de 2 cm qui dépasse de 4 mm ;
  *     l'impression couvre tout le tapis, la bordure recouvre ses 2 cm extérieurs ;
  *   - éclairage : environnement « pièce » + lumière principale avec ombre douce au sol.
@@ -17,7 +21,8 @@
  *   - Android (Chrome, ARCore) : WebXR « immersive-ar » avec détection du sol, boutons tourner / déplacer / fermer ;
  *   - ordinateur ou téléphone sans RA : pas de bouton (la création n'étant pas enregistrée, un QR code n'aurait rien à ouvrir).
  *
- * open({ canvas, pattern, sizeCm, title, subtitle, fileName, t }) -> Promise<void>
+ * open({ art, felt, inkBlur, sizeCm, title, subtitle, fileName, t }) -> Promise<void>
+ *   art : canvas de l'impression ; felt : URL de la photo de feutre ; inkBlur : rayon du flou en px de art
  */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/+esm'
 import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js/+esm'
@@ -99,6 +104,9 @@ function bumpToNormalTexture(bumpTex, size = 1024, strength = 2) {
     const t = new THREE.CanvasTexture(c)
 
     t.colorSpace = THREE.NoColorSpace
+    t.wrapS = t.wrapT = THREE.RepeatWrapping
+    t.repeat.copy(bumpTex.repeat)
+    t.offset.copy(bumpTex.offset)
 
     return t
 }
@@ -148,17 +156,121 @@ function slab(W, H, w, h, r, y0, y1, bevel, uvFull) {
     return geo
 }
 
-// Relief : la photo du feutre en niveaux de gris, contraste étiré (elle ne varie que de quelques %)
-function bumpTexture(image, renderer) {
-    const c = document.createElement('canvas')
-    const size = Math.min(1024, image.naturalWidth || 1024)
+const PATTERN_CM = 200     // largeur réelle couverte par la photo de feutre
+const INK_OPACITY = 0.95
 
-    c.width = size
-    c.height = Math.round(size * (image.naturalHeight || 1) / (image.naturalWidth || 1))
+function loadImage(src) {
+    const img = new Image()
+
+    img.decoding = 'async'
+    img.src = src
+
+    return img.decode().then(() => img)
+}
+
+// Texture couleur, assemblée par la carte graphique dans une texture de rendu (même méthode que la démo 3dmat, faite au
+// canvas) : feutre répété à l'échelle réelle ; encre = l'impression floutée (noyau gaussien 5 × 5) ; fusion « overlay » de
+// l'encre sur le feutre à 95 % d'opacité, avec les formules du canvas (calcul sur les valeurs sRGB, comme le navigateur).
+function printTexture(art, felt, blur, W, H, renderer) {
+    const w = Math.min(renderer.capabilities.maxTextureSize, art.width)
+    const h = Math.round(w * art.height / art.width)
+    const artTex = new THREE.CanvasTexture(art)
+    const feltTex = felt ? new THREE.Texture(felt) : null
+
+    artTex.colorSpace = THREE.NoColorSpace
+    artTex.generateMipmaps = false
+    artTex.minFilter = THREE.LinearFilter
+    if (feltTex) {
+        feltTex.colorSpace = THREE.NoColorSpace
+        feltTex.wrapS = feltTex.wrapT = THREE.RepeatWrapping
+        feltTex.needsUpdate = true
+    }
+
+    const rx = W * 100 / PATTERN_CM
+    const ry = felt ? H * 100 / (PATTERN_CM * felt.naturalHeight / felt.naturalWidth) : 1
+    // texture sRGB (stockage sRGB 8 bits, comme une image) : le shader écrit du linéaire, la carte graphique encode et décode
+    const target = new THREE.WebGLRenderTarget(w, h, { colorSpace: THREE.SRGBColorSpace, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter, magFilter: THREE.LinearFilter })
+    const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+        uniforms: {
+            art: { value: artTex }, felt: { value: feltTex }, hasFelt: { value: felt ? 1 : 0 },
+            texel: { value: new THREE.Vector2(1 / art.width, 1 / art.height) }, sigma: { value: Math.max(0.0001, blur) },
+            repeat: { value: new THREE.Vector2(rx, ry) }, offset: { value: new THREE.Vector2(0, 1 - (ry % 1)) }, opacity: { value: INK_OPACITY },
+        },
+        vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+        fragmentShader: `
+            uniform sampler2D art; uniform sampler2D felt; uniform float hasFelt; uniform vec2 texel; uniform float sigma;
+            uniform vec2 repeat; uniform vec2 offset; uniform float opacity; varying vec2 vUv;
+            void main() {
+                vec4 ink = vec4(0.0); float total = 0.0;
+                for (int y = -2; y <= 2; y++) for (int x = -2; x <= 2; x++) {
+                    float k = exp(-float(x * x + y * y) / (2.0 * sigma * sigma));
+                    ink += texture2D(art, vUv + vec2(float(x), float(y)) * texel) * k; total += k;
+                }
+                ink /= total;
+                vec3 b = hasFelt > 0.5 ? texture2D(felt, vUv * repeat + offset).rgb : vec3(0.5);
+                vec3 s = ink.rgb;
+                vec3 o = mix(2.0 * b * s, 1.0 - 2.0 * (1.0 - b) * (1.0 - s), step(0.5, b));
+                vec3 c = mix(b, o, ink.a * opacity);
+                // valeurs sRGB (calcul du navigateur) -> linéaires, pour la texture sRGB
+                gl_FragColor = vec4(mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)), 1.0);
+            }`,
+    }))
+    const scene = new THREE.Scene()
+    const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+
+    scene.add(quad)
+    renderer.setRenderTarget(target)
+    renderer.render(scene, cam)
+    renderer.setRenderTarget(null)
+    quad.geometry.dispose()
+    quad.material.dispose()
+    artTex.dispose()
+    if (feltTex) feltTex.dispose()
+
+    const tex = target.texture
+
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy()
+    tex.userData.target = target
+    tex.userData.size = [w, h]
+
+    return tex
+}
+
+// La texture de rendu en canvas (fichier USDZ de Quick Look : l'exporteur a besoin d'une image)
+function textureToCanvas(tex, renderer) {
+    const [w, h] = tex.userData.size
+    const px = new Uint8Array(w * h * 4)
+
+    renderer.readRenderTargetPixels(tex.userData.target, 0, 0, w, h, px)
+
+    const c = document.createElement('canvas')
+
+    c.width = w
+    c.height = h
+
+    const ctx = c.getContext('2d')
+    const img = ctx.createImageData(w, h)
+
+    for (let y = 0; y < h; y++) img.data.set(px.subarray((h - 1 - y) * w * 4, (h - y) * w * 4), y * w * 4) // lignes GL de bas en haut
+    ctx.putImageData(img, 0, 0)
+
+    const t = new THREE.CanvasTexture(c)
+
+    t.colorSpace = THREE.SRGBColorSpace
+
+    return t
+}
+
+// Relief : le feutre en niveaux de gris, contraste étiré (il ne varie que de quelques %), répété à la même échelle
+function bumpTexture(felt, W, H, renderer) {
+    const c = document.createElement('canvas')
+
+    c.width = felt.naturalWidth
+    c.height = felt.naturalHeight
 
     const ctx = c.getContext('2d', { willReadFrequently: true })
 
-    ctx.drawImage(image, 0, 0, c.width, c.height)
+    ctx.drawImage(felt, 0, 0)
 
     const data = ctx.getImageData(0, 0, c.width, c.height)
     const d = data.data
@@ -183,9 +295,14 @@ function bumpTexture(image, renderer) {
     ctx.putImageData(data, 0, 0)
 
     const t = new THREE.CanvasTexture(c)
+    const rx = W * 100 / PATTERN_CM
+    const ry = H * 100 / (PATTERN_CM * felt.naturalHeight / felt.naturalWidth)
 
     t.colorSpace = THREE.NoColorSpace
+    t.wrapS = t.wrapT = THREE.RepeatWrapping
     t.anisotropy = renderer.capabilities.getMaxAnisotropy()
+    t.repeat.set(rx, ry)
+    t.offset.set(0, 1 - (ry % 1)) // même origine (coin haut gauche) que la texture couleur
 
     return t
 }
@@ -314,7 +431,8 @@ export async function open(options) {
 
     controls.enableDamping = true
     controls.dampingFactor = 0.08
-    controls.minDistance = 0.25
+    controls.screenSpacePanning = false // le déplacement (clic droit, deux doigts) reste dans le plan du tapis
+    controls.minDistance = 0.3
     controls.maxDistance = 15
     controls.maxPolarAngle = Math.PI * 0.495
     controls.autoRotateSpeed = 0.6
@@ -344,17 +462,14 @@ export async function open(options) {
     world.add(ground)
 
     // ---- tapis ----
-    const map = new THREE.CanvasTexture(options.canvas)
-
-    map.colorSpace = THREE.SRGBColorSpace
-    map.anisotropy = renderer.capabilities.getMaxAnisotropy()
-
+    const feltImg = options.felt ? await loadImage(options.felt).catch(() => null) : null
+    const map = printTexture(options.art, feltImg, options.inkBlur || 0, W, H, renderer)
     const top = new THREE.MeshPhysicalMaterial({
         map, roughness: 0.95, metalness: 0, sheen: L.sheen, sheenRoughness: 0.6, sheenColor: new THREE.Color(0x3a3a3a),
     })
 
-    if (options.pattern && options.pattern.naturalWidth) {
-        top.bumpMap = bumpTexture(options.pattern, renderer)
+    if (feltImg) {
+        top.bumpMap = bumpTexture(feltImg, W, H, renderer)
         top.bumpScale = 1.5
     }
 
@@ -428,7 +543,13 @@ export async function open(options) {
             target.addScaledVector(right, ((minX + maxX) / 2 - cx) * halfW).addScaledVector(up, ((minY + maxY) / 2 - cy) * halfH)
         }
 
-        return { pos: target.clone().addScaledVector(dir, dist), target }
+        // Le point visé est ramené sur le dessus du tapis, le long de l'axe de vue (même cadrage) : le zoom s'approche
+        // alors de la surface sans jamais la traverser
+        const pos = target.clone().addScaledVector(dir, dist)
+
+        if (dir.y > 0.05) target.copy(pos).addScaledVector(dir, -(pos.y - FELT_TOP) / dir.y)
+
+        return { pos, target }
     }
 
     let flyTo = null
@@ -467,7 +588,12 @@ export async function open(options) {
     // automatique, redimensionnement). Immobile, elle ne consomme rien (batterie des téléphones).
     const clock = new THREE.Clock()
 
-    controls.addEventListener('change', () => { dirty = true })
+    // Garde-fous : la cible reste sur le dessus du tapis, la caméra au-dessus (jamais dans le tapis ni dessous)
+    controls.addEventListener('change', () => {
+        dirty = true
+        controls.target.y = FELT_TOP
+        if (camera.position.y < FELT_TOP + 0.04) camera.position.y = FELT_TOP + 0.04
+    })
 
     renderer.setAnimationLoop((time, frame) => {
         const dt = clock.getDelta()
@@ -568,7 +694,7 @@ export async function open(options) {
         arScene.add(new THREE.Mesh(rubber.geometry, new THREE.MeshStandardMaterial({ color: rubberMat.color, roughness: rubberMat.roughness })))
 
         const feltMats = [
-            new THREE.MeshStandardMaterial({ map, normalMap: top.bumpMap ? bumpToNormalTexture(top.bumpMap) : null, roughness: 0.95 }),
+            new THREE.MeshStandardMaterial({ map: textureToCanvas(map, renderer), normalMap: top.bumpMap ? bumpToNormalTexture(top.bumpMap) : null, roughness: 0.95 }),
             new THREE.MeshStandardMaterial({ color: feltSide.color, roughness: 0.95 }),
         ]
 
@@ -694,6 +820,7 @@ export async function open(options) {
                 const ms = o.material ? [].concat(o.material) : []
                 ms.forEach((m) => { for (const k of ['map', 'bumpMap']) if (m[k]) m[k].dispose(); m.dispose() })
             })
+            if (map.userData.target) map.userData.target.dispose()
             envTarget.dispose()
             pmrem.dispose()
             renderer.dispose()

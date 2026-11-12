@@ -1497,10 +1497,10 @@
                 view3d.title = t('view3dLoading', 'Preparing the 3D view…')
 
                 const load = viewerModule ? Promise.resolve(viewerModule) : import(VIEWER_URL).then(function (m) { viewerModule = m; return m })
-                const stageNode = MmCustom.svg.root() && MmCustom.svg.root().parentElement
-                const pattern = stageNode ? stageNode.querySelector('.mat-pattern') : null
+                const box = MmCustom.svg.viewBox()
 
-                Promise.all([load, MmCustom.export.canvas({ width: 4096 })]).then(function (results) {
+                // l'impression sans le feutre : la vue 3D pose elle-même le feutre répété à l'échelle réelle (comme la démo)
+                Promise.all([load, MmCustom.export.canvas({ width: 4096, texture: false })]).then(function (results) {
                     const viewer = results[0]
 
                     if (!viewer.supported()) throw new Error('webgl')
@@ -1511,8 +1511,10 @@
                     const design = $('.sx-design-btn span', topBar)
 
                     return viewer.open({
-                        canvas: results[1],
-                        pattern: pattern,
+                        art: results[1],
+                        felt: window.mm_custom_sixten.img + 'felt.webp',
+                        // flou d'encre de la démo : 2 unités du gabarit, ramenées en pixels de l'image
+                        inkBlur: box && box.width ? 2 * results[1].width / box.width : 1.2,
                         sizeCm: matSize,
                         title: title(),
                         subtitle: [matSize.width + ' × ' + matSize.length + ' cm', design ? design.textContent.trim() : ''].filter(Boolean).join(' · '),
