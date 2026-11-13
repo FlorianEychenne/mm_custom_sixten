@@ -771,10 +771,6 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-btns{displa
   body#module-mm_custom-customModule.sx-dock-open{--mm-stage-h:50svh}
 }
 
-/* Téléphone (2026-11-13) : pas de poignées sur la sélection, texte ou logo (elles cachent le dessin) ; le cadre reste, l'élément se déplace au doigt */
-@media (max-width:767.98px){
-  body#module-mm_custom-customModule .mmc-overlay :is(.mmc-handles__corner,.mmc-handles__rotate,.mmc-handles__stem){display:none}
-}
 
 /* Outils de la scène (2026-11-13) : la 3D est avec la rotation et le zoom, sur téléphone comme sur ordinateur. Sur ordinateur, en
    ligne ; sur téléphone (< 992 px), en colonnes : à gauche repères, image, story, annuler, réinitialiser ; à droite 3D, rotation

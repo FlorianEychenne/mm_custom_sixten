@@ -6,6 +6,18 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Configurateur (Mathieu) : les contournements du moteur passent dans mm_custom
+
+- `layout.js` s'appuie sur les nouvelles fonctions de mm_custom (entrée « Moteur » du 13/11/2026) au lieu de les refaire :
+  - quart de tour : `ui.zoom.mount(…, { rotate: true, autoTurn: true })`, la fonction `turnOnPhones` est retirée ;
+  - tailles en cm : `MmCustom.product.cmPerUnit()`, `texts.capHeight` / `setCapHeight`, `logos.width` / `setWidth`
+    (mesure de la police au canvas, échelle de la matrice et recherche par la sécante retirées) ;
+  - zone imprimable : `MmCustom.drag.keepInside` après un curseur du texte (calcul de la zone retiré) ;
+  - poignées : `MmCustom.drag.configure({ touchHandles: false })` ; la règle de `site.css` qui les masquait sous 768 px
+    est retirée (au doigt désormais, et non selon la largeur de l'écran).
+- 180 lignes de moins dans `layout.js`. Mêmes résultats aux mêmes tests (1440 et 390 px), logo importé plus juste à 40 cm
+  (40,03 cm au lieu de 37).
+
 ### Encre (Mathieu) : le recalcul passe dans mm_custom
 
 - Le recalcul de l'encre après chaque modification (`MmCustom.effects.refresh()` dans `layout.js`, entrée suivante) est

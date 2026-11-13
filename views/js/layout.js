@@ -58,7 +58,8 @@
         /* ------------------------------------------------------------- réglages du moteur (propres à Sixten) */
 
         // Logos: dragged anywhere on the mat (as on new.sixten), size handles and free rotation
-        if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true })
+        // (at the finger: the frame alone, the handles would hide the design on a phone)
+        if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true, touchHandles: false })
         // Ink of the print on the felt, flat 2 cm sole
         if (MmCustom.effects) MmCustom.effects.configure({ ink: true, sole: { cm: 2, fill: '#333333' } })
 
@@ -766,13 +767,8 @@
 
         /* ------------------------------------------------------------- mesures en cm (textes et logos) */
 
-        // Template units to cm, from the size in the SKU (SIXCUST-HON-95X200-CLASSIC = 95 x 200 cm); 0 when unknown
-        const matCm = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
-        const cmPerUnit = function () {
-            const box = MmCustom.svg.viewBox()
-
-            return matCm && matCm.length && box ? matCm.length / Math.max(box.width, box.height) : 0
-        }
+        // Template units to cm (MmCustom.product.cmPerUnit, from the size of the product); 0 when unknown
+        const cmPerUnit = function () { return MmCustom.product.cmPerUnit() }
         const roundCm = function (value) { return Math.round(value * 10) / 10 }
         const formatOffset = function (dx) {
             const k = cmPerUnit()
@@ -893,11 +889,9 @@
         // Size of the text (height of its capitals, in cm) and its offset along the mat, built like the logo's sliders
         function mountTextSliders(container, before) {
             const box = document.createElement('div')
-            const root = MmCustom.svg.root()
             const view = MmCustom.svg.viewBox()
             const half = view ? Math.round(Math.max(view.width, view.height) / 2) : 500
             const origins = new WeakMap() // anchor of each text when first seen: the offset is measured from it
-            const capRatios = {}
 
             box.className = 'sx-logo-sliders sx-text-sliders'
             box.innerHTML = '<div class="sx-logo-size"><div class="logo-design">'
@@ -919,76 +913,18 @@
             box.querySelector('#sx-text-pos-label').textContent = t('offset', 'Left / right offset')
             design.insertBefore(number.box, slider)
 
-            // Template units of one unit of height of the text, across its baseline: its matrix and its groups may scale it,
-            // stretch it or slant it (a slanted number keeps its height)
-            const scaleOf = function (el) {
-                const m = root.getScreenCTM().inverse().multiply(el.getScreenCTM())
-                const along = Math.hypot(m.a, m.b)
+            // Height of the capitals in cm (MmCustom.texts.capHeight: across the baseline, a slanted number keeps its height)
+            const sizeCm = function (el) { return MmCustom.texts.capHeight(el) * (cmPerUnit() || 1) }
 
-                return along ? Math.abs(m.a * m.d - m.b * m.c) / along : 1
-            }
-
-            // Printable part of the mat, as for a drag (drag.js): the mat less its sole and the margin, on every side
-            const zone = function () {
-                const box = MmCustom.svg.viewBox()
-                const k = cmPerUnit()
-                const drag = MmCustom.drag && MmCustom.drag.options ? MmCustom.drag.options() : {}
-                const fx = MmCustom.effects && MmCustom.effects.options ? MmCustom.effects.options() : {}
-                const cm = (parseFloat(drag.marginCm) || 0) + (fx.sole && parseFloat(fx.sole.cm) > 0 ? parseFloat(fx.sole.cm) : 0)
-                const inset = k && cm ? Math.min(cm / k, Math.min(box.width, box.height) / 4) : 0
-
-                return { x: box.x + inset, y: box.y + inset, width: box.width - 2 * inset, height: box.height - 2 * inset }
-            }
-
-            // A text the sliders make larger or move stays on the mat (the drag keeps it there too); too large, it is centred
-            const keepInside = function (el) {
-                const b = MmCustom.geometry.boundsOf(MmCustom.texts.frame(el))
-                const z = zone()
-                const shift = function (start, size, zStart, zSize) {
-                    if (size > zSize) return zStart + zSize / 2 - (start + size / 2)
-                    if (start < zStart) return zStart - start
-                    if (start + size > zStart + zSize) return zStart + zSize - (start + size)
-
-                    return 0
-                }
-                const dx = shift(b.x, b.width, z.x, z.width)
-                const dy = shift(b.y, b.height, z.y, z.height)
-
-                if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) MmCustom.texts.moveBy(el, dx, dy)
-            }
-
-            // Height of a capital letter for 1 of font size, measured once per loaded font (0.7 until then)
-            const capRatio = function (el) {
-                const style = window.getComputedStyle(el)
-                const font = style.fontStyle + ' ' + style.fontWeight + ' 100px "' + familyOf(style.fontFamily) + '"'
-
-                if (capRatios[font]) return capRatios[font]
-
-                const loaded = document.fonts && document.fonts.check ? document.fonts.check(font, 'H') : true
-                const ctx = document.createElement('canvas').getContext('2d')
-                let ratio = 0.7
-
-                if (ctx && loaded) {
-                    ctx.font = font
-
-                    const m = ctx.measureText('H')
-
-                    if (m.actualBoundingBoxAscent > 10) ratio = Math.min(1.2, (m.actualBoundingBoxAscent + (m.actualBoundingBoxDescent || 0)) / 100)
-                    capRatios[font] = ratio
-                }
-
-                return ratio
-            }
-
-            const sizeCm = function (el) { return (MmCustom.texts.size(el) || 0) * scaleOf(el) * capRatio(el) * (cmPerUnit() || 1) }
-
+            // A text the sliders make larger or move stays in the printable part of the mat (MmCustom.drag.keepInside, as
+            // the drag); too large, it is centred
             function setCm(cm) {
                 const el = current.text
 
                 if (!el) return
 
-                MmCustom.texts.setSize(el, cm / (scaleOf(el) * capRatio(el) * (cmPerUnit() || 1)))
-                keepInside(el)
+                MmCustom.texts.setCapHeight(el, cm / (cmPerUnit() || 1))
+                MmCustom.drag.keepInside(el)
                 sync()
                 number.input.value = String(roundCm(sizeCm(el))) // what was drawn (the slot may hold the text smaller)
             }
@@ -1028,7 +964,7 @@
                 const dx = parseFloat(offset.value) || 0
 
                 MmCustom.texts.moveBy(el, dx - offsetOf(el), 0)
-                keepInside(el)
+                MmCustom.drag.keepInside(el)
                 offsetValue.textContent = formatOffset(offsetOf(el))
             })
             offset.addEventListener('change', sync)
@@ -1317,48 +1253,13 @@
                 return Math.round((box.x + box.width / 2) - (slot.x + slot.width / 2))
             }
 
-            // Width of the logo in cm (its own width: a logo turned on a side slot keeps it), set from a figure
-            const widthCm = function (logo) {
-                const c = MmCustom.logos.frame(logo)
-
-                return Math.hypot(c[1].x - c[0].x, c[1].y - c[0].y) * (cmPerUnit() || 1)
-            }
+            // Width of the logo in cm (MmCustom.logos.width: its own width, a logo turned on a side slot keeps it), set from
+            // a figure (MmCustom.logos.setWidth)
+            const widthCm = function (logo) { return MmCustom.logos.width(logo) * (cmPerUnit() || 1) }
             const setWidthCm = function (cm) {
                 const logo = current.logo
-                const free = freeOf(logo)
 
-                if (!logo || (!free && !MmCustom.logos.isPlaced(logo))) return
-
-                const close = function (width) { return !width || Math.abs(width / cm - 1) < 0.005 }
-
-                if (free) {
-                    // Logo of the template: a scale, proportional
-                    for (let i = 0; i < 2 && !close(widthCm(logo)); i++) MmCustom.logos.scaleBy(logo, cm / widthCm(logo))
-                } else {
-                    // Placed logo: its width follows the slider value but not in proportion (an imported image grows by the
-                    // same amount in width and height, then fits its ratio): first guess in proportion, then the secant
-                    let v0 = MmCustom.logos.sizeOf(logo)
-                    let w0 = widthCm(logo)
-
-                    if (!close(w0)) {
-                        let v1 = Math.round(((100 + v0) * cm / w0 - 100) * 10) / 10
-
-                        if (MmCustom.logos.resize(logo, v1)) {
-                            let w1 = widthCm(logo)
-
-                            for (let i = 0; i < 6 && !close(w1) && w1 !== w0; i++) {
-                                const v2 = Math.round((v1 + (cm - w1) * (v1 - v0) / (w1 - w0)) * 10) / 10
-
-                                if (v2 === v1 || !MmCustom.logos.resize(logo, v2)) break
-
-                                v0 = v1
-                                w0 = w1
-                                v1 = v2
-                                w1 = widthCm(logo)
-                            }
-                        }
-                    }
-                }
+                if (!logo || !MmCustom.logos.setWidth(logo, cm / (cmPerUnit() || 1))) return
 
                 syncLogo()
                 logoNumber.input.value = String(roundCm(widthCm(logo))) // what was drawn
@@ -1733,7 +1634,8 @@
         const zoomWrap = $('.sx-zoomwrap')
 
         if (stageBox && ui.zoom && zoomWrap) {
-            const zoom = ui.zoom.mount(stageBox, { rotate: true })
+            // Quarter turn: on a phone in portrait, the long mat is turned as it opens and fills the stage (autoTurn)
+            const zoom = ui.zoom.mount(stageBox, { rotate: true, autoTurn: true })
 
             if (zoom) {
                 const bar = zoom.bar
@@ -1763,72 +1665,7 @@
                 }
 
                 zoomWrap.appendChild(bar)
-
-                if (rotate) turnOnPhones(rotate)
             }
-        }
-
-        // Quarter turn on a phone: the stage is taller than wide, so a long mat is turned as soon as the page opens, and
-        // turned it fills the stage (the module stops the turned view at the flat size, 100 %)
-        function turnOnPhones(rotate) {
-            const phone = window.matchMedia('(max-width: 767.98px)')
-            const turnedBase = function () {
-                const svg = MmCustom.svg.root()
-                const box = MmCustom.svg.viewBox()
-                const style = window.getComputedStyle(stageBox)
-                const width = stageBox.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
-                const height = stageBox.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
-                const ratio = box ? box.width / box.height : svg.clientWidth / svg.clientHeight
-                const drawnWidth = Math.min(svg.clientWidth, svg.clientHeight * ratio)
-                const drawnHeight = drawnWidth / ratio
-
-                return drawnWidth && drawnHeight ? Math.min(3, width / drawnHeight, height / drawnWidth) * 0.97 : 0
-            }
-            const fill = function () {
-                const base = MmCustom.stage.state().rotation % 180 === 90 ? turnedBase() : 0
-
-                if (base > MmCustom.stage.base()) MmCustom.stage.setBase(base)
-            }
-
-            rotate.addEventListener('click', fill) // after the module's own handler: it has turned the mat and set its view
-
-            // The stage changes size (a panel opens or closes, the phone turns): the turned mat is fitted again
-            let last = stageBox.clientWidth + 'x' + stageBox.clientHeight
-
-            if (window.ResizeObserver) {
-                new ResizeObserver(function () {
-                    const now = stageBox.clientWidth + 'x' + stageBox.clientHeight
-
-                    if (now === last) return
-
-                    last = now
-
-                    if (MmCustom.stage.state().rotation % 180 === 90) {
-                        const base = turnedBase()
-
-                        if (base) MmCustom.stage.setBase(base)
-                    }
-                }).observe(stageBox)
-            }
-
-            const box = MmCustom.svg.viewBox()
-            const long = box && box.width > box.height
-
-            if (!phone.matches || !long) return
-
-            let tries = 0
-            const turn = function () {
-                const svg = MmCustom.svg.root()
-
-                if ((!svg.clientWidth || stageBox.clientHeight <= stageBox.clientWidth) && ++tries < 20) {
-                    window.setTimeout(turn, 150) // laid out once the loading screen is gone
-                    return
-                }
-
-                if (stageBox.clientHeight > stageBox.clientWidth && MmCustom.stage.state().rotation === 0) rotate.click()
-            }
-
-            window.requestAnimationFrame(turn)
         }
 
         if (ui.tooltips) ui.tooltips.watch('.sx-stage-hint button, .sx-zoomwrap button, .sx-design-btn')
