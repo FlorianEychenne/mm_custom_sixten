@@ -6,6 +6,40 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : volet Textes en pastilles et quatre outils, zoom sur le texte choisi
+
+- Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Maquette validée par Mathieu. Le volet
+  Textes n'a plus ni en-tête noir ni liste à dérouler : une rangée de pastilles (un texte par pastille, écrit dans sa
+  police, l'œil du texte choisi à droite) et quatre outils dessous : Texte, Police, Couleur, Position. Le volet fait
+  7,75 rem de haut, le tapis prend le reste de l'écran.
+- `views/js/layout.js` (`mountTextPhone`, objet `textPhone` appelé par `renderRows` et par `mountAdjust`) :
+  - pastilles `.sx-tchips` construites à partir de `MmCustom.zones.all('text')`, repeintes avec les lignes ; un toucher
+    choisit le texte (`selectZone`), l'œil appelle `toggleHidden`. Les lignes `.sx-row` restent dans la page, cachées ;
+  - outils `.sx-ttools`. Un outil ouvert pose `body.sx-ttool` et `body.sx-ttool--text|font|color` : en-tête, onglets,
+    pastilles et boutons de la scène disparaissent, une coche rouge `.sx-ttool-ok` ramène au volet (Échap aussi) ;
+    - Texte : le champ passe en haut de l'écran, au-dessus du tapis, et reçoit le focus dans le toucher même (le
+      clavier monte). Le tapis occupe ce que le clavier laisse (`visualViewport` -> `--sx-vvh`, hauteur du champ ->
+      `--sx-ttext-h`). Clavier rangé = outil fermé ;
+    - Police : la liste `.sx-fontlist` devient une rangée qui défile sous le tapis ; elle reste ouverte après un choix
+      pour en essayer plusieurs (`mountFontField` rend maintenant `open`, `list` et `onClose`) ;
+    - Couleur : les pastilles (40 px) en une rangée qui défile, la roue reste à droite et s'ouvre au-dessus ;
+    - Position : ouvre l'outil à trois roues (`mountAdjust`), dont le bouton « Ajuster la position » est caché dans
+      ce volet ;
+  - zoom : tant que le volet montre les textes, la scène zoome sur le texte choisi (jusqu'à 4 fois la vue entière,
+    `MmCustom.stage.zoomTo` / `panBy`), avec une transition au changement de texte, sans transition quand la scène
+    change de taille (observateur créé après celui de `ui/zoom.js`, qui recale le tapis tourné). Sous les roues, la
+    vue suit l'objet qui approche du bord. Retour à la vue entière (`MmCustom.stage.fit`) quand le volet quitte les
+    textes ou se ferme.
+  - `setActive` pose `body[data-sx-kind]` (sorte affichée dans le volet) pour la feuille de style.
+- `views/css/site.css` : bloc « Téléphone : volet des textes » en fin de fichier.
+- `mm_custom_sixten.php` (`jsTranslations`) et `translations/*.php` : « Text », « Colour », « Position » (5 langues).
+- Tests : le scénario `visual` de `tests/e2e/run.mjs` clique `.sx-rows--text .sx-row` en tablette et en téléphone ; ces
+  lignes y sont maintenant cachées, il faut y cliquer `.sx-tchip` à la place (fichier non touché : modifications de
+  Flo en cours).
+- Vérifié sans tête (Chromium) en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900 : pastilles, quatre outils, œil,
+  changement d'onglet, fermeture, console sans erreur. Non vérifié sur vrai téléphone : le clavier (hauteur visible).
+- Volets Couleurs et Logos inchangés (même principe à venir).
+
 ### Téléphone (Mathieu) : « Ajuster la position », trois roues à la place des curseurs
 
 - Sous 992 px seulement ; rien ne change sur ordinateur. Dans les volets Textes et Logos, les curseurs « Taille » et

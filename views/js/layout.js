@@ -185,6 +185,7 @@
 
         function setActive(kind) {
             active = kind
+            body.dataset.sxKind = kind ? kind.key : '' // the style sheet lays the panel out by kind (phone: texts)
             paintRail()
             $$('[data-sx-kind]').forEach(function (block) { block.hidden = !kind || block.dataset.sxKind !== kind.key })
             eye.textContent = kind ? kind.label : ''
@@ -283,6 +284,7 @@
         const editors = {}
         const collapsed = {} // kind key -> the editor of the chosen row is folded (arrow of the row)
         let rowToShow = null // kind key whose chosen row is to be scrolled to (phone, after a selection)
+        let textPhone = null // phone panel of the texts (mountTextPhone): { chips(zones), follow(element) }
         const logoMeta = {} // name and origin of the logo placed in each slot (slot id)
 
         KINDS.forEach(function (kind) {
@@ -587,6 +589,8 @@
             } else {
                 editor.hidden = true
             }
+
+            if (kind.key === 'text' && textPhone) textPhone.chips(zones)
         }
 
         ;['color:change', 'text:change', 'text:moved', 'logo:placed', 'logo:removed', 'logo:hidden', 'logo:text-mode', 'logo:resized', 'logo:scaled'].forEach(function (name) {
@@ -1180,6 +1184,7 @@
 
                 if (selected) list.scrollTop = selected.offsetTop - list.clientHeight / 2 + selected.offsetHeight / 2
             }
+            const handle = { onClose: null } // onClose: told when the list closes (phone tool of the fonts)
             const close = function (focusField) {
                 if (!isOpen()) return
 
@@ -1188,6 +1193,7 @@
                 button.setAttribute('aria-expanded', 'false')
 
                 if (focusField === true) field.focus()
+                if (handle.onClose) handle.onClose()
             }
 
             const sync = function () {
@@ -1272,7 +1278,10 @@
                 const font = item.dataset.font
 
                 MmCustom.texts.setFont(element, font)
-                close()
+
+                // Phone tool of the fonts (mountTextPhone): the row stays, several fonts are tried before the tick
+                if (!body.classList.contains('sx-ttool--font')) close()
+
                 sync()
 
                 // Back to typing on a computer; with an on-screen keyboard the mat stays in view, the keyboard stays down
@@ -1299,7 +1308,12 @@
             MmCustom.on('text:change', function (event) { if (event.detail.element === current.text) sync() })
             MmCustom.on('select', function (event) { if (!event.detail || event.detail.type !== 'text') close() })
 
-            return { sync: sync, close: close }
+            handle.sync = sync
+            handle.close = close
+            handle.open = open
+            handle.list = list
+
+            return handle
         }
 
         /* ------------------------------------------------------------- logos */
@@ -1739,6 +1753,8 @@
                 kind.sync()
                 paint()
 
+                if (textPhone) textPhone.follow(el)
+
                 return target ? read()[key] : value
             }
 
@@ -1909,6 +1925,352 @@
 
             document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && target) close(false) })
             paintButtons()
+        })()
+
+        /* ------------------------------------------------------------- téléphone : volet des textes (pastilles, quatre outils) */
+
+        // Phone (layout under 992 px): the list of the texts and its editor give way to a strip of chips (one per text, the
+        // eye of the chosen one at its right) over four tools: text, font, colour, position. A tool takes the place of the
+        // header, the tabs and the panel, with a tick to come back: the field at the top of the screen, over the mat (the
+        // keyboard covers the bottom, and the mat keeps what is left: visualViewport); the fonts or the swatches in one row
+        // under the mat; the three wheels (mountAdjust). While the panel shows the texts, the mat zooms on the chosen one
+        // and follows it under the wheels; it comes back to the whole mat when the panel leaves the texts.
+        ;(function mountTextPhone() {
+            const phone = window.matchMedia('(max-width: 991.98px)')
+            const still = window.matchMedia('(prefers-reduced-motion: reduce)')
+            const container = $('.module-container')
+            const kind = KINDS.find(function (k) { return k.key === 'text' })
+            const field = textArea ? textArea.querySelector('.sx-textfield textarea') || textArea.querySelector('.mmc-text-editor textarea') : null
+
+            if (!container || !kind || !textBlock || !field || !rows.text || !editors.text) return
+
+            const SVG = function (path) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + path + '"/></svg>' }
+            const ART = {
+                text: SVG('M3 7h18v10H3zM7 10.5h.01M11 10.5h.01M15 10.5h.01M8 14h8'),
+                font: SVG('M3 18L8 6l5 12M5 14h6M21 18v-6M21 15a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0'),
+                color: SVG('M12 3.5s6 6.2 6 10.5a6 6 0 0 1-12 0c0-4.3 6-10.5 6-10.5z'),
+                position: SVG('M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3'),
+                ok: SVG('M5 12.5l4.5 4.5L19 7.5'),
+            }
+            const ZOOM_MAX = 4 // times the whole mat, on the chosen text
+            const zonesNow = function () { return MmCustom.zones.all(kind.type) }
+            const usable = function () { return !!current.text && current.text.isConnected }
+            const twice = function (run) { window.requestAnimationFrame(function () { window.requestAnimationFrame(run) }) }
+
+            /* chips: one per text, written in its font; the eye shows or hides the chosen one */
+            const chips = document.createElement('div')
+
+            chips.className = 'sx-tchips'
+            chips.innerHTML = '<div class="sx-tchips__list" role="listbox"></div><button type="button" class="sx-tchips__eye" hidden></button>'
+            textBlock.insertBefore(chips, rows.text)
+
+            const strip = chips.firstChild
+            const eye = chips.lastChild
+
+            strip.setAttribute('aria-label', kind.label)
+            eye.addEventListener('click', function () {
+                const zone = zonesNow().find(function (z) { return z.element === current.text })
+
+                if (zone) toggleHidden(kind, zone)
+            })
+
+            /* tools: text, font, colour, position */
+            const tools = document.createElement('div')
+            const toolButtons = {}
+            const adjustButton = textArea.querySelector('.sx-adjust-btn')
+
+            tools.className = 'sx-ttools'
+            ;[['text', t('toolText', 'Text')], ['font', t('font', 'Font')], ['color', t('toolColor', 'Colour')], ['position', t('toolPosition', 'Position')]].forEach(function (item) {
+                const b = document.createElement('button')
+
+                b.type = 'button'
+                b.innerHTML = ART[item[0]] + '<span>' + esc(item[1]) + '</span>'
+                b.addEventListener('click', function () {
+                    if (item[0] === 'position') { if (adjustButton) adjustButton.click() }
+                    else enter(item[0])
+                })
+                tools.appendChild(b)
+                toolButtons[item[0]] = b
+            })
+            editors.text.insertBefore(tools, editors.text.firstChild)
+
+            const ok = document.createElement('button')
+
+            ok.type = 'button'
+            ok.className = 'sx-ttool-ok'
+            ok.hidden = true
+            ok.innerHTML = ART.ok
+            ok.setAttribute('aria-label', t('adjustOk', 'Confirm'))
+            ok.addEventListener('click', function () { leave() })
+            container.appendChild(ok)
+
+            function paintTools() {
+                const on = usable()
+
+                toolButtons.text.disabled = !on
+                toolButtons.font.disabled = !on || !fontField
+                toolButtons.color.disabled = !on
+                toolButtons.position.disabled = !on || !adjustButton || !MmCustom.texts.isMovable(current.text)
+            }
+
+            function paintChips(zones) {
+                let items = $$('button', strip)
+
+                if (items.length !== zones.length) {
+                    strip.textContent = ''
+                    items = zones.map(function (zone, index) {
+                        const b = document.createElement('button')
+
+                        b.type = 'button'
+                        b.className = 'sx-tchip'
+                        b.setAttribute('role', 'option')
+                        b.addEventListener('click', function () {
+                            const now = zonesNow()[index]
+
+                            if (now) selectZone(now)
+                        })
+                        strip.appendChild(b)
+
+                        return b
+                    })
+                }
+
+                let chosen = null
+
+                zones.forEach(function (zone, index) {
+                    const b = items[index]
+                    const on = zone.element === current.text
+                    const label = zone.content ? textOf(zone.element).split('\n')[0].trim() : ''
+
+                    b.textContent = label || t('emptyText', 'Empty text')
+                    b.style.fontFamily = label ? window.getComputedStyle(zone.element).fontFamily : ''
+                    b.classList.toggle('on', on)
+                    b.classList.toggle('is-hidden', !!zone.hidden)
+                    b.classList.toggle('is-empty', !label)
+                    b.setAttribute('aria-selected', String(on))
+
+                    if (on) chosen = zone
+                })
+
+                const state = chosen ? (chosen.hidden ? 'off' : 'on') : ''
+
+                if (eye.dataset.state !== state) {
+                    eye.dataset.state = state
+                    eye.hidden = !state
+                    eye.innerHTML = state === 'off' ? ICONS.eyeOff : ICONS.eye
+                    eye.title = state === 'off' ? t('show', 'Show') : t('hide', 'Hide')
+                    eye.setAttribute('aria-label', eye.title)
+                    eye.setAttribute('aria-pressed', String(state === 'off'))
+                }
+
+                paintTools()
+
+                if (mode && !usable()) leave() // the text went away (undo, another design)
+            }
+
+            const showChip = function () {
+                const b = strip.querySelector('.sx-tchip.on')
+
+                if (b) strip.scrollTo({ left: Math.max(0, b.offsetLeft - (strip.clientWidth - b.offsetWidth) / 2), behavior: still.matches ? 'auto' : 'smooth' })
+            }
+
+            /* zoom on the chosen text */
+            let zoomed = false // the view was set here: it goes back to the whole mat when the panel leaves the texts
+            let settle = 0
+
+            // The text the view follows: the chosen one, while the panel shows the texts (its tools and its wheels too)
+            const wanted = function () {
+                return phone.matches && body.classList.contains('sx-dock-open') && active === kind && usable() ? current.text : null
+            }
+
+            // Zoom and move of the stage that put the text in the middle of the view, large enough to be read. Worked out
+            // from one measure, with the transition off: the stage turns and scales around its centre, moved by state.x, y.
+            function focus(animate) {
+                const el = wanted()
+                const stage = MmCustom.stage.element()
+                const clip = stage ? stage.parentElement : null
+
+                if (!el || !clip) return
+
+                window.clearTimeout(settle)
+                stage.style.transition = 'none'
+
+                const s = MmCustom.stage.state()
+                const r = el.getBoundingClientRect()
+                const v = clip.getBoundingClientRect()
+                const box = stage.getBoundingClientRect()
+
+                if (r.width + r.height > 0 && v.width > 0 && v.height > 0 && s.zoom > 0) {
+                    const cx = box.left + box.width / 2 - s.x
+                    const cy = box.top + box.height / 2 - s.y
+                    const ux = (r.left + r.width / 2 - cx - s.x) / s.zoom
+                    const uy = (r.top + r.height / 2 - cy - s.y) / s.zoom
+                    const fit = s.zoom * Math.min(0.62 * v.width / Math.max(1, r.width), 0.5 * v.height / Math.max(1, r.height))
+                    const zoom = Math.min(s.base * ZOOM_MAX, Math.max(s.base, fit))
+                    const x = v.left + v.width / 2 - cx - zoom * ux
+                    const y = v.top + v.height / 2 - cy - zoom * uy
+
+                    if (animate && !still.matches) stage.style.transition = 'transform .3s ease'
+
+                    MmCustom.stage.zoomTo(zoom)
+                    MmCustom.stage.panBy(x - s.x, y - s.y, true)
+                    zoomed = true
+                }
+
+                settle = window.setTimeout(function () { stage.style.transition = '' }, 400)
+            }
+
+            const unfocus = function () {
+                if (!zoomed) return
+
+                zoomed = false
+                MmCustom.stage.fit()
+            }
+
+            // Under the wheels: an element that nears the edge of the zoomed view brings the view with it
+            function follow(el) {
+                const stage = MmCustom.stage.element()
+                const clip = stage ? stage.parentElement : null
+
+                if (!zoomed || !clip || !el || !el.isConnected) return
+
+                stage.style.transition = 'none'
+
+                const r = el.getBoundingClientRect()
+                const v = clip.getBoundingClientRect()
+                const mx = v.width * 0.2
+                const my = v.height * 0.2
+                const ex = r.left + r.width / 2
+                const ey = r.top + r.height / 2
+                const dx = ex < v.left + mx ? v.left + mx - ex : (ex > v.right - mx ? v.right - mx - ex : 0)
+                const dy = ey < v.top + my ? v.top + my - ey : (ey > v.bottom - my ? v.bottom - my - ey : 0)
+
+                if (dx || dy) MmCustom.stage.panBy(dx, dy, true)
+
+                stage.style.transition = ''
+            }
+
+            // The stage changes size (panel, tool, keyboard): the engine fits the turned mat again (ui/zoom.js, observer
+            // made before this one), then the view goes back on the text. Made once the layout is mounted.
+            window.requestAnimationFrame(function () {
+                const stage = MmCustom.stage.element()
+
+                if (!window.ResizeObserver || !stage || !stage.parentElement) return
+
+                new ResizeObserver(function () {
+                    if (wanted()) focus(false)
+                    else unfocus()
+                }).observe(stage.parentElement)
+            })
+
+            /* tools that take the panel: text, font, colour */
+            let mode = ''
+            const viewport = window.visualViewport
+
+            // Text tool: the height of the field (one to three lines) and what the keyboard leaves of the screen
+            const measure = function () {
+                if (mode !== 'text') return
+
+                body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
+
+                if (viewport) body.style.setProperty('--sx-vvh', Math.round(viewport.height) + 'px')
+            }
+
+            function enter(name) {
+                if (mode || !phone.matches || !usable() || (name === 'font' && !fontField)) return
+
+                if (ui.colorPicker) ui.colorPicker.close()
+
+                mode = name
+                body.classList.add('sx-ttool', 'sx-ttool--' + name)
+                ok.hidden = false
+
+                if (name === 'text') {
+                    // In the tap itself: a phone only raises its keyboard for a focus asked by a gesture
+                    field.focus({ preventScroll: true })
+
+                    try { field.setSelectionRange(field.value.length, field.value.length) } catch (e) { /* not a text field */ }
+
+                    measure()
+                }
+
+                // After this tap: the list closes on any click outside itself
+                if (name === 'font') {
+                    window.setTimeout(function () {
+                        if (mode !== 'font') return
+
+                        fontField.open()
+
+                        const chosen = fontField.list.querySelector('[aria-selected="true"]')
+
+                        if (chosen) fontField.list.scrollLeft = Math.max(0, chosen.offsetLeft - (fontField.list.clientWidth - chosen.offsetWidth) / 2)
+                    }, 0)
+                }
+
+                window.dispatchEvent(new Event('resize'))
+            }
+
+            function leave() {
+                if (!mode) return
+
+                const was = mode
+
+                mode = ''
+                body.classList.remove('sx-ttool', 'sx-ttool--' + was)
+                body.style.removeProperty('--sx-ttext-h')
+                body.style.removeProperty('--sx-vvh')
+                ok.hidden = true
+
+                if (ui.colorPicker) ui.colorPicker.close()
+                if (was === 'text' && document.activeElement === field) field.blur()
+                if (was === 'font' && fontField) fontField.close()
+
+                window.dispatchEvent(new Event('resize'))
+            }
+
+            if (fontField) fontField.onClose = function () { if (mode === 'font') leave() }
+
+            field.addEventListener('input', measure)
+            // Keyboard put away (its own key, a tap elsewhere): the tool is over
+            field.addEventListener('blur', function () {
+                window.setTimeout(function () { if (mode === 'text' && document.activeElement !== field) leave() }, 0)
+            })
+
+            if (viewport) viewport.addEventListener('resize', measure)
+
+            document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && mode) leave() })
+
+            MmCustom.on('select', function (event) {
+                const detail = event.detail || {}
+
+                if (detail.type !== 'text') {
+                    if (mode) leave()
+                    if (!wanted()) unfocus()
+
+                    return
+                }
+
+                paintTools()
+
+                // Once the rows are drawn and the stage has its size (the observer above has refitted it)
+                twice(function () {
+                    focus(true)
+                    showChip()
+                })
+            })
+
+            const off = function () {
+                if (phone.matches) return
+
+                leave()
+                unfocus()
+            }
+
+            if (phone.addEventListener) phone.addEventListener('change', off)
+            else if (phone.addListener) phone.addListener(off)
+
+            textPhone = { chips: paintChips, follow: follow }
+            paintTools()
         })()
 
         /* ------------------------------------------------------------- en-tête : options, sauvegarde, sortie */

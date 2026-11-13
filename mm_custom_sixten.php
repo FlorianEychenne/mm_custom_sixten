@@ -200,6 +200,9 @@ class Mm_custom_sixten extends Module
             'adjust' => $this->l('Adjust the position'),
             'adjustOk' => $this->l('Confirm'),
             'adjustBack' => $this->l('Cancel'),
+            'toolText' => $this->l('Text'),
+            'toolColor' => $this->l('Colour'),
+            'toolPosition' => $this->l('Position'),
             'logoSizeCm' => $this->l('Width of the logo, in cm'),
         ];
     }

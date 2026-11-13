@@ -122,3 +122,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6ed98937b2e2985c2ec7886
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f2d39ed805748ed130ffc6181c00bb59'] = 'Regola la posizione';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_70d9be9b139893aa6c69b5e77e614311'] = 'Conferma';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ea4788705e6873b424c65e91c2846b19'] = 'Annulla';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9dffbf69ffba8bc38bc4e01abf4b1675'] = 'Testo';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dfe6076e1d429c24edcbb2686bb39567'] = 'Colore';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_52f5e0bc3859bc5f5e25130b6c7e8881'] = 'Posizione';

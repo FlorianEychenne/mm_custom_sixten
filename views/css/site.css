@@ -887,3 +887,77 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
   body#module-mm_custom-customModule .sx-adjust__btns button{display:grid;place-items:center;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
   body#module-mm_custom-customModule .sx-adjust__btns .sx-adjust__ok{background:#000;color:#fff}
 }
+
+/* ---------- Téléphone : volet des textes (Mathieu, 13/11). La liste des textes et son éditeur laissent la place à une rangée de pastilles (.sx-tchips, l'œil du
+   texte choisi à droite) et à quatre outils (.sx-ttools : texte, police, couleur, position). Un outil ouvert (body.sx-ttool) prend la place de l'en-tête, des
+   onglets et du volet : champ en haut de l'écran pour le texte (le clavier couvre le bas), une rangée sous le tapis pour les polices et les couleurs, coche
+   rouge .sx-ttool-ok pour revenir (layout.js, mountTextPhone) ---------- */
+body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok{display:none}
+@media (max-width:991.98px){
+  /* volet des textes : ni en-tête ni liste ; il a la hauteur des pastilles et des outils, le tapis prend le reste */
+  body#module-mm_custom-customModule.sx-dock-open[data-sx-kind="text"]:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
+  body#module-mm_custom-customModule[data-sx-kind="text"] .sx-dock__head,
+  body#module-mm_custom-customModule[data-sx-kind="text"] .module-container .info::after,
+  body#module-mm_custom-customModule .module-container .tools .sx-rows--text>.sx-row,
+  body#module-mm_custom-customModule .module-container .tools .sx-editor--text>.font-colors,
+  body#module-mm_custom-customModule .module-container .tools .sx-editor--text .mmc-text-editor,
+  body#module-mm_custom-customModule .module-container .tools .sx-editor--text .sx-adjust-btn{display:none}
+  body#module-mm_custom-customModule[data-sx-kind="text"] .module-container .tools{padding:.5rem .625rem;overflow:hidden}
+  body#module-mm_custom-customModule .module-container .tools .sx-editor--text,body#module-mm_custom-customModule .module-container .tools .sx-editor--text .inputTextDesign{margin:0;padding:0;border:0}
+  body#module-mm_custom-customModule .module-container .tools .sx-tchips{display:flex;gap:.375rem;margin:0 0 .5rem}
+  body#module-mm_custom-customModule .sx-tchips__list{position:relative;flex:1;min-width:0;display:flex;gap:.375rem;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule .sx-tchips__list::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule .sx-tchip{flex:none;max-width:11rem;height:2.75rem;padding:0 .875rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-size:1.0625rem;line-height:2.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+  body#module-mm_custom-customModule .sx-tchip.on{background:#000;color:#fff}
+  body#module-mm_custom-customModule .sx-tchip.is-hidden{text-decoration:line-through;color:#8a8a8a}
+  body#module-mm_custom-customModule .sx-tchip.is-empty{font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+  body#module-mm_custom-customModule .sx-tchips__eye{flex:none;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule .sx-tchips__eye[hidden]{display:none}
+  body#module-mm_custom-customModule .sx-tchips__eye[aria-pressed=true]{background:#000;color:#fff}
+  body#module-mm_custom-customModule .module-container .tools .sx-ttools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.375rem}
+  body#module-mm_custom-customModule .sx-ttools button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3125rem;height:3.5rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;line-height:1;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule .sx-ttools button:disabled{opacity:.35;cursor:default}
+  body#module-mm_custom-customModule .sx-tchips__eye svg,body#module-mm_custom-customModule .sx-ttools svg,body#module-mm_custom-customModule .sx-ttool-ok svg{flex:none;width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+
+  /* outil ouvert : ni en-tête, ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée sous le tapis, la coche à sa droite */
+  body#module-mm_custom-customModule.sx-ttool{--mm-header-h:0rem;--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--mm-stage-h:calc(100svh - var(--sx-ttool-h))}
+  body#module-mm_custom-customModule.sx-ttool .module-top-bar,
+  body#module-mm_custom-customModule.sx-ttool .module-container>.sx-steps,
+  body#module-mm_custom-customModule.sx-ttool .sx-stage-hint,
+  body#module-mm_custom-customModule.sx-ttool .sx-zoomwrap,
+  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-tchips,
+  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-ttools{display:none}
+  body#module-mm_custom-customModule.sx-ttool .module-container .info{top:auto;left:0;right:3.25rem;bottom:0;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body#module-mm_custom-customModule.sx-ttool .module-container .tools{padding:0;overflow:hidden}
+  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-editor--text:not([hidden]){display:block}
+  body#module-mm_custom-customModule .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;right:0;bottom:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
+  body#module-mm_custom-customModule .sx-ttool-ok svg{width:1.5rem;height:1.5rem;stroke-width:2}
+
+  /* texte : le champ en haut de l'écran, le tapis dessous sur ce que le clavier laisse (--sx-vvh : hauteur visible, --sx-ttext-h : celle du champ) */
+  body#module-mm_custom-customModule.sx-ttool--text{--mm-header-h:var(--sx-ttext-h,3.5rem);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
+  body#module-mm_custom-customModule.sx-ttool--text .module-container .info{top:0;bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
+  body#module-mm_custom-customModule.sx-ttool--text .sx-ttool-ok:not([hidden]){top:0;bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
+  body#module-mm_custom-customModule.sx-ttool--text .module-container .tools .sx-editor--text .mmc-text-editor{display:block;margin:0}
+  body#module-mm_custom-customModule.sx-ttool--text .sx-textfield__font{display:none}
+
+  /* police : la liste des polices en une rangée qui défile, chaque police écrit le texte */
+  body#module-mm_custom-customModule.sx-ttool--font .module-container .info{display:none}
+  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist:not([hidden]){left:0!important;right:3.25rem;top:auto!important;bottom:0!important;display:flex;box-sizing:border-box;width:auto!important;height:var(--sx-ttool-h);max-height:none!important;padding:0 0 env(safe-area-inset-bottom,0px);overflow-x:auto;overflow-y:hidden;border:0;box-shadow:none;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist li{flex:none;flex-direction:column;align-items:flex-start;justify-content:center;gap:.25rem;min-width:5.5rem;max-width:13rem;padding:0 1rem;box-shadow:inset -1px 0 0 var(--mmx-border,#e5e5e5)}
+  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist__sample{max-width:100%;font-size:1.25rem;line-height:1.3}
+
+  /* couleur : les pastilles en une rangée qui défile, la roue reste à droite */
+  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .sx-editor--text .inputTextDesign{display:none}
+  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{display:flex;flex-direction:row;align-items:center;gap:.375rem;height:4rem;margin:0;padding:0 0 0 .5rem;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-section-title{display:none}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-section:not([hidden]){display:contents}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color{flex:none;width:2.5rem;height:2.5rem;margin:0}
+  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color:hover{transform:none}
+  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color svg{width:1rem;height:1rem}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 .5rem;background:#fff}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel-preview{width:auto}
+  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel-hex{display:none}
+}
