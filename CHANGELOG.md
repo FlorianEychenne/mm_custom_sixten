@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : volet plus haut
+
+- `views/css/site.css` : volet ouvert, le tapis garde 40 % de l'écran (50 % depuis ce matin, 34 % avant). Sur un écran de
+  390 × 844, le volet passe d'environ 220 à 302 px : le champ du texte et ses curseurs sont visibles sans défiler. Le tapis
+  tourné se recale sur la scène (vue 0,94).
+
 ### Configurateur (Mathieu) : les contournements du moteur passent dans mm_custom
 
 - `layout.js` s'appuie sur les nouvelles fonctions de mm_custom (entrée « Moteur » du 13/11/2026) au lieu de les refaire :
