@@ -6,6 +6,13 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : croix fine pour le bouton fermer
+
+- `views/css/site.css` (sous 992 px) : le bouton fermer de l'en-tête n'affiche plus le caractère « × » (épais, mal
+  centré dans la police Azeret Mono) mais une croix fine dessinée, comme la disquette et le panier, centrée, avec un
+  léger écart après le prix. Le caractère reste dans la page (taille 0), l'`aria-label` « Fermer » aussi. Ordinateur
+  inchangé. Vérifié sur une capture agrandie en 390 px.
+
 ### Téléphone (Mathieu) : disquette centrée dans son bouton
 
 - `views/css/site.css` : le libellé masqué de « Sauvegarder » reste un élément du bouton ; l'écart entre lui et le
