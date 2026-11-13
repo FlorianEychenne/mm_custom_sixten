@@ -825,3 +825,5 @@ body#module-mm_custom-customModule .sx-reset .mmc-exit__title{padding:0 2.75rem}
 .sx3d-share__text,.sx3d-share__note{margin:0;font-size:.9375rem;line-height:1.45}
 .sx3d-share__open{height:2.75rem;padding:0 1.25rem;border:0;border-radius:0;background:#000;color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
 .sx3d-share__open:disabled{opacity:.6}
+/* téléphone : pas de mention sur les couleurs imprimées sous la liste des couleurs (le volet est court) */
+@media (max-width:991.98px){body#module-mm_custom-customModule .module-container .tools .sx-note{display:none}}
