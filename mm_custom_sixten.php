@@ -204,6 +204,9 @@ class Mm_custom_sixten extends Module
             'toolColor' => $this->l('Colour'),
             'toolPosition' => $this->l('Position'),
             'toolUpload' => $this->l('Upload'),
+            'more' => $this->l('More tools'),
+            'moreImage' => $this->l('Image'),
+            'moreStory' => $this->l('Instagram story'),
             'logoSizeCm' => $this->l('Width of the logo, in cm'),
         ];
     }

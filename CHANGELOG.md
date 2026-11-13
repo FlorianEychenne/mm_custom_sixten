@@ -6,6 +6,26 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : boutons de la scène allégés, « annuler » et un menu « … »
+
+- Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Des cinq boutons posés en haut à gauche
+  du tapis (repères, image, story, annuler, réinitialiser), il ne reste que « annuler » et, dessous, un bouton « … » ;
+  les deux font 44 px. Le tapis zoomé sur un texte ou un logo est moins recouvert. À droite, 3D, quart de tour et zoom
+  ne changent pas.
+- `views/js/layout.js` (`mountStageMore`) : ajoute le bouton `.sx-more` à `.sx-stage-hint` et un nom à chaque bouton
+  (`.sx-more__label` : « Image », « Story Instagram », « Réinitialiser » ; le bouton des repères garde le sien, qui dit
+  ce qu'il va faire). « … » déplie les quatre boutons en menu, un par ligne avec son nom ; un choix, un toucher
+  ailleurs ou Échap le replie. La classe `sx-has-more` posée sur `.sx-stage-hint` déclenche la feuille de style (sans
+  elle, les cinq boutons restent).
+- `views/css/site.css` : bloc « Téléphone : boutons de la scène » en fin de fichier ; « Réinitialiser » est gris dans
+  le menu tant qu'il n'y a rien à réinitialiser.
+- `mm_custom_sixten.php` (`jsTranslations`) et `translations/*.php` : « More tools », « Image », « Instagram story »
+  (5 langues).
+- Tests : aucun sélecteur de `tests/e2e/run.mjs` n'est touché (les boutons gardent leurs classes ; `.sx-more` est le
+  dernier `.sx-shot`). Sous 992 px, un clic sur image, story, repères ou réinitialiser demande d'abord `.sx-more`.
+- Vérifié sans tête (Chromium) en 390 × 844, 820 × 1180 et 1440 × 900 : menu, repères, image téléchargée,
+  réinitialisation (fenêtre de confirmation), annuler, console sans erreur. Non vérifié sur vrai téléphone.
+
 ### Téléphone (Mathieu) : volets Couleurs et Logos en pastilles, comme le volet Textes
 
 - Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Suite du commit précédent, à la demande

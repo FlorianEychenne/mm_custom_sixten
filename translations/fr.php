@@ -126,3 +126,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9dffbf69ffba8bc38bc4e01
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dfe6076e1d429c24edcbb2686bb39567'] = 'Couleur';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_52f5e0bc3859bc5f5e25130b6c7e8881'] = 'Position';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_91412465ea9169dfd901dd5e7c96dd99'] = 'Importer';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_b9cd538a753713464d2ea17d7e975041'] = 'Autres outils';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_be53a0541a6d36f6ecb879fa2c584b08'] = 'Image';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_c8c0125a959d9d90e95c91341e68f0a1'] = 'Story Instagram';

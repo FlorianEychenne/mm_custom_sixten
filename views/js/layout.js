@@ -1927,6 +1927,50 @@
             paintButtons()
         })()
 
+        /* ------------------------------------------------------------- téléphone : boutons de la scène (annuler, « … ») */
+
+        // Phone (layout under 992 px): of the buttons laid on the stage, only « undo » stays, over a « … » button that
+        // unfolds the others as a menu, each with its name: markers, image, Instagram story, reset. A choice, a tap
+        // elsewhere or Escape folds it back. On a computer the five buttons stay in their row, without « … ».
+        ;(function mountStageMore() {
+            const hint = $('.sx-stage-hint')
+
+            if (!hint) return
+
+            const more = document.createElement('button')
+
+            more.type = 'button'
+            more.className = 'sx-shot sx-more'
+            more.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01"/></svg>'
+            more.setAttribute('aria-label', t('more', 'More tools'))
+            more.setAttribute('aria-expanded', 'false')
+            hint.appendChild(more)
+
+            // The name of each button in the menu (the markers button has its own, which says what it will do)
+            ;[['.sx-shot:not(.sx-shot--story):not(.sx-hist):not(.sx-more)', t('moreImage', 'Image')], ['.sx-shot--story', t('moreStory', 'Instagram story')], ['.sx-hist--reset', t('resetGo', 'Reset')]].forEach(function (item) {
+                const b = $(item[0], hint)
+
+                if (!b) return
+
+                const label = document.createElement('span')
+
+                label.className = 'sx-more__label'
+                label.textContent = item[1]
+                b.appendChild(label)
+            })
+
+            const set = function (open) {
+                hint.classList.toggle('is-open', open)
+                more.setAttribute('aria-expanded', String(open))
+            }
+
+            more.addEventListener('click', function () { set(!hint.classList.contains('is-open')) })
+            hint.addEventListener('click', function (event) { if (!event.target.closest('.sx-more')) set(false) })
+            document.addEventListener('click', function (event) { if (!hint.contains(event.target)) set(false) })
+            document.addEventListener('keydown', function (event) { if (event.key === 'Escape') set(false) })
+            hint.classList.add('sx-has-more') // the style sheet folds the buttons only once the menu is there
+        })()
+
         /* ------------------------------------------------------------- téléphone : volets en pastilles (couleurs, textes, logos) */
 
         // Phone (layout under 992 px, body.sx-chips): the header of the panel, the list of the zones and their editor give

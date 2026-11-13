@@ -1003,3 +1003,20 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-preview{width:auto}
   body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-hex{display:none}
 }
+
+/* ---------- Téléphone : boutons de la scène (Mathieu, 13/11). Sous 992 px, des cinq boutons posés en haut à gauche du tapis il ne reste que « annuler » et,
+   dessous, un bouton « … » (.sx-more) qui déplie les autres en menu, chacun avec son nom : repères, image, story, réinitialiser (layout.js, mountStageMore).
+   Sur ordinateur rien ne change : ni « … » ni noms ---------- */
+body#module-mm_custom-customModule .sx-more,body#module-mm_custom-customModule .sx-more__label{display:none}
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-hist--undo{order:-2}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more{display:inline-flex;order:-1}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-hist--undo,body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more{width:2.75rem;height:2.75rem}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>.sx-more{background:#000;color:#fff}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more svg{stroke-width:2.75}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more:not(.is-open)>:not(.sx-hist--undo):not(.sx-more){display:none}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>:not(.sx-hist--undo):not(.sx-more):not([hidden]){display:flex;align-items:center;justify-content:flex-start;gap:.625rem;width:auto;min-width:12.5rem;height:2.75rem;padding:0 .875rem 0 .8125rem;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-font);font-size:.8125rem;font-weight:600;letter-spacing:0;line-height:1;text-transform:none;white-space:nowrap}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>.sx-hist--reset:disabled:not(.sx-hist--undo):not(.sx-more):not([hidden]){opacity:1;color:#9a9a9a;box-shadow:inset 0 0 0 1.5px #c4c4c4}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open .sx-more__label,body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>.sx-toggle span{display:inline}
+  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>:not(.sx-hist--undo):not(.sx-more) svg{flex:none}
+}
