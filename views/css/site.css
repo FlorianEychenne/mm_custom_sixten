@@ -889,19 +889,19 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
 }
 
 /* ---------- Téléphone : volets en pastilles (Mathieu, 13/11). Sous 992 px, quand layout.js les a montés (body.sx-chips, mountPhonePanels) : plus d'en-tête de
-   volet ni de liste ; une rangée de pastilles (.sx-tchips : une par zone, l'œil du texte ou du logo choisi à droite) et une rangée dessous : les couleurs
-   (Couleurs), quatre outils .sx-ttools (Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
+   volet ni de liste ; une rangée de pastilles (.sx-tchips : une par zone, l'œil du texte ou du logo choisi à droite) et une rangée d'outils .sx-ttools dessous
+   (Couleurs : palette, couleur personnalisée ; Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
    même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place des onglets et du volet : champ juste au-dessus du
-   clavier pour le texte, une rangée sous le tapis pour les polices et les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
+   clavier pour le texte, une grille sous le tapis pour les polices, une rangée pour les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
 body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok,body#module-mm_custom-customModule .sx-zoneview,body#module-mm_custom-customModule .sx-cartdock{display:none}
 @media (max-width:991.98px){
   /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
-  /* volet ouvert : plus d'en-tête (titre, prix, taille, design), il revient quand on ferme le volet ; le panier reste, à droite des onglets (.sx-cartdock) */
+  /* volet ouvert : plus d'en-tête (titre, prix, taille, design), il revient quand on ferme le volet ; le panier reste, seul en haut à droite de l'écran
+     (.sx-cartdock, comme le bouton de l'en-tête), y compris dans les outils */
   body#module-mm_custom-customModule.sx-chips.sx-dock-open{--mm-header-h:0rem}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-top-bar{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-container>.sx-steps{right:4rem}
-  body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool) .sx-cartdock{position:absolute;z-index:10;right:.75rem;bottom:.75rem;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
-  body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open .sx-cartdock{position:absolute;z-index:10;top:calc(var(--sx-vvt,0px) + .5rem);right:.75rem;display:inline-flex;align-items:center;gap:.375rem;height:2rem;padding:0 .625rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open[data-sx-kind="logo"]:not(.sx-adjusting):not(.sx-ttool):has(.sx-logo-hint:not([hidden])){--sx-tpanel-h:9.5rem}
   body#module-mm_custom-customModule.sx-chips .sx-dock__head,
@@ -947,88 +947,102 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips .sx-ttools--logo button{font-size:.5625rem;letter-spacing:0}
   body#module-mm_custom-customModule.sx-chips .sx-ttools button:disabled{opacity:.35;cursor:default}
   body#module-mm_custom-customModule.sx-chips .sx-tchips__eye svg,body#module-mm_custom-customModule.sx-chips .sx-ttools svg,body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{flex:none;width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
-  /* scène : un seul bouton de vue en bas à droite (.sx-zoneview : tapis entier / zone du texte ou du logo choisi), à la place de la barre + % − (on zoome en
+  /* scène : un seul bouton de vue en bas à droite (.sx-zoneview, 2 rem comme la 3D et le quart de tour : tapis entier / zone du texte ou du logo choisi), à la place de la barre + % − (on zoome en
      pinçant) ; la 3D et le quart de tour au-dessus de lui. Le cadre pointillé de la sélection garde sa taille à l'écran quel que soit le zoom (--sx-zoom) */
   body#module-mm_custom-customModule.sx-chips .sx-zoomwrap .sx-zoom{display:none}
   body#module-mm_custom-customModule.sx-chips .sx-zoomwrap{right:.75rem;align-items:flex-end}
-  body#module-mm_custom-customModule.sx-chips .sx-viewport:has(>.sx-zoneview:not([hidden])) .sx-zoomwrap{bottom:3.625rem}
-  body#module-mm_custom-customModule.sx-chips .sx-zoneview:not([hidden]){position:absolute;z-index:6;right:.75rem;bottom:.5rem;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
-  body#module-mm_custom-customModule.sx-chips .sx-zoneview svg{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  body#module-mm_custom-customModule.sx-chips .sx-viewport:has(>.sx-zoneview:not([hidden])) .sx-zoomwrap{bottom:3rem}
+  body#module-mm_custom-customModule.sx-chips .sx-zoneview:not([hidden]){position:absolute;z-index:6;right:.75rem;bottom:.5rem;display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-zoneview svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__frame{stroke-width:calc(1.5px / var(--sx-zoom,1));stroke-dasharray:calc(6px / var(--sx-zoom,1)) calc(4px / var(--sx-zoom,1))}
   body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__stem{stroke-width:calc(1.5px / var(--sx-zoom,1))}
   body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__corner,body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__rotate,body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-guide{stroke-width:calc(2px / var(--sx-zoom,1))}
-  /* couleurs : les pastilles de couleur en une rangée qui défile, la roue reste à droite */
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){height:3.5rem}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden])::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden])>.mm-tools-title,body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-section-title{display:none}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-section:not([hidden]){display:contents}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button:hover{transform:none}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button svg{width:1rem;height:1rem}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-preview{width:auto}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-hex{display:none}
+  /* couleurs : deux outils (palette, couleur personnalisée), les couleurs ne s'affichent que dans leur outil */
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors>.colors-section{display:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-ttools--colors{grid-template-columns:repeat(2,minmax(0,1fr))}
   /* logos : le rappel « logo plus grand que son emplacement » au-dessus des outils */
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo:not([hidden]){display:flex;flex-direction:column}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current{order:-1}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-foot{display:block}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint{width:100%;height:1.25rem;margin:0 0 .5rem;font-size:.625rem;line-height:1.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  /* outil des textes ouvert : ni en-tête, ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée sous le tapis, la coche à sa droite */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool{--mm-header-h:0rem;--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--mm-stage-h:calc(100svh - var(--sx-ttool-h))}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-top-bar,
+  /* outil ouvert : ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée au bas de ce que le clavier laisse de l'écran (--sx-vvh : hauteur
+     visible, --sx-vvt : où elle commence ; layout.js les mesure), la coche à sa droite, le tapis au-dessus */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool{--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--sx-ttool-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttool-h));--mm-header-h:var(--sx-vvt,0px);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttool-h))}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container>.sx-steps,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-stage-hint,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-zoomwrap,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-tchips,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-ttools{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .info{top:auto;left:0;right:3.25rem;bottom:0;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .info{top:var(--sx-ttool-top);left:0;right:3.25rem;bottom:auto;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools{padding:0;overflow:hidden}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--text:not([hidden]){display:block}
-  body#module-mm_custom-customModule.sx-chips .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;right:0;bottom:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--text:not([hidden]),body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--colors,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--colors:not([hidden]){display:block}
+  body#module-mm_custom-customModule.sx-chips .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;top:var(--sx-ttool-top);right:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
   body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{width:1.5rem;height:1.5rem;stroke-width:2}
 
-  /* texte : le champ en bas de ce que le clavier laisse de l'écran, le tapis au-dessus (--sx-vvh : hauteur visible, --sx-vvt : où elle commence,
-     --sx-ttext-h : hauteur du champ ; layout.js les mesure) */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text{--sx-ttext-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem));--mm-header-h:var(--sx-vvt,0px);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .info{top:var(--sx-ttext-top);bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-ttool-ok:not([hidden]){top:var(--sx-ttext-top);bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
+  /* texte : le champ, de la hauteur de ses lignes (--sx-ttext-h, mesurée par layout.js) */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text{--sx-ttool-h:var(--sx-ttext-h,3.5rem)}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .info{height:auto;padding:.375rem 0 .375rem .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-ttool-ok:not([hidden]){padding:0}
   body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .tools .sx-editor--text .mmc-text-editor{display:block;margin:0}
   body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-textfield__font{display:none}
 
-  /* police : la liste des polices en une rangée qui défile, chaque police écrit le texte */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .module-container .info{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist:not([hidden]){left:0!important;right:3.25rem;top:auto!important;bottom:0!important;display:flex;box-sizing:border-box;width:auto!important;height:var(--sx-ttool-h);max-height:none!important;padding:0 0 env(safe-area-inset-bottom,0px);overflow-x:auto;overflow-y:hidden;border:0;box-shadow:none;scrollbar-width:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist li{flex:none;flex-direction:column;align-items:flex-start;justify-content:center;gap:.25rem;min-width:5.5rem;max-width:13rem;padding:0 1rem;box-shadow:inset -1px 0 0 var(--mmx-border,#e5e5e5)}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist__sample{max-width:100%;font-size:1.25rem;line-height:1.3}
+  /* police : les polices en grille sous le tapis (trois colonnes sur un téléphone, quatre rangées visibles, la suite en défilant), chaque police écrit le
+     texte ; au-dessus, une barre avec le nom de l'outil (body : data-sx-font sur le volet) et la coche */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font{--sx-ttool-h:calc(16.75rem + env(safe-area-inset-bottom,0px))}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .module-container .info{display:flex;flex-direction:row;align-items:center;height:2.75rem;padding:0 0 0 .75rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .module-container .info::before{content:attr(data-sx-font);font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#000}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .module-container .info>*{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-ttool-ok:not([hidden]){height:2.75rem;padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist:not([hidden]){left:0!important;right:0;top:auto!important;bottom:0!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(7rem,1fr));grid-auto-rows:3.5rem;align-content:start;gap:0;box-sizing:border-box;width:auto!important;height:calc(var(--sx-ttool-h) - 2.75rem);max-height:none!important;padding:0 0 env(safe-area-inset-bottom,0px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;border:0;border-top:1px solid #000;box-shadow:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist li{flex-direction:column;align-items:flex-start;justify-content:center;gap:.25rem;min-width:0;padding:0 .75rem;box-shadow:inset -1px -1px 0 var(--mmx-border,#e5e5e5)}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist__sample{max-width:100%;font-size:1.125rem;line-height:1.3}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist li small{max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 
-  /* couleur du texte : comme le volet des couleurs */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text .inputTextDesign{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{height:4rem;padding:0 0 0 .5rem}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-section-title{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-section:not([hidden]){display:contents}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button:hover{transform:none}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button svg{width:1rem;height:1rem}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-preview{width:auto}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-hex{display:none}
+  /* palette (couleur d'un texte ou d'une zone de couleur) : les pastilles en une rangée qui défile, la roue reste à droite et mène à la couleur personnalisée */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text .inputTextDesign,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex .module-container .tools .sx-editor--text .inputTextDesign{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors{display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-section-title{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-section:not([hidden]){display:contents}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-grid>button:hover{transform:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-grid>button svg{width:1rem;height:1rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel-preview{width:auto}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel-hex{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors{height:4rem;padding:0 0 0 .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]){display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden])::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden])>.mm-tools-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-section-title{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-section:not([hidden]){display:contents}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button:hover{transform:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button svg{width:1rem;height:1rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-preview{width:auto}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-hex{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]){height:4rem;padding:0 0 0 .5rem}
+
+  /* couleur personnalisée : la pastille de la roue (elle ouvre la roue au-dessus) et son code, écrit en 16 px (en dessous, Safari agrandit la page) */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]){display:flex;flex-direction:row;align-items:center;height:4rem;margin:0;padding:0 0 0 .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-section-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-section:not(.colors-section-wheel),body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-section-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-section:not(.colors-section-wheel){display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .colors-section-wheel,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .colors-section-wheel{display:block;flex:1;min-width:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel{display:flex;width:100%;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel-preview,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-preview{display:flex;flex:1;min-width:0;width:auto;height:2.75rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel-swatch,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-swatch{flex:none;width:2.75rem;height:2.75rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="text"] .module-container .tools .sx-editor--text>.font-colors .mm-wheel-hex,body#module-mm_custom-customModule.sx-chips.sx-ttool--hex[data-sx-kind="colors"] .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-hex{display:block;flex:1;min-width:0;width:auto;height:2.75rem;font-size:1rem;letter-spacing:.04em;text-transform:uppercase}
 }
 
 /* ---------- Téléphone : boutons de la scène (Mathieu, 13/11). Sous 992 px, des cinq boutons posés en haut à gauche du tapis il ne reste que « annuler » et,
-   dessous, un bouton « … » (.sx-more) qui déplie les autres en menu, chacun avec son nom : repères, image, story, réinitialiser (layout.js, mountStageMore).
+   dessous, un bouton « … » (.sx-more, de la même taille que les autres boutons de la scène) qui déplie les autres en menu, chacun avec son nom : repères, image, story, réinitialiser (layout.js, mountStageMore).
    Sur ordinateur rien ne change : ni « … » ni noms ---------- */
 body#module-mm_custom-customModule .sx-more,body#module-mm_custom-customModule .sx-more__label{display:none}
 @media (max-width:991.98px){
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-hist--undo{order:-2}
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more{display:inline-flex;order:-1}
-  body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-hist--undo,body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more{width:2.75rem;height:2.75rem}
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>.sx-more{background:#000;color:#fff}
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more>.sx-more svg{stroke-width:2.75}
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more:not(.is-open)>:not(.sx-hist--undo):not(.sx-more){display:none}
@@ -1050,4 +1064,10 @@ body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__head{p
   body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__head{padding-right:0}
   body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__title{padding-right:2.25rem}
   body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__search{width:100%;font-size:1rem;letter-spacing:0}
+}
+
+/* ---------- Téléphone : sélecteur de taille de l'en-tête en 16 px (Mathieu, 13/11). Écrit en 9 px, il faisait agrandir toute la page par Safari quand on
+   le touchait (tout champ ou sélecteur de moins de 16 px) ---------- */
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule .module-top-bar select.sx-variant__select:not(.sx-variant__select--picker){font-size:1rem;letter-spacing:0}
 }

@@ -1974,11 +1974,13 @@
         /* ------------------------------------------------------------- téléphone : volets en pastilles (couleurs, textes, logos) */
 
         // Phone (layout under 992 px, body.sx-chips): the header of the panel, the list of the zones and their editor give
-        // way to a strip of chips (one per zone; the eye of the chosen text or logo at its right) over one row:
-        //  - colours: the swatches, the wheel at their right;
+        // way to a strip of chips (one per zone; the eye of the chosen text or logo at its right) over one row of tools:
+        //  - colours: two tools, the palette (the swatches in one row, the wheel at their right) and the custom colour
+        //    (the wheel and its code, typed in a field that comes just over the keyboard);
         //  - texts: four tools (text, font, colour, position). The first three take the place of the tabs and the panel,
-        //    with a tick to come back: the field just over the keyboard, the mat above it (visualViewport); the fonts or
-        //    the swatches in one row under the mat;
+        //    with a tick to come back: the field just over the keyboard, the mat above it (visualViewport); the fonts in
+        //    a grid under the mat, each one writing the text; the swatches in one row under the mat, their wheel leading
+        //    to the custom colour as for the colours;
         //  - logos: four tools (library, file, position, remove), which press the buttons of the editor.
         // « Position » opens the three wheels (mountAdjust). While the panel shows the texts or the logos, the mat zooms on
         // the zone of the chosen one (twice the whole mat at most) and follows it under the wheels; it shows the whole mat
@@ -2003,7 +2005,8 @@
                 ok: SVG('M5 12.5l4.5 4.5L19 7.5'),
                 whole: SVG('M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'),
                 zone: SVG('M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4.9-4.9M10.5 8v5M8 10.5h5'),
-                cart: SVG('M3 4h2.5l2.2 10.5h9.6L19.5 7H7M9.5 19h.01M16.5 19h.01'),
+                cart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></svg>',
+                hex: SVG('M5 9h14M5 15h14M10 4L8 20M16 4l-2 16'),
             }
             const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
             const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
@@ -2074,6 +2077,21 @@
                 textTools.position.disabled = !on || !textAdjust || !MmCustom.texts.isMovable(current.text)
             }
 
+            // Colours: the palette and the custom colour take the panel, as the tools of the texts do
+            const colorKind = KINDS.find(function (k) { return k.key === 'colors' }) || null
+            const colorTools = colorKind && editors.colors ? toolRow('colors', [
+                ['color', t('palette', 'Palette')], ['hex', t('toolCustom', 'Custom')],
+            ], function (name) { enter(name) }) : null
+
+            function paintColorTools() {
+                if (!colorTools) return
+
+                const on = !!current.color && current.color.isConnected
+
+                colorTools.color.disabled = !on
+                colorTools.hex.disabled = !on
+            }
+
             // Logos: each tool presses a button of the editor (library, file, three wheels, remove)
             const press = logoBlock ? {
                 library: $('.sx-logo-btn--library', logoBlock),
@@ -2111,8 +2129,8 @@
             ok.addEventListener('click', function () { leave() })
             container.appendChild(ok)
 
-            // The header goes away while a panel is open: the cart stays, at the right of the tabs (it presses the
-            // button of the header)
+            // The header goes away while a panel is open: the cart stays, alone at the top right of the screen, with the
+            // short name it has in the header (it presses the button of the header)
             const cartButton = document.getElementById('add-to-cart')
 
             if (cartButton) {
@@ -2120,7 +2138,7 @@
 
                 cart.type = 'button'
                 cart.className = 'sx-cartdock'
-                cart.innerHTML = ART.cart
+                cart.innerHTML = ART.cart + '<span>' + esc((cartButton.querySelector('.sx-cart__short') || cartButton).textContent.trim()) + '</span>'
                 cart.title = (cartButton.querySelector('.sx-cart__long') || cartButton).textContent.trim()
                 cart.setAttribute('aria-label', cart.title)
                 cart.addEventListener('click', function () { cartButton.click() })
@@ -2209,13 +2227,11 @@
 
                 strip.list.classList.toggle('is-turned', MmCustom.stage.state().rotation % 180 === 90)
 
-                if (kind.key === 'text') {
-                    paintTextTools()
-
-                    if (mode && !usable()) leave() // the text went away (undo, another design)
-                }
-
+                if (kind.key === 'text') paintTextTools()
+                if (kind.key === 'colors') paintColorTools()
                 if (kind.key === 'logo') paintLogoTools()
+
+                if (mode && kind.key === modeKind && !chosenOf(kind.key)) leave() // the zone went away (undo, another design)
             }
 
             const showChip = function (kind) {
@@ -2425,9 +2441,23 @@
                 }).observe(stage.parentElement)
             })
 
-            /* tools of the texts that take the panel: text, font, colour */
+            /* tools that take the panel: text, font and colour of a text; palette of a colour zone; custom colour of both */
             let mode = ''
+            let modeKind = '' // key of the kind the open tool works on (text, colors)
             const viewport = window.visualViewport
+            // The zone a tool works on: the chosen text, or the chosen colour zone
+            const chosenOf = function (key) {
+                const el = key === 'text' ? current.text : (key === 'colors' ? current.color : null)
+
+                return el && el.isConnected ? el : null
+            }
+            // The wheel of a kind: its swatch opens the colour picker, its field takes the code
+            const wheelOf = function (key) { return key ? document.querySelector('[data-sx-kind="' + key + '"] .mm-wheel') : null }
+            const partOf = function (key, selector) {
+                const wheel = wheelOf(key)
+
+                return wheel ? wheel.querySelector(selector) : null
+            }
 
             // Text tool: the field sits at the bottom of what the keyboard leaves of the screen, the mat above it. The
             // style sheet gets the visible height and where it starts (visualViewport: a phone that scrolls the page to
@@ -2435,25 +2465,41 @@
             // its height is unknown: the field waits at 55 % of the screen, clear of any keyboard, so that the phone has
             // no reason to scroll; it comes down on the keyboard as soon as the visible part has resized, or to the bottom
             // of the screen when no keyboard came (0.6 s).
+            // The other tools sit at the bottom of the visible part too: the code of a colour is typed with the keyboard.
             let waiting = 0
             const measure = function (early) {
-                if (mode !== 'text') return
+                if (!mode) return
 
                 const full = viewport ? viewport.height : window.innerHeight
 
                 body.style.setProperty('--sx-vvh', Math.round(early === true ? full * 0.55 : full) + 'px')
                 body.style.setProperty('--sx-vvt', Math.round(viewport ? viewport.offsetTop : 0) + 'px')
-                body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
+
+                if (mode === 'text') body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
             }
 
             function enter(name) {
-                if (mode || !field || !phone.matches || !usable() || (name === 'font' && !fontField)) return
+                const key = active ? active.key : ''
+
+                if (mode || !phone.matches || !chosenOf(key)) return
+                if ((name === 'text' || name === 'font') && (key !== 'text' || !field || (name === 'font' && !fontField))) return
 
                 if (ui.colorPicker) ui.colorPicker.close()
 
                 mode = name
+                modeKind = key
                 body.classList.add('sx-ttool', 'sx-ttool--' + name)
                 ok.hidden = false
+                measure()
+
+                // Custom colour: the wheel opens over its swatch, once the tool is laid out
+                if (name === 'hex') {
+                    twice(function () {
+                        const swatch = mode === 'hex' ? partOf(modeKind, '.mm-wheel-swatch') : null
+
+                        if (swatch) swatch.click()
+                    })
+                }
 
                 if (name === 'text') {
                     measure(true)
@@ -2475,7 +2521,8 @@
 
                         const chosen = fontField.list.querySelector('[aria-selected="true"]')
 
-                        if (chosen) fontField.list.scrollLeft = Math.max(0, chosen.offsetLeft - (fontField.list.clientWidth - chosen.offsetWidth) / 2)
+                        // The grid of the fonts scrolls down: the font of the text comes to its middle
+                        if (chosen) fontField.list.scrollTop = Math.max(0, chosen.offsetTop - (fontField.list.clientHeight - chosen.offsetHeight) / 2)
                     }, 0)
                 }
 
@@ -2486,10 +2533,14 @@
                 if (!mode) return
 
                 const was = mode
+                const code = partOf(modeKind, '.mm-wheel-hex')
 
                 mode = ''
+                modeKind = ''
                 body.classList.remove('sx-ttool', 'sx-ttool--' + was)
                 window.clearTimeout(waiting)
+
+                if (code && document.activeElement === code) code.blur() // the code being typed is applied
                 body.style.removeProperty('--sx-ttext-h')
                 body.style.removeProperty('--sx-vvh')
                 body.style.removeProperty('--sx-vvt')
@@ -2503,6 +2554,29 @@
             }
 
             if (fontField) fontField.onClose = function () { if (mode === 'font') leave() }
+
+            dock.dataset.sxFont = t('font', 'Font') // title of the bar over the grid of the fonts (style sheet)
+
+            // Palette of a text or of a colour zone: its wheel leads to the custom colour (caught before the picker
+            // opens: it would open where the swatch was)
+            dock.addEventListener('click', function (event) {
+                if (mode !== 'color' || !event.target.closest('.mm-wheel-swatch')) return
+
+                event.stopPropagation()
+                leave()
+                enter('hex')
+            }, true)
+
+            // Code of the custom colour: applied as soon as it is whole (six figures), the picker gives way to the
+            // keyboard, Enter puts the keyboard away
+            Array.from(dock.querySelectorAll('.mm-wheel-hex')).forEach(function (code) {
+                code.setAttribute('autocapitalize', 'off')
+                code.addEventListener('focus', function () { if (mode === 'hex' && ui.colorPicker) ui.colorPicker.close() })
+                code.addEventListener('input', function () {
+                    if (mode === 'hex' && /^#?[0-9a-f]{6}$/i.test(code.value.trim())) code.dispatchEvent(new Event('change'))
+                })
+                code.addEventListener('keydown', function (event) { if (mode === 'hex' && event.key === 'Enter') code.blur() })
+            })
 
             if (field) {
                 field.addEventListener('input', measure)
@@ -2526,7 +2600,7 @@
                 const detail = event.detail || {}
                 const kind = kindOfType(detail.type)
 
-                if (detail.type !== 'text' && mode) leave()
+                if (mode && (!kind || kind.key !== modeKind)) leave() // another kind chosen on the mat: its tool is over
                 if (!kind) return
 
                 // Once the rows are drawn and the stage has its size (the observer above has refitted it)
@@ -2554,6 +2628,7 @@
             phonePanel = { chips: paintChips, follow: follow }
             body.classList.add('sx-chips') // the style sheet lays the phone panels out in chips
             paintTextTools()
+            paintColorTools()
             paintLogoTools()
         })()
 

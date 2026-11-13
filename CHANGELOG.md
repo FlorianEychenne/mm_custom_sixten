@@ -6,6 +6,33 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : retours iPhone, suite (taille, boutons, polices en grille, panier, couleurs, code HEX)
+
+- Sous 992 px seulement ; rien ne change sur ordinateur. Retours de Mathieu pendant son essai sur iPhone.
+- Sélecteur de taille de l'en-tête : écrit en 16 px (9 px avant). En dessous de 16 px, Safari agrandit toute la page
+  quand on touche un champ ou une liste.
+- Boutons posés sur la scène : « annuler », « … » et le bouton de vue font 2 rem, comme la 3D et le quart de tour
+  (44 px avant).
+- Panier : quand l'en-tête est masqué (volet ouvert, outils compris), le bouton `.sx-cartdock` est seul en haut à
+  droite de l'écran, avec l'icône et le libellé court du bouton de l'en-tête (il n'est plus à droite des onglets).
+- Polices : l'outil « Police » montre les polices en grille sous le tapis (trois colonnes sur un téléphone, quatre
+  rangées visibles, la suite en défilant), chacune écrivant le texte, sous une barre « Police » avec la coche. La
+  grille s'ouvre sur la police du texte. La rangée unique du commit précédent disparaît.
+- Couleurs comme les textes : sous les pastilles des zones, deux outils (`.sx-ttools--colors`) au lieu des couleurs
+  posées directement : « Palette » (les couleurs en une rangée, la roue à droite) et « Personnalisée ».
+- Couleur personnalisée (`body.sx-ttool--hex`), pour une zone de couleur comme pour un texte : la pastille de la roue
+  (qui ouvre la roue au-dessus) et le code HEX dans un champ en 16 px. Le code s'applique dès qu'il est complet (six
+  chiffres, avec ou sans #), Entrée range le clavier. On y arrive par l'outil « Personnalisée » des couleurs, ou par
+  la roue au bout de la palette (couleurs et textes).
+- `views/js/layout.js` (`mountPhonePanels`) : les outils valent pour deux sortes de zones (`modeKind`, `chosenOf`) ;
+  tout outil ouvert se place au bas de la partie visible de l'écran (`--sx-vvh`, `--sx-vvt`), donc au-dessus du
+  clavier quand on tape un code. `views/css/site.css` : blocs « volets en pastilles », « boutons de la scène »,
+  « sélecteur de taille ». `mm_custom_sixten.php` et `translations/*.php` : « Custom » (5 langues).
+- Vérifié sans tête (Chromium) en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900, clavier simulé : console sans
+  erreur. Non vérifié sur vrai téléphone.
+- Relevé sans y toucher : à 360 px de large, le bouton panier de l'en-tête passe sur une troisième ligne (déjà le cas
+  avant ce commit).
+
 ### Téléphone (Mathieu) : le champ de saisie d'un texte en bas, au-dessus du clavier
 
 - Sous 992 px seulement. Demande de Mathieu après essai sur iPhone : dans l'outil « Texte », le champ n'est plus en
