@@ -6,6 +6,21 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Vue 3D (Mathieu) : sur iPhone et iPad, la capture se range dans la photothèque
+
+- `views/js/viewer3d.js` (bouton photo de la vue 3D). Demande de Mathieu : sur iOS, l'image téléchargée allait dans
+  l'app Fichiers. Sur iPhone et iPad, l'image est maintenant remise à la feuille de partage (`navigator.share` avec le
+  fichier PNG), qui propose « Enregistrer l'image » (la photothèque), AirDrop, Messages, etc.
+- Ailleurs (Android, ordinateur), et sur iOS quand le partage d'un fichier n'est pas possible ou est refusé, l'image
+  est téléchargée comme avant. Une feuille de partage refermée sans choix ne télécharge rien.
+- Tout se fait dans le toucher du bouton (la feuille de partage ne s'ouvre que depuis un geste). La page ouverte par
+  le QR code (`ar.tpl`) utilise la même vue : elle en profite.
+- Vérifié sans tête avec un iPhone simulé (partage accepté, annulé, refusé, impossible), un Android et un
+  ordinateur : le fichier part bien vers le partage ou vers le téléchargement selon le cas. La vraie feuille de
+  partage d'iOS n'est pas vérifiée.
+- Non traité ici : le bouton « Image » de la scène (export du moteur `mm_custom`) et la story Instagram téléchargent
+  toujours un fichier.
+
 ### Téléphone (Mathieu) : une seule palette, sur plusieurs lignes, avec la roue et le code HEX
 
 - Sous 992 px seulement. Demande de Mathieu : pas deux outils pour les couleurs, et la palette sur plusieurs lignes,

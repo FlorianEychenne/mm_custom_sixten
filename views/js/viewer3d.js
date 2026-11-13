@@ -686,15 +686,54 @@ export async function open(options) {
     })
     bReset.addEventListener('click', () => { userMoved = false; applyView(VIEW_DEFAULT, true) })
     bTop.addEventListener('click', () => applyView(VIEW_TOP, true))
-    bShot.addEventListener('click', () => {
-        const a = document.createElement('a')
+    // Image of the view. On an iPhone or an iPad a downloaded file goes to the Files app: the image is handed to the share
+    // sheet instead, which offers « Save Image » (the photo library). Elsewhere, and when sharing a file is not possible, it
+    // is downloaded. Everything is done in the tap itself: the share sheet only opens from a gesture.
+    const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
-        a.download = (options.fileName || 'tapis') + '-3d.png'
+    bShot.addEventListener('click', () => {
+        const name = (options.fileName || 'tapis') + '-3d.png'
+
         renderer.render(scene, camera)
-        a.href = renderer.domElement.toDataURL('image/png')
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
+
+        const url = renderer.domElement.toDataURL('image/png')
+        const download = () => {
+            const a = document.createElement('a')
+
+            a.download = name
+            a.href = url
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+        }
+
+        if (!IOS || !navigator.canShare || typeof File !== 'function') {
+            download()
+
+            return
+        }
+
+        let file = null
+
+        try {
+            const data = atob(url.slice(url.indexOf(',') + 1))
+            const bytes = new Uint8Array(data.length)
+
+            for (let i = 0; i < data.length; i++) bytes[i] = data.charCodeAt(i)
+
+            file = new File([bytes], name, { type: 'image/png' })
+        } catch (error) {
+            file = null
+        }
+
+        if (!file || !navigator.canShare({ files: [file] })) {
+            download()
+
+            return
+        }
+
+        // Closed without a choice (AbortError): nothing to do; any other refusal: the file is downloaded
+        navigator.share({ files: [file] }).catch((error) => { if (!error || error.name !== 'AbortError') download() })
     })
 
     // ---- réalité augmentée ----
