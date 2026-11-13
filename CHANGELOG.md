@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : le volet défile jusqu'à la ligne choisie
+
+- `views/js/layout.js` : sous 992 px, après une sélection (un logo, un texte ou une couleur touché sur le tapis, une
+  ligne, un repère), la ligne choisie vient en haut du volet, avec son éditeur dessous (`showChosenRow()`, après le
+  dessin des lignes ; défilement doux, direct si l'appareil demande moins d'animations). Avant, un logo touché ouvrait
+  bien « Logos », mais sa ligne pouvait rester hors du volet (L5, L6).
+- Vérifié au navigateur en 390 × 844 (Kawasaki 95x200 Classic) : L6, L3 puis L5 touchés sur le tapis, ligne L4 touchée
+  dans le volet ; chaque fois la ligne est visible en haut du volet.
+
 ### Vue 3D (Mathieu) : QR code « Voir chez moi » sur ordinateur
 
 - `views/js/viewer3d.js` : sur un ordinateur (pas de réalité augmentée, pointeur principal non tactile), le bouton

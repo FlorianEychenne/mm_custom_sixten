@@ -269,6 +269,9 @@
 
             setActive(kind)
 
+            // Phone: the panel is short, the chosen row comes to its top once the rows are drawn (refreshRows)
+            if (loaded) rowToShow = kind.key
+
             if (detail.type === 'color') syncColor()
             if (detail.type === 'text') syncText()
             if (detail.type === 'logo') syncLogo()
@@ -279,6 +282,7 @@
         const rows = {}
         const editors = {}
         const collapsed = {} // kind key -> the editor of the chosen row is folded (arrow of the row)
+        let rowToShow = null // kind key whose chosen row is to be scrolled to (phone, after a selection)
         const logoMeta = {} // name and origin of the logo placed in each slot (slot id)
 
         KINDS.forEach(function (kind) {
@@ -438,7 +442,28 @@
                 refreshing = false
                 KINDS.forEach(renderRows)
                 refreshLogoEditor()
+                showChosenRow()
             })
+        }
+
+        // Phone layout (under 992 px): the chosen row of the kind just selected is brought to the top of the panel, so a tap
+        // on a logo, a text or a colour of the mat shows its row and its editor, wherever it is in the list
+        function showChosenRow() {
+            const key = rowToShow
+
+            rowToShow = null
+
+            if (!key || !window.matchMedia('(max-width: 991.98px)').matches) return
+
+            const tools = $('.tools', dock)
+            const row = $('[data-sx-kind="' + key + '"] .sx-row.on')
+
+            if (!tools || !row) return
+
+            const top = row.getBoundingClientRect().top - tools.getBoundingClientRect().top + tools.scrollTop - 8
+            const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+            tools.scrollTo({ top: Math.max(0, top), behavior: smooth ? 'smooth' : 'auto' })
         }
 
         // The eye of a row shows or hides its text or its logo, like the switch of the editor
