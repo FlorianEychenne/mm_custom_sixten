@@ -806,3 +806,22 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-foot:not(:h
 body#module-mm_custom-customModule .sx-text-bar{display:none!important}
 body#module-mm_custom-customModule .module-container .tools .colors-section[hidden]{display:none}
 body#module-mm_custom-customModule .sx-reset .mmc-exit__title{padding:0 2.75rem}
+
+/* « Voir chez moi » sur ordinateur : QR code vers la vue 3D du téléphone (viewer3d.js), page du téléphone (controllers/front/ar.php) */
+.sx3d-qr{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:1rem;background:rgba(0,0,0,.35)}
+.sx3d-qr[hidden]{display:none}
+.sx3d-qr__card{position:relative;display:grid;justify-items:center;gap:1rem;width:min(22rem,100%);padding:2rem 1.75rem 1.75rem;background:#fff;color:#000;text-align:center;box-shadow:0 1.5rem 4rem rgba(0,0,0,.25)}
+.sx3d-qr__close{position:absolute;top:0;right:0;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;background:#000;color:#fff;font-size:1.5rem;line-height:1;cursor:pointer}
+.sx3d-qr__close:hover,.sx3d-qr__close:focus-visible{background:#E4032E;outline:0}
+.sx3d-qr__title{margin:0 2rem 0 0;font-size:1.0625rem;font-weight:900;letter-spacing:-.01em;line-height:1.15;text-transform:uppercase}
+.sx3d-qr__code{display:grid;place-items:center;width:13.5rem;height:13.5rem;color:#6b6b6b;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.sx3d-qr__code svg{display:block;width:100%;height:100%}
+.sx3d-qr__text{margin:0;font-size:.8125rem;line-height:1.45;color:#333}
+.sx3d-qr__link{font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#000;text-decoration:underline;text-underline-offset:.3em}
+.sx3d-qr__link[hidden]{display:none}
+.sx3d-share{display:grid;justify-items:start;gap:.75rem;max-width:32rem;margin:2rem auto;padding:0 1rem}
+.sx3d-share__eyebrow{margin:0;font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.sx3d-share__title{margin:0;font-size:1.5rem;font-weight:900;text-transform:uppercase}
+.sx3d-share__text,.sx3d-share__note{margin:0;font-size:.9375rem;line-height:1.45}
+.sx3d-share__open{height:2.75rem;padding:0 1.25rem;border:0;border-radius:0;background:#000;color:#fff;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.sx3d-share__open:disabled{opacity:.6}

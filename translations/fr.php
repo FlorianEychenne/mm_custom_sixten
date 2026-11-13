@@ -109,3 +109,12 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9cf69763de83f9db7f4a87c
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_117a49d150569f248caf515a848297ed'] = 'Réinitialiser le design ?';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_00700cf9af89497c3eb5903c77ffa790'] = 'Toutes vos modifications seront effacées : le tapis revient au design de départ.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_526d688f37a86d3c3f27d0c5016eb71d'] = 'Réinitialiser';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7657c21ae7d51e194921ff9e52de3df5'] = 'Voir chez moi avec mon téléphone';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8c0425dc7a48f337af9353728186b4c1'] = 'Scannez ce code avec votre téléphone pour poser le tapis sur votre sol, en taille réelle. Le lien fonctionne 48 heures.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_37d381828783e2de00e4d4f37f9a1dc0'] = 'Ouvrir le lien';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_cf1516cabe51c03349a7abe7da93b731'] = 'Le code n\'a pas pu être créé. Réessayez dans un instant.';
+$_MODULE['<{mm_custom_sixten}prestashop>ar_42ded648c677e9cd89c0a3e98971c37f'] = 'Ce lien a expiré. Rouvrez la vue 3D sur votre ordinateur pour obtenir un nouveau code.';
+$_MODULE['<{mm_custom_sixten}prestashop>ar_02dd4f466a8760c200c07557c244fa69'] = 'Votre tapis chez vous';
+$_MODULE['<{mm_custom_sixten}prestashop>ar_65fc08d6cd5c5bd57daa1c38c9ba2f35'] = 'Votre tapis en 3D, en taille réelle : touchez « Voir chez moi » et visez le sol.';
+$_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Voir le tapis en 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n\'est pas disponible sur cet appareil.';

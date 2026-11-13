@@ -19,9 +19,12 @@
  * Réalité augmentée (« Voir chez moi », repris de la même démo) : poser le tapis au sol, en taille réelle, avec le téléphone.
  *   - iPhone / iPad : AR Quick Look, sur un fichier USDZ fabriqué dans le navigateur à l'ouverture de la vue 3D ;
  *   - Android (Chrome, ARCore) : WebXR « immersive-ar » avec détection du sol, boutons tourner / déplacer / fermer ;
- *   - ordinateur ou téléphone sans RA : pas de bouton (la création n'étant pas enregistrée, un QR code n'aurait rien à ouvrir).
+ *   - ordinateur (pointeur principal qui n'est pas tactile, sans RA) : le bouton ouvre un QR code. options.share() envoie l'image de l'impression au
+ *     serveur (controllers/front/ar.php, gardée 48 h) et rend l'adresse d'une page qui ouvre cette vue 3D sur le téléphone ;
+ *   - téléphone sans RA : pas de bouton.
  *
- * open({ art, felt, inkBlur, sizeCm, title, subtitle, fileName, t }) -> Promise<void>
+ * open({ art, felt, inkBlur, sizeCm, title, subtitle, fileName, t, share }) -> Promise<void>
+ *   share : facultatif, () -> Promise<string> (adresse pour le téléphone) ; sans lui, pas de QR code sur ordinateur
  *   art : canvas de l'impression ; felt : URL de la photo de feutre ; inkBlur : rayon du flou en px de art
  */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/+esm'
@@ -115,7 +118,10 @@ async function arMode() {
     const probe = document.createElement('a')
 
     if (probe.relList && probe.relList.supports && probe.relList.supports('ar')) return 'quicklook'
-    if (navigator.xr && await navigator.xr.isSessionSupported('immersive-ar').catch(() => false)) return 'webxr'
+    // Some browsers never answer this question (no AR runtime): no answer in 3 s means no AR
+    const answer = navigator.xr ? navigator.xr.isSessionSupported('immersive-ar').catch(() => false) : Promise.resolve(false)
+
+    if (await Promise.race([answer, new Promise((resolve) => setTimeout(() => resolve(false), 3000))])) return 'webxr'
 
     return ''
 }
@@ -383,6 +389,28 @@ export async function open(options) {
     bARLabel.textContent = t('arButton', 'See it at home')
     tools.appendChild(bAR)
 
+    // Ordinateur : QR code vers la même vue 3D sur le téléphone (« Voir chez moi »)
+    const qr = el('div', 'sx3d-qr')
+    const qrCard = el('div', 'sx3d-qr__card')
+    const qrClose = el('button', 'sx3d-qr__close', '&times;')
+    const qrTitle = el('p', 'sx3d-qr__title')
+    const qrCode = el('div', 'sx3d-qr__code')
+    const qrText = el('p', 'sx3d-qr__text')
+    const qrLink = el('a', 'sx3d-qr__link')
+
+    qr.hidden = true
+    qr.setAttribute('role', 'dialog')
+    qr.setAttribute('aria-modal', 'true')
+    qrClose.type = 'button'
+    qrClose.setAttribute('aria-label', t('close', 'Close'))
+    qrTitle.textContent = t('arQrTitle', 'See it at home with your phone')
+    qrText.textContent = t('arQrText', 'Scan this code with your phone to place the mat on your floor, in real size. The link works for 48 hours.')
+    qrLink.target = '_blank'
+    qrLink.rel = 'noopener'
+    qrLink.textContent = t('arQrLink', 'Open the link')
+    qrCard.append(qrClose, qrTitle, qrCode, qrText, qrLink)
+    qr.appendChild(qrCard)
+
     // Interface pendant la session WebXR (dom-overlay) : message en haut, boutons en bas
     const arOverlay = el('div', 'sx3d-ar')
     const arMsg = el('p', 'sx3d-ar__msg')
@@ -403,7 +431,7 @@ export async function open(options) {
     const arClose = arButton('sx3d-ar__btn--close', t('close', 'Close'))
 
     arOverlay.append(arMsg, arCtrls)
-    overlay.append(viewer, head, hint, tools)
+    overlay.append(viewer, head, hint, tools, qr)
     document.body.appendChild(overlay)
     document.documentElement.classList.add('sx3d-on')
 
@@ -770,8 +798,51 @@ export async function open(options) {
     })
     arClose.addEventListener('click', () => { if (xrSession) xrSession.end() })
 
+    // QR code : l'image est envoyée une fois par ouverture de la vue 3D, au premier clic
+    let shareUrl = null
+
+    async function showQR() {
+        qr.hidden = false
+        qrClose.focus({ preventScroll: true })
+
+        if (shareUrl) return
+
+        qrCode.replaceChildren()
+        qrCode.classList.add('is-busy')
+        qrCode.textContent = t('arPreparing', 'Preparing…')
+        qrLink.hidden = true
+
+        try {
+            const [url, lib] = await Promise.all([options.share(), import('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/+esm')])
+            const make = lib.default || lib
+            const code = make(0, 'M')
+
+            code.addData(url)
+            code.make()
+            shareUrl = url
+            qrCode.innerHTML = code.createSvgTag({ cellSize: 6, margin: 2, scalable: true })
+            qrLink.href = url
+            qrLink.hidden = false
+        } catch (e) {
+            console.error('mm_custom_sixten: QR', e)
+            qrCode.textContent = t('arQrFailed', 'The code could not be created. Try again in a moment.')
+        }
+
+        qrCode.classList.remove('is-busy')
+    }
+
+    function hideQR() {
+        qr.hidden = true
+        bAR.focus({ preventScroll: true })
+    }
+
+    qrClose.addEventListener('click', hideQR)
+    qr.addEventListener('click', (e) => { if (e.target === qr) hideQR() })
+
     bAR.addEventListener('click', () => {
-        if (mode === 'quicklook' && usdzUrl) {
+        if (mode === 'qr') {
+            showQR()
+        } else if (mode === 'quicklook' && usdzUrl) {
             const a = document.createElement('a')
 
             a.rel = 'ar'
@@ -784,8 +855,14 @@ export async function open(options) {
     })
 
     arMode().then(async (m) => {
-        mode = m
+        // Computer (main pointer not a finger, no AR): the button shows a QR code towards the same 3D view on the phone
+        mode = m || (typeof options.share === 'function' && !window.matchMedia('(pointer: coarse)').matches ? 'qr' : '')
         if (!mode) return
+        if (mode === 'qr') {
+            bAR.hidden = false
+            bAR.setAttribute('aria-haspopup', 'dialog')
+            return
+        }
         document.body.appendChild(arOverlay)
         bAR.hidden = false
         if (mode !== 'quicklook') return
@@ -805,7 +882,11 @@ export async function open(options) {
 
     // ---- fermeture : tout est libéré (contexte WebGL, textures, géométries) ----
     return new Promise((resolve) => {
-        function onKey(e) { if (e.key === 'Escape') shut() }
+        function onKey(e) {
+            if (e.key !== 'Escape') return
+            if (!qr.hidden) hideQR()
+            else shut()
+        }
 
         function shut() {
             if (xrSession) xrSession.end().catch(() => {})

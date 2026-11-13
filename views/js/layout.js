@@ -1792,6 +1792,35 @@
 
             let viewerModule = null
 
+            // The print, at most 3000 px wide, in JPEG (under the server's 6 MB), sent with what the phone page shows
+            const shareArt = function (art, box, size, design) {
+                const width = Math.min(3000, art.width)
+                const canvas = document.createElement('canvas')
+
+                canvas.width = width
+                canvas.height = Math.round(art.height * width / art.width)
+                canvas.getContext('2d').drawImage(art, 0, 0, canvas.width, canvas.height)
+
+                let image = canvas.toDataURL('image/jpeg', 0.9)
+
+                if (image.length > 7800000) image = canvas.toDataURL('image/jpeg', 0.75)
+
+                return MmCustom.ajax(window.mm_custom_sixten.ar, {
+                    action: 'share',
+                    token: MmCustom.config.token,
+                    image: image,
+                    length: size.length,
+                    width: size.width,
+                    title: title(),
+                    subtitle: [size.width + ' × ' + size.length + ' cm', design ? design.textContent.trim() : ''].filter(Boolean).join(' · '),
+                    inkBlur: box && box.width ? 2 * width / box.width : 1.2,
+                }, { json: true }).then(function (res) {
+                    if (!res || !res.url) throw new Error('share')
+
+                    return res.url
+                })
+            }
+
             view3d.addEventListener('click', function () {
                 if (view3d.classList.contains('is-busy')) return
 
@@ -1822,6 +1851,8 @@
                         subtitle: [matSize.width + ' × ' + matSize.length + ' cm', design ? design.textContent.trim() : ''].filter(Boolean).join(' · '),
                         fileName: MmCustom.export.fileName(title()).replace(/\.png$/, ''),
                         t: t,
+                        // « Voir chez moi » from a computer: the print goes to the server (48 h) for the phone (QR code)
+                        share: window.mm_custom_sixten.ar ? function () { return shareArt(results[1], box, matSize, design) } : null,
                     })
                 }).catch(function (error) {
                     console.error('mm_custom_sixten: 3D', error)

@@ -6,6 +6,26 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Vue 3D (Mathieu) : QR code « Voir chez moi » sur ordinateur
+
+- `views/js/viewer3d.js` : sur un ordinateur (pas de réalité augmentée, pointeur principal non tactile), le bouton
+  « Voir chez moi » est affiché et ouvre une fenêtre avec un QR code et le lien. Au premier clic, `options.share()`
+  envoie l'image de l'impression au serveur ; le QR code (qrcode-generator 1.4.4, jsDelivr, chargé à ce moment) porte
+  l'adresse de la page du téléphone. Échap ferme d'abord le QR code. La question « ce navigateur sait-il la RA ? »
+  est bornée à 3 s (certains navigateurs n'y répondent jamais, le bouton ne venait pas).
+- `controllers/front/ar.php` (nouveau) : `POST action=share` (jeton du visiteur de `mm_custom`, image en data URL,
+  taille du tapis, titres) décode l'image, la réencode en JPEG (GD) dans `var/mm_custom_sixten_ar/` du site et rend
+  l'adresse `…/module/mm_custom_sixten/ar?k=<identifiant>` ; 48 h, 300 partages au plus, 6 Mo et 4 096 px au plus.
+  `GET k=…` : la page du téléphone ; `&img=1` : l'image. Lien expiré : message.
+- `views/templates/front/ar.tpl` (nouveau) : la page du téléphone ouvre la même vue 3D (`viewer3d.js`), avec
+  « Voir chez moi » si le téléphone sait poser le tapis au sol.
+- `views/js/layout.js` : `shareArt()` (impression en JPEG, 3 000 px de large au plus). `mm_custom_sixten.php` : adresse
+  `ar`, `jsTranslations()` publique, chaînes du QR code ; traductions (5 langues) ; `site.css` : fenêtre et page.
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic) : QR code et lien sur ordinateur, page du
+  téléphone en 390 × 844 avec la vue 3D, ses titres et l'image (340 Ko), lien inconnu = message d'expiration, aucune
+  erreur dans la console. Pas vérifié : un vrai téléphone (lecture du QR code, pose en RA sur iPhone et Android). Sur
+  les sites protégés (dev, new avant la bascule), le téléphone doit passer la protection (IP autorisée ou identifiant).
+
 ### Téléphone (Mathieu) : « Réinitialiser le design » demande confirmation
 
 - `views/js/layout.js` : sous 992 px (mise en page téléphone), le bouton « Réinitialiser le design » ouvre d'abord une
