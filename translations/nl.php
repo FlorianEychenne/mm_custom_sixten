@@ -110,7 +110,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_00700cf9af89497c3eb5903
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_526d688f37a86d3c3f27d0c5016eb71d'] = 'Herstellen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7657c21ae7d51e194921ff9e52de3df5'] = 'Thuis bekijken met je telefoon';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8c0425dc7a48f337af9353728186b4c1'] = 'Scan deze code met je telefoon om de mat op ware grootte op je vloer te leggen. De link werkt 48 uur.';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_37d381828783e2de00e4d4f37f9a1dc0'] = 'Link openen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_cf1516cabe51c03349a7abe7da93b731'] = 'De code kon niet worden gemaakt. Probeer het zo opnieuw.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_42ded648c677e9cd89c0a3e98971c37f'] = 'Deze link is verlopen. Open de 3D-weergave opnieuw op je computer voor een nieuwe code.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_02dd4f466a8760c200c07557c244fa69'] = 'Je mat bij jou thuis';

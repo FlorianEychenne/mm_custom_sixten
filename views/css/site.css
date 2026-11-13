@@ -817,8 +817,6 @@ body#module-mm_custom-customModule .sx-reset .mmc-exit__title{padding:0 2.75rem}
 .sx3d-qr__code{display:grid;place-items:center;width:13.5rem;height:13.5rem;color:#6b6b6b;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 .sx3d-qr__code svg{display:block;width:100%;height:100%}
 .sx3d-qr__text{margin:0;font-size:.8125rem;line-height:1.45;color:#333}
-.sx3d-qr__link{font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#000;text-decoration:underline;text-underline-offset:.3em}
-.sx3d-qr__link[hidden]{display:none}
 .sx3d-share{display:grid;justify-items:start;gap:.75rem;max-width:32rem;margin:2rem auto;padding:0 1rem}
 .sx3d-share__eyebrow{margin:0;font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
 .sx3d-share__title{margin:0;font-size:1.5rem;font-weight:900;text-transform:uppercase}

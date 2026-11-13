@@ -6,6 +6,11 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Vue 3D (Mathieu) : plus de lien « Ouvrir le lien » sous le QR code
+
+- `views/js/viewer3d.js`, `site.css` : la fenêtre du QR code ne montre plus que le titre, le code et le texte. Chaîne
+  `Open the link` retirée (`mm_custom_sixten.php`, 5 langues). Vérifié au navigateur (Honda 95x200 Classic).
+
 ### Téléphone (Mathieu) : pas de mention sur les couleurs imprimées
 
 - `views/css/site.css` : sous 992 px, la mention « Les couleurs imprimées sur mesure peuvent légèrement varier… » n'est

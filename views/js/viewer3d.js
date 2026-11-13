@@ -395,7 +395,6 @@ export async function open(options) {
     const qrTitle = el('p', 'sx3d-qr__title')
     const qrCode = el('div', 'sx3d-qr__code')
     const qrText = el('p', 'sx3d-qr__text')
-    const qrLink = el('a', 'sx3d-qr__link')
 
     qr.hidden = true
     qr.setAttribute('role', 'dialog')
@@ -404,10 +403,7 @@ export async function open(options) {
     qrClose.setAttribute('aria-label', t('close', 'Close'))
     qrTitle.textContent = t('arQrTitle', 'See it at home with your phone')
     qrText.textContent = t('arQrText', 'Scan this code with your phone to place the mat on your floor, in real size. The link works for 48 hours.')
-    qrLink.target = '_blank'
-    qrLink.rel = 'noopener'
-    qrLink.textContent = t('arQrLink', 'Open the link')
-    qrCard.append(qrClose, qrTitle, qrCode, qrText, qrLink)
+    qrCard.append(qrClose, qrTitle, qrCode, qrText)
     qr.appendChild(qrCard)
 
     // Interface pendant la session WebXR (dom-overlay) : message en haut, boutons en bas
@@ -843,7 +839,6 @@ export async function open(options) {
         qrCode.replaceChildren()
         qrCode.classList.add('is-busy')
         qrCode.textContent = t('arPreparing', 'Preparing…')
-        qrLink.hidden = true
 
         try {
             const [url, lib] = await Promise.all([options.share(), import('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/+esm')])
@@ -854,8 +849,6 @@ export async function open(options) {
             code.make()
             shareUrl = url
             qrCode.innerHTML = code.createSvgTag({ cellSize: 6, margin: 2, scalable: true })
-            qrLink.href = url
-            qrLink.hidden = false
         } catch (e) {
             console.error('mm_custom_sixten: QR', e)
             qrCode.textContent = t('arQrFailed', 'The code could not be created. Try again in a moment.')

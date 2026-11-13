@@ -110,7 +110,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_00700cf9af89497c3eb5903
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_526d688f37a86d3c3f27d0c5016eb71d'] = 'Zurücksetzen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7657c21ae7d51e194921ff9e52de3df5'] = 'Mit dem Handy bei mir ansehen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8c0425dc7a48f337af9353728186b4c1'] = 'Scannen Sie diesen Code mit Ihrem Handy, um die Matte in Originalgröße auf Ihren Boden zu legen. Der Link ist 48 Stunden gültig.';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_37d381828783e2de00e4d4f37f9a1dc0'] = 'Link öffnen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_cf1516cabe51c03349a7abe7da93b731'] = 'Der Code konnte nicht erstellt werden. Versuchen Sie es gleich noch einmal.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_42ded648c677e9cd89c0a3e98971c37f'] = 'Dieser Link ist abgelaufen. Öffnen Sie die 3D-Ansicht auf Ihrem Computer erneut, um einen neuen Code zu erhalten.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_02dd4f466a8760c200c07557c244fa69'] = 'Ihre Matte bei Ihnen';

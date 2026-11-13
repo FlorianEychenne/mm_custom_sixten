@@ -110,7 +110,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_00700cf9af89497c3eb5903
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_526d688f37a86d3c3f27d0c5016eb71d'] = 'Restablecer';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7657c21ae7d51e194921ff9e52de3df5'] = 'Verlo en casa con el móvil';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8c0425dc7a48f337af9353728186b4c1'] = 'Escanee este código con su móvil para colocar la alfombra en su suelo, a tamaño real. El enlace funciona 48 horas.';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_37d381828783e2de00e4d4f37f9a1dc0'] = 'Abrir el enlace';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_cf1516cabe51c03349a7abe7da93b731'] = 'No se pudo crear el código. Inténtelo de nuevo en un momento.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_42ded648c677e9cd89c0a3e98971c37f'] = 'Este enlace ha caducado. Vuelva a abrir la vista 3D en su ordenador para obtener un código nuevo.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_02dd4f466a8760c200c07557c244fa69'] = 'Su alfombra en casa';

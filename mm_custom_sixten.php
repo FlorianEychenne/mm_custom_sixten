@@ -179,7 +179,6 @@ class Mm_custom_sixten extends Module
             'arFailed' => $this->l('Could not start the AR camera on this device.'),
             'arQrTitle' => $this->l('See it at home with your phone'),
             'arQrText' => $this->l('Scan this code with your phone to place the mat on your floor, in real size. The link works for 48 hours.'),
-            'arQrLink' => $this->l('Open the link'),
             'arQrFailed' => $this->l('The code could not be created. Try again in a moment.'),
             'printNote' => $this->l('Custom printed colors may vary slightly from those shown on screen, depending on your display and the printing process.'),
             'switchTitle' => $this->l('Change option?'),
