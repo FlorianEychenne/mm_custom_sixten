@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Bibliothèque de logos (Mathieu) : bouton fermer, recherche sur téléphone, rangées
+
+- `views/css/site.css` seulement (bloc « Bibliothèque de logos » en fin de fichier). Retours de Mathieu après essai sur
+  iPhone.
+- Bouton fermer : c'était un rectangle blanc posé sous la recherche, croix blanche sur fond blanc, sur téléphone comme
+  sur ordinateur (une ancienne règle `#modal-logos-library-content #close-logos-library-modal`, plus précise,
+  l'emportait sur la règle commune des boutons fermer). Il passe dans le coin haut droit de la fenêtre, noir, 44 px.
+- Peu de résultats : les rangées de logos ne s'étirent plus sur toute la hauteur (`align-content:start`), la fenêtre
+  ne semble plus changer de forme pendant la recherche.
+- Téléphone (sous 992 px) : la recherche prend toute la largeur et s'écrit en 16 px. En dessous de 16 px, Safari
+  agrandit toute la page quand on touche un champ.
+- Vérifié sans tête en 390 × 844, 360 × 640 et 1440 × 900. Non vérifié sur vrai téléphone.
+
 ### Téléphone (Mathieu) : zoom de zone, bouton « tapis entier », en-tête masqué en édition, panier gardé
 
 - Sous 992 px seulement ; rien ne change sur ordinateur. Retours de Mathieu après essai sur iPhone.

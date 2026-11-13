@@ -1036,3 +1036,17 @@ body#module-mm_custom-customModule .sx-more,body#module-mm_custom-customModule .
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open .sx-more__label,body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>.sx-toggle span{display:inline}
   body#module-mm_custom-customModule .sx-stage-hint.sx-has-more.is-open>:not(.sx-hist--undo):not(.sx-more) svg{flex:none}
 }
+
+/* ---------- Bibliothèque de logos (Mathieu, 13/11). Le bouton fermer restait un rectangle blanc posé sous la recherche (croix blanche sur fond blanc : une
+   ancienne règle, plus précise, l'emportait sur celle des boutons fermer) : il passe dans le coin haut droit de la fenêtre, noir comme les autres. Avec peu de
+   résultats, les rangées de logos ne s'étirent plus sur toute la hauteur. Téléphone : la recherche prend la largeur et s'écrit en 16 px (en dessous, Safari
+   agrandit toute la page quand on touche le champ) ---------- */
+body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal{position:absolute;z-index:2;top:0;right:0;width:2.75rem;height:2.75rem;box-shadow:none;background:#000;color:#fff}
+body#module-mm_custom-customModule #modal-logos-library-content #close-logos-library-modal:is(:hover,:focus-visible){background:var(--sx-red,#E4032E);color:#fff}
+body#module-mm_custom-customModule #modal-logos-library-content .logos-block{align-content:start}
+body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__head{padding-right:1.5rem}
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__head{padding-right:0}
+  body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__title{padding-right:2.25rem}
+  body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__search{width:100%;font-size:1rem;letter-spacing:0}
+}
