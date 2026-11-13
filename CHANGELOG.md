@@ -6,6 +6,16 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : en-tête sur deux lignes, boutons en pictogrammes
+
+- `views/css/site.css` (sous 992 px) : l'en-tête passe de trois lignes à deux (84 px au lieu de 128 en 390 × 844).
+  Ligne 1 : S, titre, sauvegarder (disquette), ajouter au panier (panier, rouge), fermer. Ligne 2 : Taille, Design
+  (28 px de haut au lieu de 30), prix (16 px au lieu de 22). Le délai de fabrication n'est plus affiché. Les libellés
+  « Sauvegarder » et « Ajouter au panier » restent dans la page pour les lecteurs d'écran, seuls les pictogrammes sont
+  visibles. Rien ne change sur ordinateur.
+- Vérifié au navigateur en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900 (Honda 95x200 Classic) : en-tête, titre
+  entier, « Sauvegarder » ouvre toujours la fenêtre de connexion ; ordinateur inchangé.
+
 ### Vue 3D (Mathieu) : plus de lien « Ouvrir le lien » sous le QR code
 
 - `views/js/viewer3d.js`, `site.css` : la fenêtre du QR code ne montre plus que le titre, le code et le texte. Chaîne

@@ -825,3 +825,25 @@ body#module-mm_custom-customModule .sx-reset .mmc-exit__title{padding:0 2.75rem}
 .sx3d-share__open:disabled{opacity:.6}
 /* téléphone : pas de mention sur les couleurs imprimées sous la liste des couleurs (le volet est court) */
 @media (max-width:991.98px){body#module-mm_custom-customModule .module-container .tools .sx-note{display:none}}
+
+/* ---------- Téléphone (< 992 px) : en-tête sur deux lignes au lieu de trois. Ligne 1 : S, titre, sauvegarder (disquette), ajouter au
+   panier (panier), fermer. Ligne 2 : Taille, Design, prix. Le délai de fabrication n'est pas affiché. Les libellés des deux boutons
+   restent dans la page (lecteurs d'écran), seuls leurs pictogrammes sont visibles. ---------- */
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule {--mm-header-h:5.25rem}
+  body#module-mm_custom-customModule .module-top-bar{grid-template-columns:auto minmax(0,1fr) auto auto auto;grid-template-rows:auto auto;column-gap:.375rem;row-gap:.5rem}
+  body#module-mm_custom-customModule .sx-config-logo{margin-right:.25rem}
+  body#module-mm_custom-customModule .module-footer,body#module-mm_custom-customModule .module-footer .add-to-shopping-cart{display:contents}
+  body#module-mm_custom-customModule .sx-lead{display:none}
+  body#module-mm_custom-customModule .sx-actions .save-custom{grid-column:3;grid-row:1}
+  body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{grid-column:4;grid-row:1}
+  body#module-mm_custom-customModule .sx-config-close{grid-column:5;grid-row:1}
+  body#module-mm_custom-customModule .sx-actions .save-custom,body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{width:2rem;min-width:0;height:2rem;min-height:0;padding:0;font-size:0;letter-spacing:0;overflow:hidden;clip-path:none}
+  body#module-mm_custom-customModule .sx-actions .save-custom::before,body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart::before{content:"";flex:none;width:1.125rem;height:1.125rem;background:currentColor;-webkit-mask:var(--sx-icon) center/contain no-repeat;mask:var(--sx-icon) center/contain no-repeat}
+  body#module-mm_custom-customModule .sx-actions .save-custom{--sx-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h11l3 3v15H5z'/%3E%3Cpath d='M8 3v5h7V3M8 21v-7h8v7'/%3E%3C/svg%3E")}
+  body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{--sx-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4h2.2l2.3 11h10l2-8H6.3'/%3E%3Ccircle cx='9.5' cy='19' r='1.4'/%3E%3Ccircle cx='16.5' cy='19' r='1.4'/%3E%3C/svg%3E")}
+  body#module-mm_custom-customModule .module-top-bar .module-title .module-attributes{grid-column:1/3;grid-row:2;min-width:0}
+  body#module-mm_custom-customModule .sx-variant__select{height:1.75rem}
+  body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .price{grid-column:3/-1;grid-row:2;justify-self:end;align-self:center;white-space:nowrap}
+  body#module-mm_custom-customModule .module-footer .add-to-shopping-cart p.price{font-size:1rem!important}
+}
