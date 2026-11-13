@@ -623,7 +623,39 @@
             }
 
             undoButton.addEventListener('click', function () { MmCustom.history.undo() })
-            resetButton.addEventListener('click', function () { MmCustom.history.reset() }) // can be undone
+            // On a phone (layout under 992 px) a window says first that the design is going back to its start; on a computer
+            // the reset is immediate (it can be undone)
+            const phone = window.matchMedia('(max-width: 991.98px)')
+            let resetModal = null
+
+            resetButton.addEventListener('click', function () {
+                if (!phone.matches) {
+                    MmCustom.history.reset()
+
+                    return
+                }
+
+                if (!resetModal) {
+                    resetModal = document.createElement('div')
+                    resetModal.className = 'mm-modal-overlay mmc-exit sx-switch sx-reset'
+                    resetModal.setAttribute('role', 'dialog')
+                    resetModal.setAttribute('aria-modal', 'true')
+                    resetModal.innerHTML = '<div class="mm-modal"><button type="button" class="save-auth-close" aria-label="' + esc(t('close', 'Close')) + '">&times;</button>'
+                        + '<p class="mmc-exit__title">' + esc(t('resetTitle', 'Reset the design?')) + '</p>'
+                        + '<p class="save-success-text">' + esc(t('resetText', 'All your changes will be removed: the mat goes back to the design you started from.')) + '</p>'
+                        + '<div class="save-success-actions"><button type="button" class="mm-btn sx-reset__go">' + esc(t('resetGo', 'Reset')) + '</button>'
+                        + '<button type="button" class="mm-btn-alt sx-reset__stay">' + esc(t('keepEditing', 'Keep editing')) + '</button></div></div>'
+                    page.appendChild(resetModal)
+                    closableModal(resetModal)
+                    resetModal.querySelector('.sx-reset__stay').addEventListener('click', function () { closeModal(resetModal) })
+                    resetModal.querySelector('.sx-reset__go').addEventListener('click', function () {
+                        closeModal(resetModal)
+                        MmCustom.history.reset()
+                    })
+                }
+
+                openModal(resetModal)
+            })
             MmCustom.on('history', paintHistory)
             paintHistory()
         } else {

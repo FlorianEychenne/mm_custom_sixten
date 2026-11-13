@@ -805,3 +805,4 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-foot:not(:h
 /* Textes (2026-11-13) : pas d'alignement gauche / centre / droite, le texte se déplace : la barre du texte reste vide */
 body#module-mm_custom-customModule .sx-text-bar{display:none!important}
 body#module-mm_custom-customModule .module-container .tools .colors-section[hidden]{display:none}
+body#module-mm_custom-customModule .sx-reset .mmc-exit__title{padding:0 2.75rem}

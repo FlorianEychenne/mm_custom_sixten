@@ -106,3 +106,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5bc638072849069506917d6
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_4d70254b3a8e2bc38b6147fa6ee813be'] = 'Bibliothek';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_630f1e08a8ca05e1d233e3c9a270c1e0'] = 'Logo hochladen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9cf69763de83f9db7f4a87c51fe6ae23'] = 'Trends';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_117a49d150569f248caf515a848297ed'] = 'Design zurücksetzen?';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_00700cf9af89497c3eb5903c77ffa790'] = 'Alle Ihre Änderungen werden gelöscht: Die Matte kehrt zum Ausgangsdesign zurück.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_526d688f37a86d3c3f27d0c5016eb71d'] = 'Zurücksetzen';

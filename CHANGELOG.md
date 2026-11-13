@@ -6,6 +6,18 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : « Réinitialiser le design » demande confirmation
+
+- `views/js/layout.js` : sous 992 px (mise en page téléphone), le bouton « Réinitialiser le design » ouvre d'abord une
+  fenêtre « Réinitialiser le design ? » qui prévient que toutes les modifications seront effacées, avec « Réinitialiser »
+  et « Continuer à modifier » (croix, Échap et clic à côté ferment aussi). Sur ordinateur, la réinitialisation reste
+  immédiate (elle s'annule par « Annuler »). Fenêtre aux classes du module, comme celle du changement d'option.
+- `mm_custom_sixten.php`, traductions : `Reset the design?`, le texte de la fenêtre et `Reset` (5 langues).
+  `site.css` : le titre de la fenêtre laisse la place de la croix.
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic) : en 390 × 844, la fenêtre s'ouvre sans rien
+  changer, « Continuer à modifier » la ferme et garde le design, « Réinitialiser » revient au départ (annulable) ; en
+  1440 × 900, pas de fenêtre. Aucune erreur dans la console.
+
 ### Couleurs (Mathieu) : noir et blanc en tête de la liste « Tendances »
 
 - `views/js/layout.js` : le noir puis le blanc sont les deux premières pastilles de la liste (outil Couleurs et couleur
