@@ -6,6 +6,13 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : de l'air au-dessus et au-dessous du tapis
+
+- `views/css/site.css` (sous 992 px) : la scène (`.template`) a 1 rem de marge intérieure en haut et en bas. Le tapis
+  tourné, qui remplit la boîte de contenu de la scène (`ui/zoom.js` de `mm_custom`), ne touche plus l'en-tête ni les
+  onglets : 16 px de chaque côté, volet fermé comme ouvert. Ordinateur inchangé.
+- Vérifié au navigateur en 390 × 844 et 360 × 640 (Honda 95x200 Classic), volet fermé et ouvert, et en 1440 × 900.
+
 ### Téléphone (Mathieu) : croix fine pour le bouton fermer
 
 - `views/css/site.css` (sous 992 px) : le bouton fermer de l'en-tête n'affiche plus le caractère « × » (épais, mal

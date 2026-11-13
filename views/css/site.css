@@ -856,3 +856,6 @@ body#module-mm_custom-customModule .sx-cart__short{display:none}
   body#module-mm_custom-customModule .sx-actions .save-custom{--sx-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3h11l3 3v15H5z'/%3E%3Cpath d='M8 3v5h7V3M8 21v-7h8v7'/%3E%3C/svg%3E")}
   body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{--sx-icon:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4h2.2l2.3 11h10l2-8H6.3'/%3E%3Ccircle cx='9.5' cy='19' r='1.4'/%3E%3Ccircle cx='16.5' cy='19' r='1.4'/%3E%3C/svg%3E")}
 }
+
+/* téléphone : un peu d'air au-dessus et au-dessous du tapis (la vue entière du tapis tourné remplit la boîte de contenu de la scène, ui/zoom.js) */
+@media (max-width:991.98px){body#module-mm_custom-customModule .module-container .template{padding:1rem 0;box-sizing:border-box}}
