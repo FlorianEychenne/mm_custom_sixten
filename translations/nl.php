@@ -129,3 +129,5 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_91412465ea9169dfd901dd5
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_b9cd538a753713464d2ea17d7e975041'] = 'Meer hulpmiddelen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_be53a0541a6d36f6ecb879fa2c584b08'] = 'Afbeelding';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_c8c0125a959d9d90e95c91341e68f0a1'] = 'Instagram-story';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f3e4e18a859052cf4478ddefc5edbe68'] = 'Hele mat';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9368c480af98b3858c47e24ce00f1b3d'] = 'Inzoomen op de selectie';

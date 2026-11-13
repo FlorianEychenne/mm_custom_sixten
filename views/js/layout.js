@@ -1981,7 +1981,9 @@
         //    the bottom, the mat keeps what is left: visualViewport); the fonts or the swatches in one row under the mat;
         //  - logos: four tools (library, file, position, remove), which press the buttons of the editor.
         // « Position » opens the three wheels (mountAdjust). While the panel shows the texts or the logos, the mat zooms on
-        // the chosen one and follows it under the wheels; it shows the whole mat for the colours and when the panel closes.
+        // the zone of the chosen one (twice the whole mat at most) and follows it under the wheels; it shows the whole mat
+        // for the colours and when the panel closes. One button on the stage goes from the zone to the whole mat and
+        // back, and remembers the choice: once the whole mat is asked for, a selection no longer zooms.
         ;(function mountPhonePanels() {
             const phone = window.matchMedia('(max-width: 991.98px)')
             const still = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -1999,8 +2001,12 @@
                 upload: SVG('M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2'),
                 remove: SVG('M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3'),
                 ok: SVG('M5 12.5l4.5 4.5L19 7.5'),
+                whole: SVG('M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'),
+                zone: SVG('M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4.9-4.9M10.5 8v5M8 10.5h5'),
+                cart: SVG('M3 4h2.5l2.2 10.5h9.6L19.5 7H7M9.5 19h.01M16.5 19h.01'),
             }
-            const ZOOM_MAX = 4 // times the whole mat, on the chosen text or logo
+            const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
+            const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
             const textKind = KINDS.find(function (k) { return k.key === 'text' }) || null
             const logoKind = KINDS.find(function (k) { return k.key === 'logo' }) || null
             const field = textArea ? textArea.querySelector('.sx-textfield textarea') || textArea.querySelector('.mmc-text-editor textarea') : null
@@ -2105,6 +2111,22 @@
             ok.addEventListener('click', function () { leave() })
             container.appendChild(ok)
 
+            // The header goes away while a panel is open: the cart stays, at the right of the tabs (it presses the
+            // button of the header)
+            const cartButton = document.getElementById('add-to-cart')
+
+            if (cartButton) {
+                const cart = document.createElement('button')
+
+                cart.type = 'button'
+                cart.className = 'sx-cartdock'
+                cart.innerHTML = ART.cart
+                cart.title = (cartButton.querySelector('.sx-cart__long') || cartButton).textContent.trim()
+                cart.setAttribute('aria-label', cart.title)
+                cart.addEventListener('click', function () { cartButton.click() })
+                container.appendChild(cart)
+            }
+
             function paintChips(kind, zones) {
                 const strip = strips[kind.key]
 
@@ -2203,9 +2225,10 @@
                 if (b) list.scrollTo({ left: Math.max(0, b.offsetLeft - (list.clientWidth - b.offsetWidth) / 2), behavior: still.matches ? 'auto' : 'smooth' })
             }
 
-            /* zoom on the chosen text or logo */
+            /* zoom on the zone of the chosen text or logo */
+            let zone = true // the view goes on the chosen element; false once the customer asked for the whole mat
             let zoomed = false // the view was set here: it goes back to the whole mat when the panel leaves the texts and the logos
-            let settle = 0
+            let gliding = 0
 
             // The element the view follows: the chosen text or logo, while the panel shows its kind (tools and wheels too)
             const wanted = function () {
@@ -2216,54 +2239,99 @@
                 return el && el.isConnected ? el : null
             }
 
-            // Zoom and move of the stage that put the element in the middle of the view, large enough to be read. Worked
-            // out from one measure, with the transition off: the stage turns and scales around its centre, moved by
-            // state.x, y.
+            // A move of the stage kept in range for a zoom: as the engine does (the zoomed mat fills the view), but its
+            // edge may come inside the view by EDGE, so that a text or a logo of the border is not left under the buttons
+            // laid on the stage. A finger on the mat or a pinch brings the engine's own range back.
+            function inRange(zoom, x, y) {
+                const stage = MmCustom.stage.element()
+                const clip = stage ? stage.parentElement : null
+                const mat = MmCustom.svg.root()
+
+                if (!clip || !mat) return { x: x, y: y }
+
+                const matStyle = window.getComputedStyle(mat)
+                const clipStyle = window.getComputedStyle(clip)
+                const turned = MmCustom.stage.state().rotation % 180 !== 0
+                const w = parseFloat(matStyle.width) || stage.offsetWidth
+                const h = parseFloat(matStyle.height) || stage.offsetHeight
+                const vw = clip.clientWidth - parseFloat(clipStyle.paddingLeft) - parseFloat(clipStyle.paddingRight)
+                const vh = clip.clientHeight - parseFloat(clipStyle.paddingTop) - parseFloat(clipStyle.paddingBottom)
+                const whole = zoom <= MmCustom.stage.state().base * 1.02 // the whole mat does not move
+                const limitX = whole ? 0 : Math.max(0, ((turned ? h : w) * zoom - vw) / 2) + EDGE
+                const limitY = whole ? 0 : Math.max(0, ((turned ? w : h) * zoom - vh) / 2) + EDGE
+
+                return { x: Math.max(-limitX, Math.min(limitX, x)), y: Math.max(-limitY, Math.min(limitY, y)) }
+            }
+
+            // Takes the stage to a zoom and a move, in a few frames or at once. Each frame goes through the engine
+            // (zoomTo, panBy), as a pinch does: a CSS transition of the transform leaves Safari with a stale, blurred
+            // picture of the mat until the next gesture.
+            function glide(to, animate) {
+                window.cancelAnimationFrame(gliding)
+
+                const end = inRange(to.zoom, to.x, to.y)
+
+                to = { zoom: to.zoom, x: end.x, y: end.y }
+
+                const from = MmCustom.stage.state()
+                const start = window.performance.now()
+                const time = animate && !still.matches ? 220 : 0
+                const step = function (now) {
+                    const t01 = time ? Math.min(1, (now - start) / time) : 1
+                    const k = 1 - Math.pow(1 - t01, 3)
+
+                    MmCustom.stage.zoomTo(from.zoom + (to.zoom - from.zoom) * k)
+
+                    const s = MmCustom.stage.state()
+
+                    MmCustom.stage.panBy(from.x + (to.x - from.x) * k - s.x, from.y + (to.y - from.y) * k - s.y)
+
+                    if (t01 < 1) gliding = window.requestAnimationFrame(step)
+                }
+
+                step(start)
+            }
+
+            // Zoom and move of the stage that put the element in the middle of the view with its surroundings. Worked out
+            // from one measure: the stage turns and scales around its centre, moved by state.x, y.
             function focus(animate) {
                 const el = wanted()
                 const stage = MmCustom.stage.element()
                 const clip = stage ? stage.parentElement : null
 
-                if (!el || !clip) return
-
-                window.clearTimeout(settle)
-                stage.style.transition = 'none'
+                if (!zone || !el || !clip) return
 
                 const s = MmCustom.stage.state()
                 const r = el.getBoundingClientRect()
                 const v = clip.getBoundingClientRect()
                 const box = stage.getBoundingClientRect()
 
-                if (r.width + r.height > 0 && v.width > 0 && v.height > 0 && s.zoom > 0) {
-                    const cx = box.left + box.width / 2 - s.x
-                    const cy = box.top + box.height / 2 - s.y
-                    const ux = (r.left + r.width / 2 - cx - s.x) / s.zoom
-                    const uy = (r.top + r.height / 2 - cy - s.y) / s.zoom
-                    const fit = s.zoom * Math.min(0.62 * v.width / Math.max(1, r.width), 0.5 * v.height / Math.max(1, r.height))
-                    const zoom = Math.min(s.base * ZOOM_MAX, Math.max(s.base, fit))
-                    const x = v.left + v.width / 2 - cx - zoom * ux
-                    const y = v.top + v.height / 2 - cy - zoom * uy
+                if (!(r.width + r.height > 0 && v.width > 0 && v.height > 0 && s.zoom > 0)) return
 
-                    if (animate && !still.matches) stage.style.transition = 'transform .3s ease'
+                const cx = box.left + box.width / 2 - s.x
+                const cy = box.top + box.height / 2 - s.y
+                const ux = (r.left + r.width / 2 - cx - s.x) / s.zoom
+                const uy = (r.top + r.height / 2 - cy - s.y) / s.zoom
+                const fit = s.zoom * Math.min(0.45 * v.width / Math.max(1, r.width), 0.35 * v.height / Math.max(1, r.height))
+                const zoom = Math.min(s.base * ZOOM_MAX, Math.max(s.base, fit))
 
-                    MmCustom.stage.zoomTo(zoom)
-                    MmCustom.stage.panBy(x - s.x, y - s.y, true)
-                    zoomed = true
-                }
-
-                settle = window.setTimeout(function () { stage.style.transition = '' }, 400)
+                zoomed = true
+                glide({ zoom: zoom, x: v.left + v.width / 2 - cx - zoom * ux, y: v.top + v.height / 2 - cy - zoom * uy }, animate)
             }
 
             const unfocus = function () {
                 if (!zoomed) return
 
                 zoomed = false
+                window.cancelAnimationFrame(gliding)
                 MmCustom.stage.fit()
             }
 
             const refocus = function () {
                 if (wanted()) focus(true)
                 else unfocus()
+
+                paintView()
             }
 
             // Under the wheels: an element that nears the edge of the zoomed view brings the view with it
@@ -2272,8 +2340,6 @@
                 const clip = stage ? stage.parentElement : null
 
                 if (!zoomed || !clip || !el || !el.isConnected) return
-
-                stage.style.transition = 'none'
 
                 const r = el.getBoundingClientRect()
                 const v = clip.getBoundingClientRect()
@@ -2284,10 +2350,65 @@
                 const dx = ex < v.left + mx ? v.left + mx - ex : (ex > v.right - mx ? v.right - mx - ex : 0)
                 const dy = ey < v.top + my ? v.top + my - ey : (ey > v.bottom - my ? v.bottom - my - ey : 0)
 
-                if (dx || dy) MmCustom.stage.panBy(dx, dy, true)
+                if (dx || dy) {
+                    window.cancelAnimationFrame(gliding)
 
-                stage.style.transition = ''
+                    const s = MmCustom.stage.state()
+                    const to = inRange(s.zoom, s.x + dx, s.y + dy)
+
+                    MmCustom.stage.panBy(to.x - s.x, to.y - s.y)
+                }
             }
+
+            // One button on the stage: the whole mat when the view is closer (zone or pinch), the zone of the chosen text
+            // or logo when the mat is whole
+            const viewButton = document.createElement('button')
+            const closer = function () {
+                const s = MmCustom.stage.state()
+
+                return s.zoom > s.base * 1.02
+            }
+
+            viewButton.type = 'button'
+            viewButton.className = 'sx-zoneview'
+            viewButton.hidden = true
+            ;($('.sx-viewport', container) || container).appendChild(viewButton)
+
+            function paintView() {
+                const state = closer() ? 'whole' : 'zone'
+
+                viewButton.hidden = !phone.matches || (state === 'zone' && !wanted())
+
+                if (viewButton.dataset.state === state) return
+
+                viewButton.dataset.state = state
+                viewButton.innerHTML = ART[state]
+                viewButton.title = state === 'whole' ? t('viewWhole', 'Whole mat') : t('viewZone', 'Zoom on the selection')
+                viewButton.setAttribute('aria-label', viewButton.title)
+            }
+
+            viewButton.addEventListener('click', function () {
+                if (closer()) {
+                    zone = false
+                    zoomed = false
+
+                    const s = MmCustom.stage.state()
+
+                    glide({ zoom: s.base, x: 0, y: 0 }, true)
+                } else {
+                    zone = true
+                    focus(true)
+                }
+            })
+
+            // The zoom of the stage for the style sheet (the dashed frame keeps its size on the screen), and the button
+            const onZoom = function () {
+                body.style.setProperty('--sx-zoom', String(MmCustom.stage.state().zoom || 1))
+                paintView()
+            }
+
+            MmCustom.on('stage:zoom', onZoom)
+            onZoom()
 
             // The stage changes size (panel, tool, keyboard): the engine fits the turned mat again (ui/zoom.js, observer
             // made before this one), then the view goes back on the element. Made once the layout is mounted.
@@ -2299,6 +2420,8 @@
                 new ResizeObserver(function () {
                     if (wanted()) focus(false)
                     else unfocus()
+
+                    paintView()
                 }).observe(stage.parentElement)
             })
 
@@ -2399,10 +2522,12 @@
             ;['logo:placed', 'logo:removed'].forEach(function (name) { MmCustom.on(name, function () { twice(refocus) }) })
 
             const off = function () {
-                if (phone.matches) return
+                if (!phone.matches) {
+                    leave()
+                    unfocus()
+                }
 
-                leave()
-                unfocus()
+                paintView()
             }
 
             if (phone.addEventListener) phone.addEventListener('change', off)

@@ -893,9 +893,15 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
    (Couleurs), quatre outils .sx-ttools (Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
    même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place de l'en-tête, des onglets et du volet : champ en haut de
    l'écran pour le texte (le clavier couvre le bas), une rangée sous le tapis pour les polices et les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
-body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok{display:none}
+body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok,body#module-mm_custom-customModule .sx-zoneview,body#module-mm_custom-customModule .sx-cartdock{display:none}
 @media (max-width:991.98px){
   /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
+  /* volet ouvert : plus d'en-tête (titre, prix, taille, design), il revient quand on ferme le volet ; le panier reste, à droite des onglets (.sx-cartdock) */
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open{--mm-header-h:0rem}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-top-bar{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-container>.sx-steps{right:4rem}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool) .sx-cartdock{position:absolute;z-index:10;right:.75rem;bottom:.75rem;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open[data-sx-kind="logo"]:not(.sx-adjusting):not(.sx-ttool):has(.sx-logo-hint:not([hidden])){--sx-tpanel-h:9.5rem}
   body#module-mm_custom-customModule.sx-chips .sx-dock__head,
@@ -941,6 +947,16 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips .sx-ttools--logo button{font-size:.5625rem;letter-spacing:0}
   body#module-mm_custom-customModule.sx-chips .sx-ttools button:disabled{opacity:.35;cursor:default}
   body#module-mm_custom-customModule.sx-chips .sx-tchips__eye svg,body#module-mm_custom-customModule.sx-chips .sx-ttools svg,body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{flex:none;width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  /* scène : un seul bouton de vue en bas à droite (.sx-zoneview : tapis entier / zone du texte ou du logo choisi), à la place de la barre + % − (on zoome en
+     pinçant) ; la 3D et le quart de tour au-dessus de lui. Le cadre pointillé de la sélection garde sa taille à l'écran quel que soit le zoom (--sx-zoom) */
+  body#module-mm_custom-customModule.sx-chips .sx-zoomwrap .sx-zoom{display:none}
+  body#module-mm_custom-customModule.sx-chips .sx-zoomwrap{right:.75rem;align-items:flex-end}
+  body#module-mm_custom-customModule.sx-chips .sx-viewport:has(>.sx-zoneview:not([hidden])) .sx-zoomwrap{bottom:3.625rem}
+  body#module-mm_custom-customModule.sx-chips .sx-zoneview:not([hidden]){position:absolute;z-index:6;right:.75rem;bottom:.5rem;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-zoneview svg{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__frame{stroke-width:calc(1.5px / var(--sx-zoom,1));stroke-dasharray:calc(6px / var(--sx-zoom,1)) calc(4px / var(--sx-zoom,1))}
+  body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__stem{stroke-width:calc(1.5px / var(--sx-zoom,1))}
+  body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__corner,body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-handles__rotate,body#module-mm_custom-customModule.sx-chips .mmc-overlay .mmc-guide{stroke-width:calc(2px / var(--sx-zoom,1))}
   /* couleurs : les pastilles de couleur en une rangée qui défile, la roue reste à droite */
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){height:3.5rem}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}

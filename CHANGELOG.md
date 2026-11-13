@@ -6,6 +6,31 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : zoom de zone, bouton « tapis entier », en-tête masqué en édition, panier gardé
+
+- Sous 992 px seulement ; rien ne change sur ordinateur. Retours de Mathieu après essai sur iPhone.
+- Zoom moins fort : la scène montre la zone du texte ou du logo choisi, 2 fois la vue entière au plus (4 avant), l'objet
+  sur 45 % de la largeur ou 35 % de la hauteur au plus. Le bord du tapis zoomé peut rentrer de 72 px dans la vue
+  (`inRange`), pour qu'un objet de la bordure ne reste pas sous les boutons posés sur la scène.
+- Flou après le zoom corrigé : le zoom n'est plus animé par une transition CSS de la transformation (Safari gardait une
+  image périmée et floue du tapis jusqu'au geste suivant ; reproduit dans WebKit), mais image par image par le moteur
+  (`glide` : `MmCustom.stage.zoomTo` / `panBy` sur 220 ms), comme un pincement.
+- Bouton de vue `.sx-zoneview` en bas à droite de la scène (44 px) : « tapis entier » quand la vue est rapprochée
+  (zone ou pincement), « zoomer sur la sélection » quand le tapis est entier. Le choix est gardé : après « tapis
+  entier », choisir un autre texte ne zoome plus. Il reste visible sous les trois roues et dans les outils du texte. Il
+  remplace la barre + % − (`.sx-zoom`), cachée sur téléphone : on zoome en pinçant.
+- Cadre pointillé de la sélection : il grossissait avec le zoom de la scène (`vector-effect: non-scaling-stroke` ne
+  compense pas une transformation CSS). `--sx-zoom` (posé sur `body` à chaque `stage:zoom`) divise l'épaisseur et le
+  pointillé de `.mmc-handles__frame`, du trait, des poignées et des guides : ils gardent leur taille à l'écran. À
+  reprendre côté moteur si on le veut aussi sur ordinateur.
+- En-tête masqué tant qu'un volet est ouvert (`--mm-header-h:0`), il revient quand on ferme le volet. Le panier reste :
+  bouton rouge `.sx-cartdock` à droite des onglets, qui presse `#add-to-cart`.
+- `views/js/layout.js` (`mountPhonePanels`), `views/css/site.css` (bloc « volets en pastilles »),
+  `mm_custom_sixten.php` et `translations/*.php` : « Whole mat », « Zoom on the selection » (5 langues).
+- Vérifié sans tête en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900 (Chromium), et le zoom dans WebKit : zone, tapis
+  entier, retour au zoom, trois roues, panier (clic intercepté, aucun panier créé), console sans erreur. Non vérifié sur
+  vrai téléphone.
+
 ### Téléphone (Mathieu) : boutons de la scène allégés, « annuler » et un menu « … »
 
 - Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Des cinq boutons posés en haut à gauche
