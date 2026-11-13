@@ -6,6 +6,20 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : le champ de saisie d'un texte en bas, au-dessus du clavier
+
+- Sous 992 px seulement. Demande de Mathieu après essai sur iPhone : dans l'outil « Texte », le champ n'est plus en
+  haut de l'écran mais juste au-dessus du clavier, le tapis au-dessus de lui (comme sur la maquette).
+- `views/js/layout.js` (`mountPhonePanels`, `measure`) : la feuille de style reçoit la hauteur visible de l'écran
+  (`--sx-vvh`), l'endroit où elle commence (`--sx-vvt`, si le téléphone fait défiler la page pour montrer le champ) et
+  la hauteur du champ (`--sx-ttext-h`), relues à chaque `resize` et `scroll` de `visualViewport`. Avant que le clavier
+  soit monté, sa hauteur est inconnue : le champ attend à 55 % de l'écran, hors de portée de tout clavier, pour que le
+  téléphone n'ait pas de raison de faire défiler la page ; il descend sur le clavier dès que la partie visible a
+  changé, ou tout en bas de l'écran si aucun clavier n'est venu (0,6 s).
+- `views/css/site.css` : `body.sx-ttool--text` place le champ et la coche à `--sx-ttext-top`.
+- Vérifié sans tête en 390 × 844 avec une partie visible simulée (hauteur 500 px, puis page défilée de 120 px, champ
+  sur deux lignes). Le vrai clavier d'un iPhone n'est pas vérifié : c'est le point à contrôler en premier.
+
 ### Bibliothèque de logos (Mathieu) : bouton fermer, recherche sur téléphone, rangées
 
 - `views/css/site.css` seulement (bloc « Bibliothèque de logos » en fin de fichier). Retours de Mathieu après essai sur

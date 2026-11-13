@@ -891,8 +891,8 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
 /* ---------- Téléphone : volets en pastilles (Mathieu, 13/11). Sous 992 px, quand layout.js les a montés (body.sx-chips, mountPhonePanels) : plus d'en-tête de
    volet ni de liste ; une rangée de pastilles (.sx-tchips : une par zone, l'œil du texte ou du logo choisi à droite) et une rangée dessous : les couleurs
    (Couleurs), quatre outils .sx-ttools (Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
-   même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place de l'en-tête, des onglets et du volet : champ en haut de
-   l'écran pour le texte (le clavier couvre le bas), une rangée sous le tapis pour les polices et les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
+   même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place des onglets et du volet : champ juste au-dessus du
+   clavier pour le texte, une rangée sous le tapis pour les polices et les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
 body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok,body#module-mm_custom-customModule .sx-zoneview,body#module-mm_custom-customModule .sx-cartdock{display:none}
 @media (max-width:991.98px){
   /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
@@ -990,10 +990,11 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;right:0;bottom:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
   body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{width:1.5rem;height:1.5rem;stroke-width:2}
 
-  /* texte : le champ en haut de l'écran, le tapis dessous sur ce que le clavier laisse (--sx-vvh : hauteur visible, --sx-ttext-h : celle du champ) */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text{--mm-header-h:var(--sx-ttext-h,3.5rem);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .info{top:0;bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
-  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-ttool-ok:not([hidden]){top:0;bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
+  /* texte : le champ en bas de ce que le clavier laisse de l'écran, le tapis au-dessus (--sx-vvh : hauteur visible, --sx-vvt : où elle commence,
+     --sx-ttext-h : hauteur du champ ; layout.js les mesure) */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text{--sx-ttext-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem));--mm-header-h:var(--sx-vvt,0px);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .info{top:var(--sx-ttext-top);bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-ttool-ok:not([hidden]){top:var(--sx-ttext-top);bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
   body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .tools .sx-editor--text .mmc-text-editor{display:block;margin:0}
   body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-textfield__font{display:none}
 

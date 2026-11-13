@@ -1976,9 +1976,9 @@
         // Phone (layout under 992 px, body.sx-chips): the header of the panel, the list of the zones and their editor give
         // way to a strip of chips (one per zone; the eye of the chosen text or logo at its right) over one row:
         //  - colours: the swatches, the wheel at their right;
-        //  - texts: four tools (text, font, colour, position). The first three take the place of the header, the tabs and
-        //    the panel, with a tick to come back: the field at the top of the screen, over the mat (the keyboard covers
-        //    the bottom, the mat keeps what is left: visualViewport); the fonts or the swatches in one row under the mat;
+        //  - texts: four tools (text, font, colour, position). The first three take the place of the tabs and the panel,
+        //    with a tick to come back: the field just over the keyboard, the mat above it (visualViewport); the fonts or
+        //    the swatches in one row under the mat;
         //  - logos: four tools (library, file, position, remove), which press the buttons of the editor.
         // « Position » opens the three wheels (mountAdjust). While the panel shows the texts or the logos, the mat zooms on
         // the zone of the chosen one (twice the whole mat at most) and follows it under the wheels; it shows the whole mat
@@ -2429,13 +2429,21 @@
             let mode = ''
             const viewport = window.visualViewport
 
-            // Text tool: the height of the field (one to three lines) and what the keyboard leaves of the screen
-            const measure = function () {
+            // Text tool: the field sits at the bottom of what the keyboard leaves of the screen, the mat above it. The
+            // style sheet gets the visible height and where it starts (visualViewport: a phone that scrolls the page to
+            // show the field is followed), and the height of the field (one to three lines). Before the keyboard is up
+            // its height is unknown: the field waits at 55 % of the screen, clear of any keyboard, so that the phone has
+            // no reason to scroll; it comes down on the keyboard as soon as the visible part has resized, or to the bottom
+            // of the screen when no keyboard came (0.6 s).
+            let waiting = 0
+            const measure = function (early) {
                 if (mode !== 'text') return
 
-                body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
+                const full = viewport ? viewport.height : window.innerHeight
 
-                if (viewport) body.style.setProperty('--sx-vvh', Math.round(viewport.height) + 'px')
+                body.style.setProperty('--sx-vvh', Math.round(early === true ? full * 0.55 : full) + 'px')
+                body.style.setProperty('--sx-vvt', Math.round(viewport ? viewport.offsetTop : 0) + 'px')
+                body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
             }
 
             function enter(name) {
@@ -2448,12 +2456,14 @@
                 ok.hidden = false
 
                 if (name === 'text') {
+                    measure(true)
                     // In the tap itself: a phone only raises its keyboard for a focus asked by a gesture
                     field.focus({ preventScroll: true })
 
                     try { field.setSelectionRange(field.value.length, field.value.length) } catch (e) { /* not a text field */ }
 
-                    measure()
+                    window.clearTimeout(waiting)
+                    waiting = window.setTimeout(measure, 600)
                 }
 
                 // After this tap: the list closes on any click outside itself
@@ -2479,8 +2489,10 @@
 
                 mode = ''
                 body.classList.remove('sx-ttool', 'sx-ttool--' + was)
+                window.clearTimeout(waiting)
                 body.style.removeProperty('--sx-ttext-h')
                 body.style.removeProperty('--sx-vvh')
+                body.style.removeProperty('--sx-vvt')
                 ok.hidden = true
 
                 if (ui.colorPicker) ui.colorPicker.close()
@@ -2500,7 +2512,13 @@
                 })
             }
 
-            if (viewport) viewport.addEventListener('resize', measure)
+            if (viewport) {
+                viewport.addEventListener('resize', function () {
+                    window.clearTimeout(waiting)
+                    measure()
+                })
+                viewport.addEventListener('scroll', measure)
+            }
 
             document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && mode) leave() })
 
