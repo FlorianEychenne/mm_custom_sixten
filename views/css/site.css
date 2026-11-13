@@ -885,7 +885,7 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
   body#module-mm_custom-customModule .sx-adjust__val{flex:none;width:4.25rem;text-align:right;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:700;color:#000;white-space:nowrap;font-variant-numeric:tabular-nums}
   body#module-mm_custom-customModule .sx-adjust__btns{flex:none;display:grid;grid-template-rows:2fr 1fr;gap:.25rem;width:3.25rem}
   body#module-mm_custom-customModule .sx-adjust__btns button{display:grid;place-items:center;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
-  body#module-mm_custom-customModule .sx-adjust__btns .sx-adjust__ok{background:#000;color:#fff}
+  body#module-mm_custom-customModule .sx-adjust__btns .sx-adjust__ok{background:var(--sx-red,#E4032E);color:#fff;box-shadow:none}
 }
 
 /* ---------- Téléphone : volets en pastilles (Mathieu, 13/11). Sous 992 px, quand layout.js les a montés (body.sx-chips, mountPhonePanels) : plus d'en-tête de
@@ -960,20 +960,23 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   /* couleurs : un outil, la palette ; les couleurs ne s'affichent que dans cet outil */
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors>.colors-section{display:none}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-ttools--colors{grid-template-columns:minmax(0,1fr)}
-  /* logos : le rappel « logo plus grand que son emplacement » au-dessus des outils */
+  /* logos : le rappel « logo plus grand que son emplacement » au-dessus des outils, en libellé court (data-short, posé par layout.js) */
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo:not([hidden]){display:flex;flex-direction:column}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current{order:-1}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-foot{display:block}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint{width:100%;height:1.25rem;margin:0 0 .5rem;font-size:.625rem;line-height:1.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint{width:100%;height:1.25rem;margin:0 0 .5rem;font-size:0;line-height:1.25rem;white-space:nowrap;overflow:hidden}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint::after{content:attr(data-short);font-size:.625rem}
 
-  /* outil ouvert : ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée au bas de ce que le clavier laisse de l'écran (--sx-vvh : hauteur
+  /* outil ouvert : ni onglets, ni pastilles, et de la scène seulement « annuler » et le bouton de vue ; une rangée au bas de ce que le clavier laisse de l'écran (--sx-vvh : hauteur
      visible, --sx-vvt : où elle commence ; layout.js les mesure), la coche à sa droite, le tapis au-dessus */
   body#module-mm_custom-customModule.sx-chips.sx-ttool{--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--sx-ttool-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttool-h));--mm-header-h:var(--sx-vvt,0px);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttool-h))}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container>.sx-steps,
-  body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-stage-hint,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-zoomwrap,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-tchips,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-ttools{display:none}
+  /* « annuler » reste, seul, dans un outil comme sous les trois roues */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-stage-hint,body#module-mm_custom-customModule.sx-chips.sx-adjusting .sx-stage-hint{display:flex}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-stage-hint>:not(.sx-hist--undo),body#module-mm_custom-customModule.sx-chips.sx-adjusting .sx-stage-hint>:not(.sx-hist--undo){display:none}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .info{top:var(--sx-ttool-top);left:0;right:3.25rem;bottom:auto;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools{padding:0;overflow:hidden}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--text:not([hidden]),body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--colors,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--colors:not([hidden]){display:block}
@@ -1056,3 +1059,11 @@ body#module-mm_custom-customModule #modal-logos-library-content .mmc-lib__head{p
 @media (max-width:991.98px){
   body#module-mm_custom-customModule .module-top-bar select.sx-variant__select:not(.sx-variant__select--picker){font-size:1rem;letter-spacing:0}
 }
+
+/* ---------- Image vers la photothèque (Mathieu, 14/11). Sur iPhone et iPad, l'image du tapis et la story passent par la feuille de partage (layout.js,
+   saveImage). Quand le téléphone refuse de l'ouvrir parce que le toucher date trop (l'image a mis du temps à se faire), cette barre annonce que l'image
+   est prête : son bouton, un nouveau toucher, ouvre la feuille ---------- */
+body#module-mm_custom-customModule .sx-saveimg{position:fixed;z-index:1250;left:50%;bottom:calc(5rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:.625rem;box-sizing:border-box;max-width:calc(100vw - 1.5rem);padding:.375rem .375rem .375rem .875rem;background:#000;color:#fff;font-family:var(--mmx-font);font-size:.8125rem;font-weight:600;line-height:1.2;box-shadow:0 .5rem 1.5rem rgba(0,0,0,.3)}
+body#module-mm_custom-customModule .sx-saveimg span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+body#module-mm_custom-customModule .sx-saveimg button{flex:none;height:2.5rem;padding:0 .875rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.6875rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+body#module-mm_custom-customModule .sx-saveimg .sx-saveimg__close{width:2.5rem;padding:0;background:transparent;font-size:1.375rem;font-weight:400;letter-spacing:0}

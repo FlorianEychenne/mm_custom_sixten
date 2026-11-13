@@ -2007,6 +2007,10 @@
                 cart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></svg>',
             }
             const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
+            // Test (Mathieu, 14/11): while a text is edited, the stage is turned, a quarter turn at a time,
+            // so that it reads upright instead of lying on its side on a phone held upright. It goes back as it was with
+            // the whole mat. false puts the former behaviour back.
+            const FLAT_EDIT = true
             const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
             const textKind = KINDS.find(function (k) { return k.key === 'text' }) || null
             const logoKind = KINDS.find(function (k) { return k.key === 'logo' }) || null
@@ -2092,6 +2096,11 @@
                 position: $('.sx-adjust-btn', logoBlock),
                 remove: $('.sx-remove', logoBlock),
             } : null
+            // The reminder of a logo larger than its slot has a short name here (style sheet)
+            const tooLarge = logoBlock ? logoBlock.querySelector('.sx-logo-hint') : null
+
+            if (tooLarge) tooLarge.dataset.short = t('logoTooBigShort', 'Logo too large: fit it')
+
             const logoTools = logoKind && press && editors.logo ? toolRow('logo', [
                 ['library', press.library ? press.library.textContent.trim() : 'Library'], ['upload', t('toolUpload', 'Upload')],
                 ['position', t('toolPosition', 'Position')], ['remove', press.remove ? press.remove.textContent.trim() : 'Remove'],
@@ -2301,6 +2310,89 @@
                 step(start)
             }
 
+            /* the mat upright under the chosen text (test, FLAT_EDIT) */
+            let home = null // rotation of the stage before the first turn made here: it comes back with the whole mat
+
+            // Whole-mat zoom of the stage for a rotation, worked out as ui/zoom.js does (its own figure is not public):
+            // 1 for the flat mat, what fits the view for the mat turned a quarter turn
+            const baseFor = function (rotation) {
+                if (rotation % 180 === 0) return 1
+
+                const stage = MmCustom.stage.element()
+                const clip = stage ? stage.parentElement : null
+                const mat = MmCustom.svg.root()
+                const box = MmCustom.svg.viewBox()
+
+                if (!clip || !mat) return 0
+
+                const matStyle = window.getComputedStyle(mat)
+                const clipStyle = window.getComputedStyle(clip)
+                const w = parseFloat(matStyle.width)
+                const h = parseFloat(matStyle.height)
+                const ratio = box ? box.width / box.height : w / h
+                const drawnW = Math.min(w, h * ratio)
+                const drawnH = drawnW / ratio
+                const roomW = clip.clientWidth - parseFloat(clipStyle.paddingLeft) - parseFloat(clipStyle.paddingRight)
+                const roomH = clip.clientHeight - parseFloat(clipStyle.paddingTop) - parseFloat(clipStyle.paddingBottom)
+
+                return drawnW > 0 && drawnH > 0 ? Math.min(roomW / drawnH, roomH / drawnW) : 0
+            }
+
+            // Turns the stage (0, 90, 180, 270) and shows the whole mat; true when it turned
+            const turnTo = function (rotation) {
+                if (MmCustom.stage.state().rotation === rotation) return false
+
+                const base = baseFor(rotation)
+
+                if (!base) return false
+
+                window.cancelAnimationFrame(gliding)
+                MmCustom.stage.rotateTo(rotation)
+                MmCustom.stage.setBase(base)
+
+                const button = document.querySelector('.sx-toggle--rot')
+
+                if (button) button.setAttribute('aria-pressed', String(rotation !== 0))
+
+                return true
+            }
+
+            // The stage turned so that a text reads upright: its top edge, in the template, gives its angle. A logo keeps
+            // the stage as it was (the way a logo is laid in its slot cannot be read from the engine).
+            const orient = function (el) {
+                if (!FLAT_EDIT || !active) return
+
+                let corners = null
+
+                try {
+                    if (active.key === 'text') corners = MmCustom.texts.frame(el)
+                } catch (e) {
+                    corners = null // not drawn
+                }
+
+                if (!corners) {
+                    if (home) turnTo(home.rotation)
+
+                    return
+                }
+
+                const angle = Math.atan2(corners[1].y - corners[0].y, corners[1].x - corners[0].x) * 180 / Math.PI
+
+                if (!home) home = { rotation: MmCustom.stage.state().rotation, base: MmCustom.stage.state().base }
+
+                turnTo(((Math.round(-angle / 90) * 90) % 360 + 360) % 360)
+            }
+
+            const backHome = function () {
+                if (!home) return false
+
+                const turned = turnTo(home.rotation)
+
+                home = null
+
+                return turned
+            }
+
             // Zoom and move of the stage that put the element in the middle of the view with its surroundings. Worked out
             // from one measure: the stage turns and scales around its centre, moved by state.x, y.
             function focus(animate) {
@@ -2310,7 +2402,11 @@
 
                 if (!zone || !el || !clip) return
 
+                orient(el)
+
                 const s = MmCustom.stage.state()
+                // Turned upright, the flat mat is smaller than it was on its side: the zone keeps the size it had
+                const most = Math.max(s.base, home ? home.base : 0) * ZOOM_MAX
                 const r = el.getBoundingClientRect()
                 const v = clip.getBoundingClientRect()
                 const box = stage.getBoundingClientRect()
@@ -2322,18 +2418,21 @@
                 const ux = (r.left + r.width / 2 - cx - s.x) / s.zoom
                 const uy = (r.top + r.height / 2 - cy - s.y) / s.zoom
                 const fit = s.zoom * Math.min(0.45 * v.width / Math.max(1, r.width), 0.35 * v.height / Math.max(1, r.height))
-                const zoom = Math.min(s.base * ZOOM_MAX, Math.max(s.base, fit))
+                const zoom = Math.min(most, Math.max(s.base, fit))
 
                 zoomed = true
                 glide({ zoom: zoom, x: v.left + v.width / 2 - cx - zoom * ux, y: v.top + v.height / 2 - cy - zoom * uy }, animate)
             }
 
             const unfocus = function () {
+                const turned = backHome() // the whole mat, as it was before a text or a logo was edited
+
                 if (!zoomed) return
 
                 zoomed = false
                 window.cancelAnimationFrame(gliding)
-                MmCustom.stage.fit()
+
+                if (!turned) MmCustom.stage.fit()
             }
 
             const refocus = function () {
@@ -2401,9 +2500,11 @@
                     zone = false
                     zoomed = false
 
-                    const s = MmCustom.stage.state()
+                    if (!backHome()) {
+                        const s = MmCustom.stage.state()
 
-                    glide({ zoom: s.base, x: 0, y: 0 }, true)
+                        glide({ zoom: s.base, x: 0, y: 0 }, true)
+                    }
                 } else {
                     zone = true
                     focus(true)
@@ -2418,6 +2519,10 @@
 
             MmCustom.on('stage:zoom', onZoom)
             onZoom()
+            // The thumbnails of the template logos follow the mat
+            MmCustom.on('stage:rotate', function () {
+                if (strips.logo) strips.logo.list.classList.toggle('is-turned', MmCustom.stage.state().rotation % 180 === 90)
+            })
 
             // The stage changes size (panel, tool, keyboard): the engine fits the turned mat again (ui/zoom.js, observer
             // made before this one), then the view goes back on the element. Made once the layout is mounted.
@@ -2827,19 +2932,85 @@
         const shot = $('.sx-shot:not(.sx-shot--story)')
         const story = $('.sx-shot--story')
 
+        // Where an image goes. On an iPhone or an iPad a downloaded file lands in the Files app: the image is handed to the
+        // share sheet instead, which offers « Save Image » (the photo library), as the 3D view does (viewer3d.js).
+        // Elsewhere, and when a file cannot be shared, it is downloaded. The share sheet only opens from a gesture, and
+        // the image takes a moment to be made: when the tap is too old for the phone, a bar says the image is ready and
+        // its button, a fresh tap, opens the sheet.
+        const IOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+        let saveBar = null
+
+        function saveImage(blob, name) {
+            const download = function () {
+                const url = URL.createObjectURL(blob)
+                const link = document.createElement('a')
+
+                link.href = url
+                link.download = name
+                document.body.appendChild(link)
+                link.click()
+                link.remove()
+                window.setTimeout(function () { URL.revokeObjectURL(url) }, 4000)
+            }
+            let file = null
+
+            if (IOS && navigator.canShare && typeof File === 'function') {
+                try { file = new File([blob], name, { type: blob.type || 'image/png' }) } catch (e) { file = null }
+            }
+
+            if (!file || !navigator.canShare({ files: [file] })) {
+                download()
+
+                return
+            }
+
+            // Closed without a choice (AbortError): nothing to do; any other refusal: the file is downloaded
+            const share = function () {
+                return navigator.share({ files: [file] }).catch(function (error) { if (!error || error.name !== 'AbortError') download() })
+            }
+
+            navigator.share({ files: [file] }).catch(function (error) {
+                if (error && error.name === 'AbortError') return
+
+                if (!error || error.name !== 'NotAllowedError') {
+                    download()
+
+                    return
+                }
+
+                if (saveBar) saveBar.remove()
+
+                saveBar = document.createElement('div')
+                saveBar.className = 'sx-saveimg'
+                saveBar.setAttribute('role', 'status')
+                saveBar.innerHTML = '<span>' + esc(t('imageReady', 'Your image is ready')) + '</span>'
+                    + '<button type="button" class="sx-saveimg__go">' + esc(t('saveImage', 'Save the image')) + '</button>'
+                    + '<button type="button" class="sx-saveimg__close" aria-label="' + esc(t('adjustBack', 'Cancel')) + '">&times;</button>'
+
+                const bar = saveBar
+                const close = function () { bar.remove(); if (saveBar === bar) saveBar = null }
+
+                bar.querySelector('.sx-saveimg__go').addEventListener('click', function () { close(); share() })
+                bar.querySelector('.sx-saveimg__close').addEventListener('click', close)
+                document.body.appendChild(bar)
+                window.setTimeout(close, 20000)
+            })
+        }
+
         if (MmCustom.export) {
-            shotButton(shot, shot.title, function () { return MmCustom.export.download({ title: title() }) })
+            shotButton(shot, shot.title, function () {
+                if (!IOS) return MmCustom.export.download({ title: title() })
+
+                return MmCustom.export.png({ title: title() }).then(function (blob) {
+                    const name = MmCustom.export.fileName(title())
+
+                    saveImage(blob, name)
+                    MmCustom.emit('exported', { fileName: name })
+                })
+            })
             shotButton(story, story.title, function () {
                 return buildStory().then(function (blob) {
-                    const url = URL.createObjectURL(blob)
-                    const link = document.createElement('a')
-
-                    link.href = url
-                    link.download = MmCustom.export.fileName(title()).replace(/\.png$/, '') + '-story.png'
-                    document.body.appendChild(link)
-                    link.click()
-                    link.remove()
-                    window.setTimeout(function () { URL.revokeObjectURL(url) }, 4000)
+                    saveImage(blob, MmCustom.export.fileName(title()).replace(/\.png$/, '') + '-story.png')
                 })
             })
         } else {

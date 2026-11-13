@@ -4,6 +4,34 @@ Une entrée par commit, la plus récente en haut.
 
 ---
 
+## 14/11/2026
+
+### Téléphone (Mathieu) : coche de Position, rappel du logo, image et story vers la photothèque, annuler dans les outils, essai du tapis redressé
+
+- Sous 992 px, sauf l'image et la story (tout iPhone ou iPad). Points retenus par Mathieu dans la revue mobile.
+- Coche de l'outil Position (`.sx-adjust__ok`) : rouge, comme les autres coches (noire avant).
+- Rappel « logo plus grand que son emplacement » : libellé court sur téléphone (« Logo trop grand : le réduire »,
+  `data-short` posé par `layout.js`, affiché par la feuille de style) ; le libellé long était coupé.
+- Image du tapis et story Instagram : sur iPhone et iPad, elles passent par la feuille de partage (`saveImage` dans
+  `layout.js` : `navigator.share` avec le fichier), qui propose « Enregistrer l'image » dans la photothèque, comme la
+  capture de la vue 3D. L'image met un moment à se faire : si le téléphone refuse d'ouvrir la feuille parce que le
+  toucher date trop (`NotAllowedError`), une barre `.sx-saveimg` (« Ton image est prête · Enregistrer ») donne un
+  nouveau toucher. Ailleurs, et quand le partage d'un fichier est impossible, téléchargement comme avant
+  (`MmCustom.export.download`, inchangé). L'image passe par `MmCustom.export.png`, sans toucher au moteur.
+- « Annuler » reste visible, seul, dans les outils (texte, police, palette) et sous les trois roues.
+- ESSAI, à confirmer par Mathieu après test sur iPhone : pendant qu'un texte est choisi (volet Textes et ses outils),
+  la scène est tournée par quarts de tour pour que le texte se lise droit (`orient`, `turnTo`, `baseFor` dans
+  `mountPhonePanels` ; constante `FLAT_EDIT`, à passer à `false` pour revenir en arrière). Elle revient comme elle était
+  avec « tapis entier », pour les couleurs, pour les logos et à la fermeture du volet. Les logos ne sont pas
+  concernés : le sens de pose d'un logo dans son emplacement ne se lit pas de façon fiable dans le moteur (un logo
+  posé apparaissait à l'envers). La zone garde la taille qu'elle avait tapis tourné.
+- `mm_custom_sixten.php` et `translations/*.php` : « Logo too large: fit it », « Your image is ready », « Save the
+  image » (5 langues).
+- Vérifié sans tête (Chromium) en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900, et avec un iPhone simulé pour le
+  partage (accepté, refusé puis bouton, annulé, impossible) : console sans erreur. Non vérifié sur vrai téléphone.
+
+---
+
 ## 13/11/2026
 
 ### Vue 3D (Mathieu) : sur iPhone et iPad, la capture se range dans la photothèque
