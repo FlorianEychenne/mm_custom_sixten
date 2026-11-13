@@ -88,10 +88,10 @@ class Mm_custom_sixtenArModuleFrontController extends ModuleFrontController
         parent::setMedia();
 
         if ($this->context->shop->theme_name !== mm_custom_sixten::CHARTER_THEME) {
-            $this->registerStylesheet('mm_custom_sixten-charter', 'modules/' . $this->module->name . '/views/css/charter.css', ['media' => 'all', 'priority' => 199]);
+            $this->registerStylesheet('mm_custom_sixten-charter', 'modules/' . $this->module->name . '/views/css/charter.css', ['media' => 'all', 'priority' => 199, 'version' => $this->module->assetVersion('views/css/charter.css')]);
         }
 
-        $this->registerStylesheet('mm_custom_sixten-site', 'modules/' . $this->module->name . '/views/css/site.css', ['media' => 'all', 'priority' => 200]);
+        $this->registerStylesheet('mm_custom_sixten-site', 'modules/' . $this->module->name . '/views/css/site.css', ['media' => 'all', 'priority' => 200, 'version' => $this->module->assetVersion('views/css/site.css')]);
     }
 
     public function getTemplateVarPage()

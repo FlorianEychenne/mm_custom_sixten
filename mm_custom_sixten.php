@@ -70,10 +70,27 @@ class Mm_custom_sixten extends Module
     }
 
     /**
+     * Version of a file of this module for its address (« ?v=<date of the file> »): the web server lets browsers keep the
+     * style sheets and the scripts a week (Cache-Control: max-age), so a copy of the module would leave them with the
+     * former interface. The date changes with every copy of the file; without it, the version of the module.
+     *
+     * @param string $path Path of the file inside the module
+     *
+     * @return string
+     */
+    public function assetVersion($path)
+    {
+        $time = (int) @filemtime(__DIR__ . '/' . $path);
+
+        return 'v=' . ($time ?: $this->version);
+    }
+
+    /**
      * Fichiers du compagnon, chargés seulement quand il est actif sur la page du configurateur.
      */
     public function hookActionMmCustomAssets($params)
     {
+        // Each file is declared with its version (assetVersion): the web server lets browsers keep these files a week
         $controller = $params['controller'] ?? $this->context->controller;
 
         // The configurator stylesheet of the Sixten theme (themes/sixten/assets/css/mm-custom-theme.css, interface of the
@@ -85,20 +102,20 @@ class Mm_custom_sixten extends Module
             $controller->registerStylesheet(
                 'mm_custom_sixten-charter',
                 'modules/' . $this->name . '/views/css/charter.css',
-                ['media' => 'all', 'priority' => 199]
+                ['media' => 'all', 'priority' => 199, 'version' => $this->assetVersion('views/css/charter.css')]
             );
         }
 
         $controller->registerStylesheet(
             'mm_custom_sixten-site',
             'modules/' . $this->name . '/views/css/site.css',
-            ['media' => 'all', 'priority' => 200]
+            ['media' => 'all', 'priority' => 200, 'version' => $this->assetVersion('views/css/site.css')]
         );
 
         $controller->registerJavascript(
             'mm_custom_sixten-layout',
             'modules/' . $this->name . '/views/js/layout.js',
-            ['position' => 'bottom', 'priority' => 200]
+            ['position' => 'bottom', 'priority' => 200, 'version' => $this->assetVersion('views/js/layout.js')]
         );
 
         // Lead time under the price, written by the template (views/templates/front/configurator.tpl)

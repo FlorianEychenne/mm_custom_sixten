@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Fichiers JS et CSS (Mathieu) : un numéro de version dans leur adresse
+
+- Constat après la copie sur new.sixten : `layout.js`, `site.css` et `charter.css` étaient servis sans numéro de
+  version, et le serveur laisse les navigateurs les garder 7 jours (`Cache-Control: max-age=604800`). Un téléphone qui
+  avait déjà ouvert le site gardait donc l'ancienne interface après une copie du module.
+- `mm_custom_sixten.php` : nouvelle méthode `assetVersion($path)` (« v=<date du fichier> », à défaut la version du
+  module), passée en `'version'` à `registerStylesheet` / `registerJavascript` dans `hookActionMmCustomAssets`.
+  PrestaShop l'ajoute à l'adresse : `…/layout.js?v=1794612391`. La date change à chaque copie du fichier.
+- `controllers/front/ar.php` (page du QR code de la vue 3D) : même chose pour ses deux feuilles de style.
+  `viewer3d.js` avait déjà ce numéro.
+- Vérifié sur le dev : les trois adresses portent leur numéro, le configurateur et la page du QR code se chargent sans
+  erreur.
+
 ### Téléphone (Mathieu) : le tapis redressé pendant l'édition d'un texte est gardé
 
 - Décision de Mathieu après son essai sur iPhone : on garde. `views/js/layout.js` (`mountPhonePanels`) : la constante
