@@ -1982,7 +1982,8 @@
         //    a grid under the mat, each one writing the text; the same palette as for the colours;
         //  - logos: four tools (library, file, position, remove), which press the buttons of the editor.
         // « Position » opens the three wheels (mountAdjust). While the panel shows the texts or the logos, the mat zooms on
-        // the zone of the chosen one (twice the whole mat at most) and follows it under the wheels; it shows the whole mat
+        // the zone of the chosen one (twice the whole mat at most), turned upright under a text, and follows it under the
+        // wheels; it shows the whole mat
         // for the colours and when the panel closes. One button on the stage goes from the zone to the whole mat and
         // back, and remembers the choice: once the whole mat is asked for, a selection no longer zooms.
         ;(function mountPhonePanels() {
@@ -2007,10 +2008,6 @@
                 cart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></svg>',
             }
             const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
-            // Test (Mathieu, 14/11): while a text is edited, the stage is turned, a quarter turn at a time,
-            // so that it reads upright instead of lying on its side on a phone held upright. It goes back as it was with
-            // the whole mat. false puts the former behaviour back.
-            const FLAT_EDIT = true
             const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
             const textKind = KINDS.find(function (k) { return k.key === 'text' }) || null
             const logoKind = KINDS.find(function (k) { return k.key === 'logo' }) || null
@@ -2310,7 +2307,9 @@
                 step(start)
             }
 
-            /* the mat upright under the chosen text (test, FLAT_EDIT) */
+            /* the mat upright under the chosen text: while a text is edited, the stage is turned, a quarter turn at a time,
+               so that it reads upright instead of lying on its side on a phone held upright (kept by Mathieu after his test
+               on an iPhone, 14/11). It goes back as it was with the whole mat. */
             let home = null // rotation of the stage before the first turn made here: it comes back with the whole mat
 
             // Whole-mat zoom of the stage for a rotation, worked out as ui/zoom.js does (its own figure is not public):
@@ -2360,7 +2359,7 @@
             // The stage turned so that a text reads upright: its top edge, in the template, gives its angle. A logo keeps
             // the stage as it was (the way a logo is laid in its slot cannot be read from the engine).
             const orient = function (el) {
-                if (!FLAT_EDIT || !active) return
+                if (!active) return
 
                 let corners = null
 

@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : le tapis redressé pendant l'édition d'un texte est gardé
+
+- Décision de Mathieu après son essai sur iPhone : on garde. `views/js/layout.js` (`mountPhonePanels`) : la constante
+  d'essai `FLAT_EDIT` est retirée, le comportement est définitif (textes seulement, les logos gardent la vue du
+  tapis tel qu'il est).
+
 ### Téléphone (Mathieu) : coche de Position, rappel du logo, image et story vers la photothèque, annuler dans les outils, essai du tapis redressé
 
 - Sous 992 px, sauf l'image et la story (tout iPhone ou iPad). Points retenus par Mathieu dans la revue mobile.
