@@ -85,7 +85,6 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n’est pas disponible sur cet appareil.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vue 3D';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8881acb68b243c1886a70ce2b5b2d015'] = 'Glisse pour tourner · Molette ou pincement pour zoomer';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6a0501a02a9166ea69a2b4574259667c'] = 'Rotation automatique';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_3b81991dc4e4d91dd53f0d62232c76c6'] = 'Revenir à la vue de départ';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_31beee010f609c2ff70870575f07ace0'] = 'Vue de dessus';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_fd55cbe27e77a09355b130cc4391b0bb'] = 'Télécharger cette vue';
@@ -118,3 +117,4 @@ $_MODULE['<{mm_custom_sixten}prestashop>ar_02dd4f466a8760c200c07557c244fa69'] = 
 $_MODULE['<{mm_custom_sixten}prestashop>ar_65fc08d6cd5c5bd57daa1c38c9ba2f35'] = 'Votre tapis en 3D, en taille réelle : touchez « Voir chez moi » et visez le sol.';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Voir le tapis en 3D';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n\'est pas disponible sur cet appareil.';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7984c9f452d24d2334b83ec2df841984'] = 'Tourner d\'un quart de tour';

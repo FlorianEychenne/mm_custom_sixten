@@ -6,6 +6,22 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : pas de mention sur les couleurs imprimées
+
+- `views/css/site.css` : sous 992 px, la mention « Les couleurs imprimées sur mesure peuvent légèrement varier… » n'est
+  plus affichée sous la liste des couleurs. Elle reste sur ordinateur. Vérifié en 390 × 844 et 1440 × 900.
+
+### Vue 3D (Mathieu) : bouton « quart de tour » à la place de la rotation automatique
+
+- `views/js/viewer3d.js` : le premier bouton de la barre ne lance plus une rotation continue. Chaque clic tourne d'un
+  quart de tour : en 3D la caméra tourne autour du tapis, à la même hauteur ; en vue de dessus le tapis tourne de 90°
+  à l'écran. Dans les deux cas la vue est recadrée sur le tapis entier. Les animations de vue (quart de tour, vue de
+  départ, vue de dessus) passent par les angles de la caméra (`orbitOf`, `fly`) : elle tourne autour du tapis au lieu
+  de couper tout droit.
+- `mm_custom_sixten.php`, traductions : `Turn a quarter turn` remplace `Turn automatically` (5 langues).
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic, rendu logiciel) : quatre quarts de tour en 3D,
+  deux en vue de dessus (tapis couché puis debout), tapis entier à chaque fois, aucune erreur dans la console.
+
 ### Téléphone (Mathieu) : le volet défile jusqu'à la ligne choisie
 
 - `views/js/layout.js` : sous 992 px, après une sélection (un logo, un texte ou une couleur touché sur le tapis, une

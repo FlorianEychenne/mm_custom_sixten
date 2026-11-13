@@ -373,12 +373,11 @@ export async function open(options) {
 
         return b
     }
-    const bRotate = button(ICONS.rotate, t('view3dRotate', 'Turn automatically'))
+    const bRotate = button(ICONS.rotate, t('view3dRotate', 'Turn a quarter turn'))
     const bReset = button(ICONS.reset, t('view3dReset', 'Reset the view'))
     const bTop = button(ICONS.top, t('view3dTop', 'Top view'))
     const bShot = button(ICONS.shot, t('view3dShot', 'Download this view'))
 
-    bRotate.setAttribute('aria-pressed', 'false')
 
     // « Voir chez moi » : affiché seulement si l'appareil sait poser le tapis au sol (voir setupAR)
     const bAR = el('button', 'sx3d__ar', ICONS.ar + '<span></span>')
@@ -463,7 +462,6 @@ export async function open(options) {
     controls.minDistance = 0.3
     controls.maxDistance = 15
     controls.maxPolarAngle = Math.PI * 0.495
-    controls.autoRotateSpeed = 0.6
 
     const reach = Math.max(W, H)
     const key = new THREE.DirectionalLight(0xffffff, L.key)
@@ -583,10 +581,28 @@ export async function open(options) {
     let flyTo = null
     const ease = (x) => 1 - Math.pow(1 - x, 3)
 
+    // Position de la caméra autour du point visé : distance, angle depuis la verticale, angle autour du tapis. Les
+    // animations passent par ces angles (la caméra tourne autour du tapis au lieu de couper tout droit)
+    function orbitOf(pos, target) {
+        const o = pos.clone().sub(target)
+        const r = o.length() || 1
+
+        return { r, polar: Math.acos(THREE.MathUtils.clamp(o.y / r, -1, 1)), az: Math.atan2(o.x, o.z) }
+    }
+
+    function fly(to, target, keepTurn) {
+        const from = orbitOf(camera.position, controls.target)
+
+        // au plus court autour du tapis, sauf pour un quart de tour demandé (keepTurn)
+        if (!keepTurn) to.az = from.az + Math.atan2(Math.sin(to.az - from.az), Math.cos(to.az - from.az))
+
+        flyTo = { s0: from, s1: to, t0: controls.target.clone(), t1: target, k: 0 }
+    }
+
     function applyView(dir, animate) {
         const v = frameView(dir)
 
-        if (animate) flyTo = { p0: camera.position.clone(), t0: controls.target.clone(), p1: v.pos, t1: v.target, k: 0 }
+        if (animate) fly(orbitOf(v.pos, v.target), v.target, false)
         else { camera.position.copy(v.pos); controls.target.copy(v.target); controls.update() }
     }
 
@@ -612,8 +628,8 @@ export async function open(options) {
     resize()
     if (options.view === 'top') applyView(VIEW_TOP, false)
 
-    // Rendu à la demande : la scène n'est redessinée que si la vue change (geste, inertie, animation, rotation
-    // automatique, redimensionnement). Immobile, elle ne consomme rien (batterie des téléphones).
+    // Rendu à la demande : la scène n'est redessinée que si la vue change (geste, inertie, animation,
+    // redimensionnement). Immobile, elle ne consomme rien (batterie des téléphones).
     const clock = new THREE.Clock()
 
     // Garde-fous : la cible reste sur le dessus du tapis, la caméra au-dessus (jamais dans le tapis ni dessous)
@@ -637,8 +653,15 @@ export async function open(options) {
             flyTo.k = Math.min(1, flyTo.k + dt / 1.1)
             const k = ease(flyTo.k)
 
-            camera.position.lerpVectors(flyTo.p0, flyTo.p1, k)
+            const r = THREE.MathUtils.lerp(flyTo.s0.r, flyTo.s1.r, k)
+            const polar = Math.max(1e-4, THREE.MathUtils.lerp(flyTo.s0.polar, flyTo.s1.polar, k))
+            const az = THREE.MathUtils.lerp(flyTo.s0.az, flyTo.s1.az, k)
+
             controls.target.lerpVectors(flyTo.t0, flyTo.t1, k)
+            camera.position.set(
+                controls.target.x + r * Math.sin(polar) * Math.sin(az),
+                controls.target.y + r * Math.cos(polar),
+                controls.target.z + r * Math.sin(polar) * Math.cos(az))
             if (flyTo.k >= 1) flyTo = null
             dirty = true
         }
@@ -651,9 +674,19 @@ export async function open(options) {
     requestAnimationFrame(() => overlay.classList.add('is-open'))
 
     // ---- outils ----
+    // Un quart de tour : en 3D la caméra tourne autour du tapis, à la même hauteur ; en vue de dessus le tapis tourne de 90°
+    // à l'écran (un tapis long passe de couché à debout). Dans les deux cas la vue est recadrée sur le tapis entier.
     bRotate.addEventListener('click', () => {
-        controls.autoRotate = !controls.autoRotate
-        bRotate.setAttribute('aria-pressed', String(controls.autoRotate))
+        const now = flyTo ? flyTo.s1 : orbitOf(camera.position, controls.target)
+        const az = now.az + Math.PI / 2
+        const polar = now.polar < 0.06 ? 1e-4 : now.polar
+        const v = frameView(new THREE.Vector3(Math.sin(polar) * Math.sin(az), Math.cos(polar), Math.sin(polar) * Math.cos(az)).normalize())
+        const to = orbitOf(v.pos, v.target)
+
+        userMoved = true
+        to.az = az
+        to.polar = polar
+        fly(to, v.target, true)
     })
     bReset.addEventListener('click', () => { userMoved = false; applyView(VIEW_DEFAULT, true) })
     bTop.addEventListener('click', () => applyView(VIEW_TOP, true))

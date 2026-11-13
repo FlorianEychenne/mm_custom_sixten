@@ -163,7 +163,7 @@ class Mm_custom_sixten extends Module
             'view3dFailed' => $this->l('The 3D view is not available on this device.'),
             'view3dTitle' => $this->l('3D view'),
             'view3dHint' => $this->l('Drag to turn · Scroll or pinch to zoom'),
-            'view3dRotate' => $this->l('Turn automatically'),
+            'view3dRotate' => $this->l('Turn a quarter turn'),
             'view3dReset' => $this->l('Reset the view'),
             'view3dTop' => $this->l('Top view'),
             'view3dShot' => $this->l('Download this view'),
