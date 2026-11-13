@@ -6,6 +6,20 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Textes (Mathieu) : un texte agrandi ou déplacé n'est plus coupé ; curseurs bornés au tapis
+
+- **Bug** : l'encre du moteur (`effects.js`) est un filtre par élément de premier niveau du gabarit, sa zone (tout le tapis)
+  calculée une fois dans le repère de l'élément. Sur les gabarits où un texte est lui-même un élément de premier niveau
+  (Honda 95x240 Classic, le « 201 »), le déplacement du texte entre dans ce repère : la zone suit le texte, et ce qui la
+  dépasse (texte agrandi, déplacé plus loin) est masqué, dans tous les navigateurs. `layout.js` fait recalculer l'encre
+  (`MmCustom.effects.refresh()`, 120 ms après la dernière modification) à chaque texte ou logo modifié, déplacé ou tourné.
+  Mesuré : zone de -1509 à 5229 sur un tapis de 6718 avant, -10 à 6728 après.
+- **Curseurs du texte bornés** : après un changement de taille ou de décalage, le texte est ramené dans la partie
+  imprimable du tapis (tapis moins semelle et marge, comme pour le glisser de `drag.js`) ; trop grand, il est centré.
+- **Taille en cm** : la hauteur est mesurée perpendiculairement à la ligne de base (un texte étiré ou penché par sa matrice,
+  comme les numéros, n'est plus mesuré avec son échelle horizontale).
+- Vérifié sur Honda 95x240 Classic à 1440 px : « 201 » déplacé à la souris puis porté à 30 cm, entièrement visible.
+
 ### Textes et scène (Mathieu) : plus d'alignement gauche / centre / droite ; icônes en colonnes sur téléphone seulement
 
 - Textes : les boutons d'alignement ne sont plus montés (`align: false`), le texte se déplace (décalage, glisser) ; la barre

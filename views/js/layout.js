@@ -62,6 +62,20 @@
         // Ink of the print on the felt, flat 2 cm sole
         if (MmCustom.effects) MmCustom.effects.configure({ ink: true, sole: { cm: 2, fill: '#333333' } })
 
+        // The ink is one filter per top-level element of the template, its region (the whole mat) worked out once in the
+        // element's own space. A text that is itself a top-level element carries its move in that space: once moved, the
+        // region moves with it and what goes past it (enlarged text, moved further) is hidden. Worked out again after a change.
+        if (MmCustom.effects && MmCustom.effects.refresh) {
+            let inkTimer = 0
+            const refreshInk = function () {
+                window.clearTimeout(inkTimer)
+                inkTimer = window.setTimeout(function () { MmCustom.effects.refresh() }, 120)
+            }
+
+            ;['text:change', 'text:moved', 'text:rotated', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:rotated', 'logo:placed']
+                .forEach(function (name) { MmCustom.on(name, refreshInk) })
+        }
+
         MmCustom.stats.watchFirstInteraction()
 
         // Proportions of this mat: the stage sizes it from them (--sx-ratio, site.css)
@@ -919,11 +933,42 @@
             box.querySelector('#sx-text-pos-label').textContent = t('offset', 'Left / right offset')
             design.insertBefore(number.box, slider)
 
-            // Template units of one unit of the text's own space (its matrix and its groups may scale it)
+            // Template units of one unit of height of the text, across its baseline: its matrix and its groups may scale it,
+            // stretch it or slant it (a slanted number keeps its height)
             const scaleOf = function (el) {
                 const m = root.getScreenCTM().inverse().multiply(el.getScreenCTM())
+                const along = Math.hypot(m.a, m.b)
 
-                return Math.hypot(m.a, m.b) || 1
+                return along ? Math.abs(m.a * m.d - m.b * m.c) / along : 1
+            }
+
+            // Printable part of the mat, as for a drag (drag.js): the mat less its sole and the margin, on every side
+            const zone = function () {
+                const box = MmCustom.svg.viewBox()
+                const k = cmPerUnit()
+                const drag = MmCustom.drag && MmCustom.drag.options ? MmCustom.drag.options() : {}
+                const fx = MmCustom.effects && MmCustom.effects.options ? MmCustom.effects.options() : {}
+                const cm = (parseFloat(drag.marginCm) || 0) + (fx.sole && parseFloat(fx.sole.cm) > 0 ? parseFloat(fx.sole.cm) : 0)
+                const inset = k && cm ? Math.min(cm / k, Math.min(box.width, box.height) / 4) : 0
+
+                return { x: box.x + inset, y: box.y + inset, width: box.width - 2 * inset, height: box.height - 2 * inset }
+            }
+
+            // A text the sliders make larger or move stays on the mat (the drag keeps it there too); too large, it is centred
+            const keepInside = function (el) {
+                const b = MmCustom.geometry.boundsOf(MmCustom.texts.frame(el))
+                const z = zone()
+                const shift = function (start, size, zStart, zSize) {
+                    if (size > zSize) return zStart + zSize / 2 - (start + size / 2)
+                    if (start < zStart) return zStart - start
+                    if (start + size > zStart + zSize) return zStart + zSize - (start + size)
+
+                    return 0
+                }
+                const dx = shift(b.x, b.width, z.x, z.width)
+                const dy = shift(b.y, b.height, z.y, z.height)
+
+                if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) MmCustom.texts.moveBy(el, dx, dy)
             }
 
             // Height of a capital letter for 1 of font size, measured once per loaded font (0.7 until then)
@@ -957,6 +1002,7 @@
                 if (!el) return
 
                 MmCustom.texts.setSize(el, cm / (scaleOf(el) * capRatio(el) * (cmPerUnit() || 1)))
+                keepInside(el)
                 sync()
                 number.input.value = String(roundCm(sizeCm(el))) // what was drawn (the slot may hold the text smaller)
             }
@@ -996,7 +1042,8 @@
                 const dx = parseFloat(offset.value) || 0
 
                 MmCustom.texts.moveBy(el, dx - offsetOf(el), 0)
-                offsetValue.textContent = formatOffset(dx)
+                keepInside(el)
+                offsetValue.textContent = formatOffset(offsetOf(el))
             })
             offset.addEventListener('change', sync)
 
