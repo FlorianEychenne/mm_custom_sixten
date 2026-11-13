@@ -1204,9 +1204,20 @@
                 })
             }
 
-            // The list unrolls by itself when the field is used, and stays open while typing (the samples follow the text)
-            field.addEventListener('focus', open)
-            field.addEventListener('click', open)
+            // With a keyboard on screen (phone, tablet: narrow layout or finger as main pointer), the list never opens by
+            // itself: it would cover the field, the mat and the tools while the keyboard hides the rest. There, the field is
+            // only for typing and the list opens from the font button, keyboard closed.
+            const onScreenKeyboard = function () { return window.matchMedia('(max-width: 991.98px), (pointer: coarse)').matches }
+
+            // Elsewhere the list unrolls by itself when the field is used, and stays open while typing (the samples follow
+            // the text)
+            const openFromField = function () {
+                if (onScreenKeyboard()) close()
+                else open()
+            }
+
+            field.addEventListener('focus', openFromField)
+            field.addEventListener('click', openFromField)
             field.addEventListener('keydown', function (event) {
                 if (event.key === 'Escape' && isOpen()) { event.preventDefault(); event.stopPropagation(); close() }
                 else if (event.key === 'ArrowDown' && field.selectionStart === field.value.length) {
@@ -1218,10 +1229,18 @@
                 }
             })
 
-            // Clicks on ▾ and in the list keep the focus in the field (the keyboard stays up on a phone)
+            // Clicks on ▾ and in the list keep the focus where it is (a computer: in the field, typing goes on)
             button.addEventListener('mousedown', function (event) { event.preventDefault() })
             list.addEventListener('mousedown', function (event) { event.preventDefault() })
-            button.addEventListener('click', function () { if (isOpen()) close(); else open() })
+            button.addEventListener('click', function () {
+                if (isOpen()) { close(); return }
+
+                // On-screen keyboard: it goes away first (the list takes its room), then the list opens and is placed again
+                // when the visible part of the page has grown back (visualViewport resize, below)
+                if (onScreenKeyboard() && document.activeElement === field) field.blur()
+
+                open()
+            })
 
             list.addEventListener('keydown', function (event) {
                 const items = Array.from(list.children)
@@ -1256,7 +1275,8 @@
                 close()
                 sync()
 
-                if (document.activeElement !== field) field.focus({ preventScroll: true })
+                // Back to typing on a computer; with an on-screen keyboard the mat stays in view, the keyboard stays down
+                if (!onScreenKeyboard() && document.activeElement !== field) field.focus({ preventScroll: true })
 
                 // The new glyphs change the line spacing and the slot fit: measure again once the font is loaded
                 const refit = function () {

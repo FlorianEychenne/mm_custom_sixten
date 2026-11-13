@@ -6,6 +6,18 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : la liste des polices ne s'ouvre plus toute seule
+
+- `views/js/layout.js` (`mountFontField`) : avec un clavier à l'écran (mise en page sous 992 px, ou doigt comme
+  pointeur principal), toucher le champ du texte n'ouvre plus la liste des polices. Elle recouvrait le champ, le tapis
+  et les outils pendant que le clavier cachait le reste : on ne voyait plus qu'une liste de polices en tapant. Le champ
+  sert à écrire ; la liste s'ouvre par le bouton de la police (nom et ▾), qui ferme d'abord le clavier ; après le
+  choix d'une police, le clavier ne remonte pas. Sur ordinateur, rien ne change (la liste se déroule dès que le champ
+  est utilisé).
+- Vérifié au navigateur en 390 × 844 (Honda 95x200 Classic) : toucher le champ, taper, ouvrir la liste par son bouton,
+  choisir une police ; et en 1440 × 900 : comportement d'avant. Pas vérifié avec un vrai clavier de téléphone
+  (l'émulation n'en affiche pas).
+
 ### Téléphone (Mathieu) : de l'air au-dessus et au-dessous du tapis
 
 - `views/css/site.css` (sous 992 px) : la scène (`.template`) a 1 rem de marge intérieure en haut et en bas. Le tapis
