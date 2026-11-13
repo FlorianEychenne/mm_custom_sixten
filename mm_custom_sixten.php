@@ -196,6 +196,10 @@ class Mm_custom_sixten extends Module
             'textSize' => $this->l('Text size'),
             'textSizeCm' => $this->l('Height of the capital letters, in cm'),
             'offset' => $this->l('Left / right offset'),
+            'offsetY' => $this->l('Up / down offset'),
+            'adjust' => $this->l('Adjust the position'),
+            'adjustOk' => $this->l('Confirm'),
+            'adjustBack' => $this->l('Cancel'),
             'logoSizeCm' => $this->l('Width of the logo, in cm'),
         ];
     }

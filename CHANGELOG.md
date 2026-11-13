@@ -6,6 +6,33 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : « Ajuster la position », trois roues à la place des curseurs
+
+- Sous 992 px seulement ; rien ne change sur ordinateur. Dans les volets Textes et Logos, les curseurs « Taille » et
+  « Décalage gauche / droite » (`.sx-logo-sliders`) sont cachés et remplacés par un bouton « Ajuster la position »
+  (`.sx-adjust-btn`), grisé pour un texte vide, absent tant qu'aucun logo n'est posé.
+- `views/js/layout.js` (`mountAdjust`) : le bouton ouvre l'outil `.sx-adjust` et pose `body.sx-adjusting`. Trois roues,
+  l'une sous l'autre, repérées par un pictogramme et suivies de leur valeur en cm : gauche / droite, haut / bas, taille
+  (hauteur des capitales pour un texte, largeur pour un logo). 2 px de doigt = 0,1 cm, un cran de règle = 0,5 cm ;
+  flèches du clavier : 0,5 cm. Pas de rotation.
+  - Les deux décalages suivent l'écran et non le tapis (matrice écran du SVG, `getScreenCTM`) : sur un tapis tourné
+    d'un quart de tour, « gauche / droite » déplace l'objet comme le client le voit. Ils sont comptés depuis le centre
+    de l'emplacement pour un logo posé, sinon depuis la position de l'objet quand il a été vu la première fois.
+  - La taille agit comme un zoom : l'objet grandit autour de son centre. Un texte reste dans la zone imprimable
+    (`MmCustom.drag.keepInside`, comme les curseurs) ; quand le tapis retient l'objet, la roue repart de ce qui a été
+    dessiné.
+  - La flèche remet l'objet comme à l'ouverture de l'outil, la coche le garde ; Échap annule. Les deux referment
+    l'outil et rendent le volet. Un autre texte ou logo touché sur le tapis prend la main dans l'outil ; toute autre
+    sélection le referme. Repasser au-dessus de 992 px le referme aussi.
+- `views/css/site.css` : outil ouvert, l'en-tête, les onglets, le volet et les boutons posés sur la scène sont cachés
+  (`--mm-header-h:0`), le tapis prend toute la hauteur moins celle de l'outil (`--sx-adjust-h`, 7,25 rem + marge
+  basse de l'écran).
+- `mm_custom_sixten.php`, `translations/*.php` : quatre chaînes (`Adjust the position`, `Up / down offset`, `Confirm`,
+  `Cancel`), dans les cinq langues.
+- Vérifié au navigateur sans écran en 390 × 844 (texte et logo : roues, bord du tapis, annuler, valider) et en
+  1440 × 900 (curseurs inchangés, bouton absent). Pas encore essayé sur un vrai téléphone ; les suites e2e ne couvrent
+  pas cet outil.
+
 ### Téléphone (Mathieu) : la liste des polices ne s'ouvre plus toute seule
 
 - `views/js/layout.js` (`mountFontField`) : avec un clavier à l'écran (mise en page sous 992 px, ou doigt comme

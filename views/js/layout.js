@@ -1575,6 +1575,342 @@
             if (drop && ui.logoDrop) ui.logoDrop.attach(drop, importFile)
         }
 
+        /* ------------------------------------------------------------- téléphone : ajuster la position (trois roues) */
+
+        // Phone (layout under 992 px): the size and offset sliders of a text or of a logo give way to one button, « Adjust
+        // the position ». It hides the header, the panel and the tabs: the mat takes the screen, with three wheels under
+        // it (left / right, up / down, size) and their figure in cm. The two offsets follow the screen, not the mat: a mat
+        // turned a quarter turn moves the way the customer sees it. They are measured from the slot of a placed logo, else
+        // from where the element was when first seen. The arrow puts the element back as it was when the tool opened, the
+        // tick keeps it; both bring the panel back.
+        ;(function mountAdjust() {
+            const phone = window.matchMedia('(max-width: 991.98px)')
+            const container = $('.module-container')
+
+            if (!container || !MmCustom.geometry || !MmCustom.texts || !MmCustom.logos) return
+
+            const STEP_PX = 2 // finger travel for 0.1 cm
+            const TICK_CM = 0.5 // one tick of a wheel (10 px)
+            const KEYS = ['x', 'y', 'z']
+            const SVG = function (path) { return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + path + '"/></svg>' }
+            const ART = {
+                move: SVG('M12 3v18M3 12h18M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3'),
+                x: SVG('M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4'),
+                y: SVG('M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4'),
+                z: SVG('M5 19L19 5M13 5h6v6M11 19H5v-6'),
+                ok: SVG('M5 12.5l4.5 4.5L19 7.5'),
+                back: SVG('M19 12H5M11 6l-6 6 6 6'),
+            }
+            const homes = new WeakMap() // centre of an element when first seen, in template units
+            const parts = {} // key -> { wheel, value }
+            const buttons = {} // kind -> its « Adjust the position » button
+            let target = null // { kind, element, start: { centre, size } }
+            let tool = null
+
+            const api = {
+                text: {
+                    usable: function (el) { return !!el && el.isConnected && MmCustom.texts.isMovable(el) },
+                    frame: function (el) { return MmCustom.texts.frame(el) },
+                    size: function (el) { return MmCustom.texts.capHeight(el) },
+                    setSize: function (el, units) { MmCustom.texts.setCapHeight(el, units) },
+                    moveBy: function (el, dx, dy) { MmCustom.texts.moveBy(el, dx, dy) },
+                    // As the sliders: a text made larger or moved stays in the printable part of the mat
+                    settle: function (el) { if (MmCustom.drag) MmCustom.drag.keepInside(el) },
+                    sync: function () { if (textSliders) textSliders.sync() },
+                    sizeLabel: function () { return t('textSizeCm', 'Height of the capital letters, in cm') },
+                },
+                logo: {
+                    usable: function (el) {
+                        return !!el && el.isConnected && (MmCustom.logos.isPlaced(el) || !!(MmCustom.logos.freeTransform && MmCustom.logos.freeTransform(el)))
+                    },
+                    frame: function (el) { return MmCustom.logos.frame(el) },
+                    size: function (el) { return MmCustom.logos.width(el) },
+                    setSize: function (el, units) { MmCustom.logos.setWidth(el, units) },
+                    moveBy: function (el, dx, dy) { MmCustom.logos.moveBy(el, dx, dy) },
+                    settle: function () {},
+                    sync: function () { syncLogo() },
+                    sizeLabel: function () { return t('logoSizeCm', 'Width of the logo, in cm') },
+                },
+            }
+
+            const centreOf = function (kind, el) {
+                const c = api[kind].frame(el)
+
+                return { x: (c[0].x + c[1].x + c[2].x + c[3].x) / 4, y: (c[0].y + c[1].y + c[2].y + c[3].y) / 4 }
+            }
+
+            // Where the offsets start from: the centre of the slot of a placed logo, else the centre of the element when
+            // first seen (a logo of the template: less its free move)
+            const homeOf = function (kind, el) {
+                if (kind === 'logo' && MmCustom.logos.isPlaced(el)) {
+                    const slot = MmCustom.logos.slotBox(el)
+
+                    if (slot) return { x: slot.x + slot.width / 2, y: slot.y + slot.height / 2 }
+                }
+
+                if (!homes.has(el)) {
+                    const c = centreOf(kind, el)
+                    const free = kind === 'logo' && MmCustom.logos.freeTransform ? MmCustom.logos.freeTransform(el) : null
+
+                    homes.set(el, free ? { x: c.x - free.tx, y: c.y - free.ty } : c)
+                }
+
+                return homes.get(el)
+            }
+
+            // Right and down of the screen as unit vectors of the template: the screen matrix of the mat holds its zoom,
+            // its move and its quarter turn
+            const axes = function () {
+                const m = MmCustom.svg.root().getScreenCTM()
+                const k = Math.sqrt(m.a * m.a + m.b * m.b) || 1
+                const i = m.inverse()
+
+                return { x: { x: i.a * k, y: i.b * k }, y: { x: i.c * k, y: i.d * k } }
+            }
+
+            // Offsets along the screen and size, in cm (template units when the size of the product is unknown)
+            const read = function () {
+                const el = target.element
+                const c = centreOf(target.kind, el)
+                const home = homeOf(target.kind, el)
+                const a = axes()
+                const k = cmPerUnit() || 1
+                const dx = c.x - home.x
+                const dy = c.y - home.y
+
+                return { x: (dx * a.x.x + dy * a.x.y) * k, y: (dx * a.y.x + dy * a.y.y) * k, z: api[target.kind].size(el) * k }
+            }
+
+            const format = function (key, value) {
+                const shown = roundCm(value)
+                const figure = Math.abs(shown).toLocaleString(document.documentElement.lang || undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+                const sign = key === 'z' || !shown ? '' : (shown > 0 ? '+ ' : '− ')
+
+                return sign + figure + (cmPerUnit() ? ' cm' : '')
+            }
+
+            function paint() {
+                if (!target) return
+
+                if (!api[target.kind].usable(target.element)) {
+                    close(true)
+
+                    return
+                }
+
+                let now = null
+
+                try { now = read() } catch (e) { return } // not drawn
+
+                KEYS.forEach(function (key) {
+                    const text = format(key, now[key])
+
+                    parts[key].value.textContent = text
+                    parts[key].wheel.setAttribute('aria-valuetext', text)
+                    parts[key].wheel.setAttribute('aria-valuenow', String(roundCm(now[key])))
+                    // The ruler follows the figure (a tick every 0.5 cm), a tick under the red mark at each half
+                    parts[key].wheel.style.backgroundPositionX = 'calc(50% + ' + (4.5 + Math.round(now[key] / TICK_CM * 10)) + 'px)'
+                })
+            }
+
+            // Sets one figure (cm) and returns what was drawn (the mat may hold the element back)
+            function set(key, value) {
+                const el = target.element
+                const kind = api[target.kind]
+                const k = cmPerUnit() || 1
+
+                if (key === 'z') {
+                    // A zoom: the element grows around its centre (a text grows from its anchor otherwise)
+                    const before = centreOf(target.kind, el)
+
+                    kind.setSize(el, Math.max(0.5, value) / k)
+
+                    const after = centreOf(target.kind, el)
+
+                    kind.moveBy(el, before.x - after.x, before.y - after.y)
+                } else {
+                    const axis = axes()[key]
+                    const d = (value - read()[key]) / k
+
+                    kind.moveBy(el, axis.x * d, axis.y * d)
+                }
+
+                kind.settle(el)
+                kind.sync()
+                paint()
+
+                return target ? read()[key] : value
+            }
+
+            function wheel(key) {
+                const row = document.createElement('div')
+
+                row.className = 'sx-adjust__row'
+                row.innerHTML = ART[key] + '<div class="sx-adjust__wheel" role="slider" tabindex="0"></div><output class="sx-adjust__val"></output>'
+
+                const el = row.querySelector('.sx-adjust__wheel')
+                let drag = null
+
+                if (key === 'x') el.setAttribute('aria-label', t('offset', 'Left / right offset'))
+                if (key === 'y') el.setAttribute('aria-label', t('offsetY', 'Up / down offset'))
+
+                el.addEventListener('pointerdown', function (event) {
+                    if (!target) return
+
+                    event.preventDefault()
+                    el.setPointerCapture(event.pointerId)
+                    drag = { x: event.clientX, from: read()[key], steps: 0 }
+                })
+                el.addEventListener('pointermove', function (event) {
+                    if (!drag || !target) return
+
+                    const steps = Math.round((event.clientX - drag.x) / STEP_PX)
+
+                    if (steps === drag.steps) return
+
+                    drag.steps = steps
+
+                    const wanted = Math.round((drag.from + steps * 0.1) * 10) / 10
+                    const drawn = set(key, wanted)
+
+                    // Held back (edge of the mat, smallest size): the wheel starts again from what was drawn
+                    if (Math.abs(drawn - wanted) > 0.06) drag = { x: event.clientX, from: drawn, steps: 0 }
+                })
+                ;['pointerup', 'pointercancel'].forEach(function (name) { el.addEventListener(name, function () { drag = null }) })
+                el.addEventListener('keydown', function (event) {
+                    const way = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1 }[event.key]
+
+                    if (!way || !target) return
+
+                    event.preventDefault()
+                    set(key, Math.round((read()[key] + way * TICK_CM) * 10) / 10)
+                })
+
+                parts[key] = { wheel: el, value: row.querySelector('output') }
+
+                return row
+            }
+
+            function build() {
+                if (tool) return
+
+                tool = document.createElement('div')
+                tool.className = 'sx-adjust'
+                tool.hidden = true
+                tool.innerHTML = '<div class="sx-adjust__wheels"></div><div class="sx-adjust__btns">'
+                    + '<button type="button" class="sx-adjust__ok" aria-label="' + esc(t('adjustOk', 'Confirm')) + '">' + ART.ok + '</button>'
+                    + '<button type="button" class="sx-adjust__back" aria-label="' + esc(t('adjustBack', 'Cancel')) + '">' + ART.back + '</button></div>'
+                KEYS.forEach(function (key) { tool.firstChild.appendChild(wheel(key)) })
+                tool.querySelector('.sx-adjust__ok').addEventListener('click', function () { close(true) })
+                tool.querySelector('.sx-adjust__back').addEventListener('click', function () { close(false) })
+                container.appendChild(tool)
+            }
+
+            function aim(kind, el) {
+                target = { kind: kind, element: el }
+                homeOf(kind, el)
+                target.start = { centre: centreOf(kind, el), size: api[kind].size(el) }
+                parts.z.wheel.setAttribute('aria-label', api[kind].sizeLabel())
+                paint()
+            }
+
+            function open(kind) {
+                const el = current[kind]
+
+                if (target || !phone.matches || !api[kind].usable(el)) return
+
+                build()
+
+                if (ui.colorPicker) ui.colorPicker.close()
+                if (document.activeElement && document.activeElement.blur) document.activeElement.blur() // no keyboard left open
+
+                try { aim(kind, el) } catch (e) {
+                    target = null
+
+                    return // not drawn
+                }
+
+                body.classList.add('sx-adjusting')
+                tool.hidden = false
+                window.dispatchEvent(new Event('resize')) // the stage is taller: markers and zoom measure again
+            }
+
+            function close(keep) {
+                if (!target) return
+
+                const was = target
+
+                target = null
+
+                if (!keep && api[was.kind].usable(was.element)) {
+                    try {
+                        const kind = api[was.kind]
+
+                        if (Math.abs(kind.size(was.element) - was.start.size) > 1e-6) kind.setSize(was.element, was.start.size)
+
+                        const c = centreOf(was.kind, was.element)
+
+                        kind.moveBy(was.element, was.start.centre.x - c.x, was.start.centre.y - c.y)
+                        kind.sync()
+                    } catch (e) { /* not drawn */ }
+                }
+
+                body.classList.remove('sx-adjusting')
+                tool.hidden = true
+                window.dispatchEvent(new Event('resize'))
+            }
+
+            // One button per kind, after its sliders (which the phone layout hides)
+            const paintButtons = function () {
+                Object.keys(buttons).forEach(function (kind) { buttons[kind].disabled = !api[kind].usable(current[kind]) })
+            }
+            const button = function (kind, sliders) {
+                if (!sliders) return
+
+                const b = document.createElement('button')
+
+                b.type = 'button'
+                b.className = 'sx-adjust-btn'
+                b.innerHTML = ART.move + '<span>' + esc(t('adjust', 'Adjust the position')) + '</span>'
+                b.addEventListener('click', function () { open(kind) })
+                sliders.insertAdjacentElement('afterend', b)
+                buttons[kind] = b
+            }
+
+            button('text', textArea ? textArea.querySelector('.sx-text-sliders') : null)
+            button('logo', logoBlock ? logoBlock.querySelector('.sx-logo-sliders') : null)
+
+            // Another text or logo chosen on the mat while the tool is open takes it over (the first one is kept as it
+            // is); anything else closes it. The engine events repaint the figures (finger on the mat, undo).
+            MmCustom.on('select', function (event) {
+                const detail = event.detail || {}
+
+                paintButtons()
+
+                if (!target || detail.element === target.element) return
+
+                if (api[detail.type] && api[detail.type].usable(detail.element)) {
+                    try { aim(detail.type, detail.element) } catch (e) { close(true) }
+                } else {
+                    close(true)
+                }
+            })
+            ;['text:moved', 'text:change', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:measured', 'logo:placed', 'logo:removed', 'history:restore'].forEach(function (name) {
+                MmCustom.on(name, function () {
+                    paintButtons()
+                    paint()
+                })
+            })
+
+            const leave = function () { if (!phone.matches) close(true) }
+
+            if (phone.addEventListener) phone.addEventListener('change', leave)
+            else if (phone.addListener) phone.addListener(leave)
+
+            document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && target) close(false) })
+            paintButtons()
+        })()
+
         /* ------------------------------------------------------------- en-tête : options, sauvegarde, sortie */
 
         const topBar = $('.module-top-bar')

@@ -859,3 +859,31 @@ body#module-mm_custom-customModule .sx-cart__short{display:none}
 
 /* téléphone : un peu d'air au-dessus et au-dessous du tapis (la vue entière du tapis tourné remplit la boîte de contenu de la scène, ui/zoom.js) */
 @media (max-width:991.98px){body#module-mm_custom-customModule .module-container .template{padding:1rem 0;box-sizing:border-box}}
+
+/* ---------- Téléphone : « Ajuster la position » (Mathieu, 13/11). Les curseurs de taille et de décalage d'un texte ou d'un logo laissent la place à un bouton ;
+   il ouvre l'outil .sx-adjust : en-tête, volet et onglets disparaissent (body.sx-adjusting), le tapis prend l'écran, trois roues en dessous (layout.js, mountAdjust) ---------- */
+body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customModule .sx-adjust{display:none}
+@media (max-width:991.98px){
+  body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{display:none}
+  body#module-mm_custom-customModule .module-container .tools .sx-adjust-btn{display:flex;align-items:center;justify-content:center;gap:.625rem;width:100%;min-height:2.75rem;padding:.25rem 1rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule .module-container .tools .sx-adjust-btn:disabled{opacity:.35;cursor:default}
+  body#module-mm_custom-customModule .module-container .tools .sx-logo--current:has(.sx-thumb--empty) .sx-adjust-btn{display:none}
+  body#module-mm_custom-customModule .sx-adjust-btn svg,body#module-mm_custom-customModule .sx-adjust svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  /* outil ouvert : ni en-tête, ni onglets, ni volet, ni boutons posés sur la scène ; le tapis a toute la hauteur moins celle de l'outil */
+  body#module-mm_custom-customModule.sx-adjusting{--sx-adjust-h:calc(7.25rem + env(safe-area-inset-bottom,0px));--mm-header-h:0rem;--mm-stage-h:calc(100svh - var(--sx-adjust-h))}
+  body#module-mm_custom-customModule.sx-adjusting .module-top-bar,
+  body#module-mm_custom-customModule.sx-adjusting .module-container>.sx-steps,
+  body#module-mm_custom-customModule.sx-adjusting .module-container .info,
+  body#module-mm_custom-customModule.sx-adjusting .sx-stage-hint,
+  body#module-mm_custom-customModule.sx-adjusting .sx-zoomwrap{display:none}
+  body#module-mm_custom-customModule .sx-adjust:not([hidden]){position:absolute;z-index:11;left:0;right:0;bottom:0;display:flex;gap:.375rem;box-sizing:border-box;height:var(--sx-adjust-h);padding:.375rem .5rem calc(.375rem + env(safe-area-inset-bottom,0px));background:#fff;color:#000}
+  body#module-mm_custom-customModule .sx-adjust__wheels{flex:1;min-width:0;display:grid;grid-template-rows:repeat(3,2rem);gap:.25rem}
+  body#module-mm_custom-customModule .sx-adjust__row{display:flex;align-items:center;gap:.375rem;min-width:0}
+  body#module-mm_custom-customModule .sx-adjust__wheel{position:relative;flex:1;min-width:0;height:2rem;touch-action:none;cursor:ew-resize;-webkit-user-select:none;user-select:none;background-color:var(--mmx-surface-2,#F4F4F4);background-image:linear-gradient(90deg,#8A8A8A 1px,transparent 1px);background-size:10px 9px;background-repeat:repeat-x;background-position:calc(50% + 4.5px) 100%}
+  body#module-mm_custom-customModule .sx-adjust__wheel::after{content:"";position:absolute;left:50%;bottom:0;width:2px;height:1.25rem;margin-left:-1px;background:var(--sx-red,#E4032E)}
+  body#module-mm_custom-customModule .sx-adjust__wheel:focus-visible{outline:2px solid #000;outline-offset:1px}
+  body#module-mm_custom-customModule .sx-adjust__val{flex:none;width:4.25rem;text-align:right;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:700;color:#000;white-space:nowrap;font-variant-numeric:tabular-nums}
+  body#module-mm_custom-customModule .sx-adjust__btns{flex:none;display:grid;grid-template-rows:2fr 1fr;gap:.25rem;width:3.25rem}
+  body#module-mm_custom-customModule .sx-adjust__btns button{display:grid;place-items:center;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule .sx-adjust__btns .sx-adjust__ok{background:#000;color:#fff}
+}

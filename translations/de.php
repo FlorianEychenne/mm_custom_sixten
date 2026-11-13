@@ -118,3 +118,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 
 $_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'Die 3D-Ansicht ist auf diesem Gerät nicht verfügbar.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7984c9f452d24d2334b83ec2df841984'] = 'Um eine Vierteldrehung drehen';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_a85eba4c6c699122b2bb1387ea4813ad'] = 'Warenkorb';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6ed98937b2e2985c2ec7886cbd0fae54'] = 'Versatz oben / unten';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f2d39ed805748ed130ffc6181c00bb59'] = 'Position anpassen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_70d9be9b139893aa6c69b5e77e614311'] = 'Bestätigen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ea4788705e6873b424c65e91c2846b19'] = 'Abbrechen';
