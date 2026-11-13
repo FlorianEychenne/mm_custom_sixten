@@ -6,6 +6,34 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : volets Couleurs et Logos en pastilles, comme le volet Textes
+
+- Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Suite du commit précédent, à la demande
+  de Mathieu : les trois volets ont maintenant la même forme et la même hauteur (7,75 rem), le tapis ne bouge plus quand
+  on change d'onglet. L'en-tête noir du volet (« Suivant », « × ») n'existe plus sur téléphone : on change d'outil par
+  les onglets, on ferme en retouchant l'onglet ouvert.
+- `views/js/layout.js` : `mountTextPhone` devient `mountPhonePanels` (objet `phonePanel`, appelé par `renderRows` pour
+  chaque sorte de zone et par `mountAdjust`). Il pose `body.sx-chips` une fois monté : toute la feuille de style du
+  téléphone en dépend (sans lui, les listes d'origine restent).
+  - Couleurs : une pastille par zone (sa couleur et son nom), et dessous les couleurs en une rangée qui défile
+    (40 px), la roue à droite. Pas d'outil, pas de zoom : vue entière du tapis.
+  - Logos : une pastille par emplacement, avec la vignette de la ligne (`paintThumb`) sur fond gris ; un logo du
+    gabarit y est tourné comme le tapis (`.is-turned`), un emplacement libre montre « + ». L'œil du logo choisi est à
+    droite. Dessous, quatre outils qui pressent les boutons de l'éditeur : Bibliothèque (`.sx-logo-btn--library`),
+    Importer (`.sx-logo-btn--upload`), Position (les trois roues), Retirer (`.sx-remove`). Ils sont grisés d'après le
+    moteur (`isPlaced`, `freeTransform`, `slotBox`, `canRemove`). Le rappel « logo plus grand que son emplacement »
+    reste, au-dessus des outils (le volet prend alors 9,5 rem).
+  - Zoom : la scène zoome sur le logo choisi comme sur le texte choisi, et s'y replace quand un logo est posé ou
+    retiré ; vue entière pour les couleurs et volet fermé.
+- `views/css/site.css` : le bloc du commit précédent est réécrit (« Téléphone : volets en pastilles »), tous ses
+  sélecteurs passent par `body.sx-chips`.
+- `mm_custom_sixten.php` (`jsTranslations`) et `translations/*.php` : « Upload » (5 langues).
+- Tests : dans `tests/e2e/run.mjs`, tout ce qui clique `.sx-rows--… .sx-row`, `.sx-dock__next` ou lit `.sx-dock__eye`
+  sous 992 px est à passer par `.sx-tchip` et les onglets (fichier non touché : modifications de Flo en cours).
+- Vérifié sans tête (Chromium) en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900 : couleur d'une zone, roue, pose d'un
+  logo de la bibliothèque, trois roues, œil, retrait, changement d'onglet, console sans erreur. L'import d'un fichier
+  et le vrai téléphone ne sont pas vérifiés.
+
 ### Téléphone (Mathieu) : volet Textes en pastilles et quatre outils, zoom sur le texte choisi
 
 - Sous 992 px seulement (téléphone et tablette) ; rien ne change sur ordinateur. Maquette validée par Mathieu. Le volet

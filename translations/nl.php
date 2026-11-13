@@ -125,3 +125,4 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ea4788705e6873b424c65e9
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9dffbf69ffba8bc38bc4e01abf4b1675'] = 'Tekst';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dfe6076e1d429c24edcbb2686bb39567'] = 'Kleur';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_52f5e0bc3859bc5f5e25130b6c7e8881'] = 'Positie';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_91412465ea9169dfd901dd5e7c96dd99'] = 'Uploaden';

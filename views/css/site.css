@@ -888,76 +888,118 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
   body#module-mm_custom-customModule .sx-adjust__btns .sx-adjust__ok{background:#000;color:#fff}
 }
 
-/* ---------- Téléphone : volet des textes (Mathieu, 13/11). La liste des textes et son éditeur laissent la place à une rangée de pastilles (.sx-tchips, l'œil du
-   texte choisi à droite) et à quatre outils (.sx-ttools : texte, police, couleur, position). Un outil ouvert (body.sx-ttool) prend la place de l'en-tête, des
-   onglets et du volet : champ en haut de l'écran pour le texte (le clavier couvre le bas), une rangée sous le tapis pour les polices et les couleurs, coche
-   rouge .sx-ttool-ok pour revenir (layout.js, mountTextPhone) ---------- */
+/* ---------- Téléphone : volets en pastilles (Mathieu, 13/11). Sous 992 px, quand layout.js les a montés (body.sx-chips, mountPhonePanels) : plus d'en-tête de
+   volet ni de liste ; une rangée de pastilles (.sx-tchips : une par zone, l'œil du texte ou du logo choisi à droite) et une rangée dessous : les couleurs
+   (Couleurs), quatre outils .sx-ttools (Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
+   même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place de l'en-tête, des onglets et du volet : champ en haut de
+   l'écran pour le texte (le clavier couvre le bas), une rangée sous le tapis pour les polices et les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
 body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok{display:none}
 @media (max-width:991.98px){
-  /* volet des textes : ni en-tête ni liste ; il a la hauteur des pastilles et des outils, le tapis prend le reste */
-  body#module-mm_custom-customModule.sx-dock-open[data-sx-kind="text"]:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
-  body#module-mm_custom-customModule[data-sx-kind="text"] .sx-dock__head,
-  body#module-mm_custom-customModule[data-sx-kind="text"] .module-container .info::after,
-  body#module-mm_custom-customModule .module-container .tools .sx-rows--text>.sx-row,
-  body#module-mm_custom-customModule .module-container .tools .sx-editor--text>.font-colors,
-  body#module-mm_custom-customModule .module-container .tools .sx-editor--text .mmc-text-editor,
-  body#module-mm_custom-customModule .module-container .tools .sx-editor--text .sx-adjust-btn{display:none}
-  body#module-mm_custom-customModule[data-sx-kind="text"] .module-container .tools{padding:.5rem .625rem;overflow:hidden}
-  body#module-mm_custom-customModule .module-container .tools .sx-editor--text,body#module-mm_custom-customModule .module-container .tools .sx-editor--text .inputTextDesign{margin:0;padding:0;border:0}
-  body#module-mm_custom-customModule .module-container .tools .sx-tchips{display:flex;gap:.375rem;margin:0 0 .5rem}
-  body#module-mm_custom-customModule .sx-tchips__list{position:relative;flex:1;min-width:0;display:flex;gap:.375rem;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
-  body#module-mm_custom-customModule .sx-tchips__list::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule .sx-tchip{flex:none;max-width:11rem;height:2.75rem;padding:0 .875rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-size:1.0625rem;line-height:2.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-  body#module-mm_custom-customModule .sx-tchip.on{background:#000;color:#fff}
-  body#module-mm_custom-customModule .sx-tchip.is-hidden{text-decoration:line-through;color:#8a8a8a}
-  body#module-mm_custom-customModule .sx-tchip.is-empty{font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
-  body#module-mm_custom-customModule .sx-tchips__eye{flex:none;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
-  body#module-mm_custom-customModule .sx-tchips__eye[hidden]{display:none}
-  body#module-mm_custom-customModule .sx-tchips__eye[aria-pressed=true]{background:#000;color:#fff}
-  body#module-mm_custom-customModule .module-container .tools .sx-ttools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.375rem}
-  body#module-mm_custom-customModule .sx-ttools button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3125rem;height:3.5rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;line-height:1;text-transform:uppercase;cursor:pointer}
-  body#module-mm_custom-customModule .sx-ttools button:disabled{opacity:.35;cursor:default}
-  body#module-mm_custom-customModule .sx-tchips__eye svg,body#module-mm_custom-customModule .sx-ttools svg,body#module-mm_custom-customModule .sx-ttool-ok svg{flex:none;width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open[data-sx-kind="logo"]:not(.sx-adjusting):not(.sx-ttool):has(.sx-logo-hint:not([hidden])){--sx-tpanel-h:9.5rem}
+  body#module-mm_custom-customModule.sx-chips .sx-dock__head,
+  body#module-mm_custom-customModule.sx-chips .module-container .info::after,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-rows>.sx-row,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--text>.font-colors,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--text .mmc-text-editor,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--text .sx-adjust-btn,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo-btns,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--library,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--import,
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current>:not(.sx-logo-foot),
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-foot .sx-remove{display:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools{padding:.5rem .625rem;overflow:hidden}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor,body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--text .inputTextDesign,body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current{gap:0;margin:0;padding:0;border:0}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-tchips{display:flex;gap:.375rem;margin:0 0 .5rem}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__list{position:relative;flex:1;min-width:0;display:flex;gap:.375rem;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__list::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip{flex:none;max-width:11rem;height:2.75rem;padding:0 .875rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-size:1.0625rem;line-height:2.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip.on{background:#000;color:#fff}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip.is-hidden{text-decoration:line-through;color:#8a8a8a}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--text.is-empty{font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+  /* couleurs : la couleur de la zone et son nom */
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--colors{display:flex;align-items:center;gap:.5rem;padding:0 .875rem 0 .625rem;font-family:var(--mmx-font);font-size:.8125rem;font-weight:700;line-height:1}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip__swatch{flex:none;width:1.5rem;height:1.5rem;box-shadow:inset 0 0 0 1px rgba(0,0,0,.3)}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip.on .sx-tchip__swatch{box-shadow:0 0 0 1.5px #fff}
+  /* logos : la vignette sur un gris qui montre les logos clairs comme les foncés ; un logo du gabarit est tourné comme le tapis ; emplacement libre : « + » */
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo{display:grid;place-items:center;width:3.75rem;padding:0;background:#a8a8a8;box-shadow:none;line-height:1}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo.on{background:#a8a8a8;box-shadow:inset 0 0 0 3px #000}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo.is-hidden{opacity:.45}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip__thumb{display:grid;place-items:center;width:2.75rem;height:1.875rem;pointer-events:none}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip__thumb img{display:block;max-width:2.75rem;max-height:1.875rem;object-fit:contain}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__list.is-turned .sx-tchip--logo.is-tpl img{max-width:1.875rem;max-height:2.75rem;transform:rotate(90deg)}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo.is-empty{background:#fff;box-shadow:inset 0 0 0 1.5px #c4c4c4}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo.is-empty.on{background:#fff}
+  body#module-mm_custom-customModule.sx-chips .sx-tchip--logo.is-empty .sx-tchip__thumb::before{content:"+";font:400 1.5rem/1 var(--mmx-font);color:#000}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__eye{flex:none;display:grid;place-items:center;width:2.75rem;height:2.75rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__eye[hidden]{display:none}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__eye[aria-pressed=true]{background:#000;color:#fff}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-ttools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.375rem}
+  body#module-mm_custom-customModule.sx-chips .sx-ttools button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3125rem;min-width:0;height:3.5rem;padding:0 .125rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.1em;line-height:1;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-ttools button span{max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  body#module-mm_custom-customModule.sx-chips .sx-ttools--logo button{font-size:.5625rem;letter-spacing:0}
+  body#module-mm_custom-customModule.sx-chips .sx-ttools button:disabled{opacity:.35;cursor:default}
+  body#module-mm_custom-customModule.sx-chips .sx-tchips__eye svg,body#module-mm_custom-customModule.sx-chips .sx-ttools svg,body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{flex:none;width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+  /* couleurs : les pastilles de couleur en une rangée qui défile, la roue reste à droite */
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){height:3.5rem}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]){display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden])::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden])>.mm-tools-title,body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-section-title{display:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-section:not([hidden]){display:contents}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button:hover{transform:none}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .colors-grid>button svg{width:1rem;height:1rem}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-preview{width:auto}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--colors:not([hidden]) .mm-wheel-hex{display:none}
+  /* logos : le rappel « logo plus grand que son emplacement » au-dessus des outils */
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo:not([hidden]){display:flex;flex-direction:column}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current{order:-1}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-foot{display:block}
+  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint{width:100%;height:1.25rem;margin:0 0 .5rem;font-size:.625rem;line-height:1.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  /* outil ouvert : ni en-tête, ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée sous le tapis, la coche à sa droite */
-  body#module-mm_custom-customModule.sx-ttool{--mm-header-h:0rem;--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--mm-stage-h:calc(100svh - var(--sx-ttool-h))}
-  body#module-mm_custom-customModule.sx-ttool .module-top-bar,
-  body#module-mm_custom-customModule.sx-ttool .module-container>.sx-steps,
-  body#module-mm_custom-customModule.sx-ttool .sx-stage-hint,
-  body#module-mm_custom-customModule.sx-ttool .sx-zoomwrap,
-  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-tchips,
-  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-ttools{display:none}
-  body#module-mm_custom-customModule.sx-ttool .module-container .info{top:auto;left:0;right:3.25rem;bottom:0;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
-  body#module-mm_custom-customModule.sx-ttool .module-container .tools{padding:0;overflow:hidden}
-  body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-ttool .module-container .tools .sx-editor--text:not([hidden]){display:block}
-  body#module-mm_custom-customModule .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;right:0;bottom:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
-  body#module-mm_custom-customModule .sx-ttool-ok svg{width:1.5rem;height:1.5rem;stroke-width:2}
+  /* outil des textes ouvert : ni en-tête, ni onglets, ni boutons posés sur la scène, ni pastilles ; une rangée sous le tapis, la coche à sa droite */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool{--mm-header-h:0rem;--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--mm-stage-h:calc(100svh - var(--sx-ttool-h))}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-top-bar,
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container>.sx-steps,
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-stage-hint,
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-zoomwrap,
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-tchips,
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-ttools{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .info{top:auto;left:0;right:3.25rem;bottom:0;box-sizing:border-box;height:var(--sx-ttool-h);padding-bottom:env(safe-area-inset-bottom,0px)}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools{padding:0;overflow:hidden}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-rows--text,body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-editor--text:not([hidden]){display:block}
+  body#module-mm_custom-customModule.sx-chips .sx-ttool-ok:not([hidden]){position:absolute;z-index:12;right:0;bottom:0;display:grid;place-items:center;box-sizing:border-box;width:3.25rem;height:var(--sx-ttool-h);padding:0 0 env(safe-area-inset-bottom,0px);border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-ttool-ok svg{width:1.5rem;height:1.5rem;stroke-width:2}
 
   /* texte : le champ en haut de l'écran, le tapis dessous sur ce que le clavier laisse (--sx-vvh : hauteur visible, --sx-ttext-h : celle du champ) */
-  body#module-mm_custom-customModule.sx-ttool--text{--mm-header-h:var(--sx-ttext-h,3.5rem);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
-  body#module-mm_custom-customModule.sx-ttool--text .module-container .info{top:0;bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
-  body#module-mm_custom-customModule.sx-ttool--text .sx-ttool-ok:not([hidden]){top:0;bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
-  body#module-mm_custom-customModule.sx-ttool--text .module-container .tools .sx-editor--text .mmc-text-editor{display:block;margin:0}
-  body#module-mm_custom-customModule.sx-ttool--text .sx-textfield__font{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text{--mm-header-h:var(--sx-ttext-h,3.5rem);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttext-h,3.5rem))}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .info{top:0;bottom:auto;height:auto;padding:.375rem 0 .375rem .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-ttool-ok:not([hidden]){top:0;bottom:auto;height:var(--sx-ttext-h,3.5rem);padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .module-container .tools .sx-editor--text .mmc-text-editor{display:block;margin:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--text .sx-textfield__font{display:none}
 
   /* police : la liste des polices en une rangée qui défile, chaque police écrit le texte */
-  body#module-mm_custom-customModule.sx-ttool--font .module-container .info{display:none}
-  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist:not([hidden]){left:0!important;right:3.25rem;top:auto!important;bottom:0!important;display:flex;box-sizing:border-box;width:auto!important;height:var(--sx-ttool-h);max-height:none!important;padding:0 0 env(safe-area-inset-bottom,0px);overflow-x:auto;overflow-y:hidden;border:0;box-shadow:none;scrollbar-width:none}
-  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist li{flex:none;flex-direction:column;align-items:flex-start;justify-content:center;gap:.25rem;min-width:5.5rem;max-width:13rem;padding:0 1rem;box-shadow:inset -1px 0 0 var(--mmx-border,#e5e5e5)}
-  body#module-mm_custom-customModule.sx-ttool--font .sx-fontlist__sample{max-width:100%;font-size:1.25rem;line-height:1.3}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .module-container .info{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist:not([hidden]){left:0!important;right:3.25rem;top:auto!important;bottom:0!important;display:flex;box-sizing:border-box;width:auto!important;height:var(--sx-ttool-h);max-height:none!important;padding:0 0 env(safe-area-inset-bottom,0px);overflow-x:auto;overflow-y:hidden;border:0;box-shadow:none;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist li{flex:none;flex-direction:column;align-items:flex-start;justify-content:center;gap:.25rem;min-width:5.5rem;max-width:13rem;padding:0 1rem;box-shadow:inset -1px 0 0 var(--mmx-border,#e5e5e5)}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--font .sx-fontlist__sample{max-width:100%;font-size:1.25rem;line-height:1.3}
 
-  /* couleur : les pastilles en une rangée qui défile, la roue reste à droite */
-  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .sx-editor--text .inputTextDesign{display:none}
-  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{display:flex;flex-direction:row;align-items:center;gap:.375rem;height:4rem;margin:0;padding:0 0 0 .5rem;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors::-webkit-scrollbar{display:none}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-section-title{display:none}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-section:not([hidden]){display:contents}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
-  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color{flex:none;width:2.5rem;height:2.5rem;margin:0}
-  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color:hover{transform:none}
-  body#module-mm_custom-customModule.sx-ttool--color .module-container .tools .colors-grid .font-color svg{width:1rem;height:1rem}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 .5rem;background:#fff}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel-preview{width:auto}
-  body#module-mm_custom-customModule.sx-ttool--color .font-colors .mm-wheel-hex{display:none}
+  /* couleur du texte : comme le volet des couleurs */
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text .inputTextDesign{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{height:4rem;padding:0 0 0 .5rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors{display:flex;flex-direction:row;align-items:center;gap:.375rem;margin:0;overflow-x:auto;overscroll-behavior:contain;scrollbar-width:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors::-webkit-scrollbar{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors>.mm-tools-title,body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-section-title{display:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-section:not([hidden]){display:contents}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid{display:flex;flex:none;flex-wrap:nowrap;gap:.375rem;margin:0;padding:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button{flex:none;width:2.5rem;height:2.5rem;margin:0}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button:hover{transform:none}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .colors-grid>button svg{width:1rem;height:1rem}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel{position:sticky;right:0;flex:none;width:auto;margin:0 0 0 auto;padding:0 0 0 .5rem;background:#fff}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-preview{width:auto}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool--color .module-container .tools .sx-editor--text>.font-colors .mm-wheel-hex{display:none}
 }
