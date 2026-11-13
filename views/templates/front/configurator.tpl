@@ -38,7 +38,7 @@
                 {/if}
                 <small class="sx-lead">{$mmcs_lead_time|default:''}</small>
                 {* A plain button: the design is sent by MmCustom.cart.add() (AJAX), never by a form *}
-                <button type="button" class="mm-btn-cart add-to-cart" id="add-to-cart">{l s='Add to cart' mod='mm_custom_sixten'}</button>
+                <button type="button" class="mm-btn-cart add-to-cart" id="add-to-cart"><span class="sx-cart__long">{l s='Add to cart' mod='mm_custom_sixten'}</span><span class="sx-cart__short" aria-hidden="true">{l s='Cart' mod='mm_custom_sixten'}</span></button>
             </div>
         </div>
         <button type="button" class="mm-btn save-custom" data-product-id="{$product_id}" data-category="{$product_category_id}" data-product-attribute="{$product_attribute_id}" >{if $is_resuming_custom}{l s='Save changes' mod='mm_custom_sixten'}{else}{l s='Save' mod='mm_custom_sixten'}{/if}</button>

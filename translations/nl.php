@@ -117,3 +117,4 @@ $_MODULE['<{mm_custom_sixten}prestashop>ar_65fc08d6cd5c5bd57daa1c38c9ba2f35'] = 
 $_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Mat in 3D bekijken';
 $_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'De 3D-weergave is niet beschikbaar op dit apparaat.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7984c9f452d24d2334b83ec2df841984'] = 'Een kwartslag draaien';
+$_MODULE['<{mm_custom_sixten}prestashop>configurator_a85eba4c6c699122b2bb1387ea4813ad'] = 'Winkelwagen';

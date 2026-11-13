@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : en-tête réordonné, bouton « Panier »
+
+- `views/css/site.css` (sous 992 px) : ligne 1 = S, nom, prix, fermer ; ligne 2 = Taille, Design, sauvegarder
+  (disquette), « Panier » précédé de son pictogramme. Remplace la disposition du commit précédent (prix sur la ligne 2,
+  panier en pictogramme seul). Toujours deux lignes (84 px), délai de fabrication masqué. Mise en ligne par flex.
+- `views/templates/front/configurator.tpl` : le bouton panier porte un libellé long (« Ajouter au panier »,
+  ordinateur et lecteurs d'écran) et un libellé court (« Panier », téléphone). Traductions : `Cart` (5 langues).
+  Après déploiement : vider le fichier compilé du gabarit.
+- Vérifié au navigateur en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900 (Honda 95x200 Classic) ; « Sauvegarder »
+  ouvre toujours la fenêtre de connexion ; ordinateur inchangé.
+
 ### Téléphone (Mathieu) : en-tête sur deux lignes, boutons en pictogrammes
 
 - `views/css/site.css` (sous 992 px) : l'en-tête passe de trois lignes à deux (84 px au lieu de 128 en 390 × 844).
