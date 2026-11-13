@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : une seule palette, sur plusieurs lignes, avec la roue et le code HEX
+
+- Sous 992 px seulement. Demande de Mathieu : pas deux outils pour les couleurs, et la palette sur plusieurs lignes,
+  comme la grille des polices.
+- L'outil « Personnalisée » du commit précédent disparaît (`body.sx-ttool--hex`, le libellé « Custom » et ses cinq
+  traductions sont retirés). Le volet Couleurs n'a plus qu'un outil sous les pastilles des zones : « Palette ».
+- La palette (couleur d'une zone comme couleur d'un texte, `body.sx-ttool--color`) est une feuille sous le tapis, de la
+  hauteur de son contenu : une barre « Couleur » avec la coche ; les couleurs sur plusieurs lignes (40 px, trois lignes
+  au plus, la suite en défilant) ; dessous, la couleur personnalisée : la pastille de la roue (elle ouvre la roue
+  au-dessus) et le code HEX dans un champ en 16 px, appliqué dès qu'il est complet. La feuille remonte au-dessus du
+  clavier quand on tape le code.
+- `views/js/layout.js` (`mountPhonePanels`) : `measure` mesure la hauteur de la palette comme celle du champ de texte
+  (`--sx-ttext-h`) ; le nom de l'outil de la barre passe par `data-sx-tool` sur le volet (polices et palette).
+  `views/css/site.css` : bloc « volets en pastilles ».
+- Vérifié sans tête (Chromium) en 390 × 844, 360 × 640, 820 × 1180 et 1440 × 900, clavier simulé : console sans
+  erreur. Non vérifié sur vrai téléphone.
+
 ### Téléphone (Mathieu) : retours iPhone, suite (taille, boutons, polices en grille, panier, couleurs, code HEX)
 
 - Sous 992 px seulement ; rien ne change sur ordinateur. Retours de Mathieu pendant son essai sur iPhone.

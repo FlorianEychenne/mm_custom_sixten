@@ -131,4 +131,3 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_be53a0541a6d36f6ecb879f
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_c8c0125a959d9d90e95c91341e68f0a1'] = 'Instagram-story';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f3e4e18a859052cf4478ddefc5edbe68'] = 'Hele mat';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9368c480af98b3858c47e24ce00f1b3d'] = 'Inzoomen op de selectie';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_90589c47f06eb971d548591f23c285af'] = 'Eigen kleur';

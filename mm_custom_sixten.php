@@ -204,7 +204,6 @@ class Mm_custom_sixten extends Module
             'toolColor' => $this->l('Colour'),
             'toolPosition' => $this->l('Position'),
             'toolUpload' => $this->l('Upload'),
-            'toolCustom' => $this->l('Custom'),
             'more' => $this->l('More tools'),
             'moreImage' => $this->l('Image'),
             'moreStory' => $this->l('Instagram story'),

@@ -1975,12 +1975,11 @@
 
         // Phone (layout under 992 px, body.sx-chips): the header of the panel, the list of the zones and their editor give
         // way to a strip of chips (one per zone; the eye of the chosen text or logo at its right) over one row of tools:
-        //  - colours: two tools, the palette (the swatches in one row, the wheel at their right) and the custom colour
-        //    (the wheel and its code, typed in a field that comes just over the keyboard);
+        //  - colours: one tool, the palette: the swatches on several lines, then the custom colour (the wheel and its
+        //    code, typed in a field that comes just over the keyboard), in a sheet under the mat;
         //  - texts: four tools (text, font, colour, position). The first three take the place of the tabs and the panel,
         //    with a tick to come back: the field just over the keyboard, the mat above it (visualViewport); the fonts in
-        //    a grid under the mat, each one writing the text; the swatches in one row under the mat, their wheel leading
-        //    to the custom colour as for the colours;
+        //    a grid under the mat, each one writing the text; the same palette as for the colours;
         //  - logos: four tools (library, file, position, remove), which press the buttons of the editor.
         // « Position » opens the three wheels (mountAdjust). While the panel shows the texts or the logos, the mat zooms on
         // the zone of the chosen one (twice the whole mat at most) and follows it under the wheels; it shows the whole mat
@@ -2006,7 +2005,6 @@
                 whole: SVG('M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'),
                 zone: SVG('M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4.9-4.9M10.5 8v5M8 10.5h5'),
                 cart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></svg>',
-                hex: SVG('M5 9h14M5 15h14M10 4L8 20M16 4l-2 16'),
             }
             const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
             const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
@@ -2077,19 +2075,14 @@
                 textTools.position.disabled = !on || !textAdjust || !MmCustom.texts.isMovable(current.text)
             }
 
-            // Colours: the palette and the custom colour take the panel, as the tools of the texts do
+            // Colours: one tool, the palette, which takes the panel as the tools of the texts do
             const colorKind = KINDS.find(function (k) { return k.key === 'colors' }) || null
             const colorTools = colorKind && editors.colors ? toolRow('colors', [
-                ['color', t('palette', 'Palette')], ['hex', t('toolCustom', 'Custom')],
+                ['color', t('palette', 'Palette')],
             ], function (name) { enter(name) }) : null
 
             function paintColorTools() {
-                if (!colorTools) return
-
-                const on = !!current.color && current.color.isConnected
-
-                colorTools.color.disabled = !on
-                colorTools.hex.disabled = !on
+                if (colorTools) colorTools.color.disabled = !(current.color && current.color.isConnected)
             }
 
             // Logos: each tool presses a button of the editor (library, file, three wheels, remove)
@@ -2441,7 +2434,7 @@
                 }).observe(stage.parentElement)
             })
 
-            /* tools that take the panel: text, font and colour of a text; palette of a colour zone; custom colour of both */
+            /* tools that take the panel: text, font and colour of a text; palette of a colour zone */
             let mode = ''
             let modeKind = '' // key of the kind the open tool works on (text, colors)
             const viewport = window.visualViewport
@@ -2475,7 +2468,8 @@
                 body.style.setProperty('--sx-vvh', Math.round(early === true ? full * 0.55 : full) + 'px')
                 body.style.setProperty('--sx-vvt', Math.round(viewport ? viewport.offsetTop : 0) + 'px')
 
-                if (mode === 'text') body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
+                // The field of a text and the palette have the height of their content
+                if (mode === 'text' || mode === 'color') body.style.setProperty('--sx-ttext-h', Math.ceil(dock.getBoundingClientRect().height) + 'px')
             }
 
             function enter(name) {
@@ -2488,18 +2482,11 @@
 
                 mode = name
                 modeKind = key
+                // Title of the bar over the grid of the fonts and over the palette (style sheet)
+                dock.dataset.sxTool = name === 'font' ? t('font', 'Font') : (name === 'color' ? t('toolColor', 'Colour') : '')
                 body.classList.add('sx-ttool', 'sx-ttool--' + name)
                 ok.hidden = false
                 measure()
-
-                // Custom colour: the wheel opens over its swatch, once the tool is laid out
-                if (name === 'hex') {
-                    twice(function () {
-                        const swatch = mode === 'hex' ? partOf(modeKind, '.mm-wheel-swatch') : null
-
-                        if (swatch) swatch.click()
-                    })
-                }
 
                 if (name === 'text') {
                     measure(true)
@@ -2555,27 +2542,15 @@
 
             if (fontField) fontField.onClose = function () { if (mode === 'font') leave() }
 
-            dock.dataset.sxFont = t('font', 'Font') // title of the bar over the grid of the fonts (style sheet)
-
-            // Palette of a text or of a colour zone: its wheel leads to the custom colour (caught before the picker
-            // opens: it would open where the swatch was)
-            dock.addEventListener('click', function (event) {
-                if (mode !== 'color' || !event.target.closest('.mm-wheel-swatch')) return
-
-                event.stopPropagation()
-                leave()
-                enter('hex')
-            }, true)
-
-            // Code of the custom colour: applied as soon as it is whole (six figures), the picker gives way to the
-            // keyboard, Enter puts the keyboard away
+            // Code of the custom colour, in the palette: applied as soon as it is whole (six figures), the picker gives
+            // way to the keyboard, Enter puts the keyboard away
             Array.from(dock.querySelectorAll('.mm-wheel-hex')).forEach(function (code) {
                 code.setAttribute('autocapitalize', 'off')
-                code.addEventListener('focus', function () { if (mode === 'hex' && ui.colorPicker) ui.colorPicker.close() })
+                code.addEventListener('focus', function () { if (mode === 'color' && ui.colorPicker) ui.colorPicker.close() })
                 code.addEventListener('input', function () {
-                    if (mode === 'hex' && /^#?[0-9a-f]{6}$/i.test(code.value.trim())) code.dispatchEvent(new Event('change'))
+                    if (mode === 'color' && /^#?[0-9a-f]{6}$/i.test(code.value.trim())) code.dispatchEvent(new Event('change'))
                 })
-                code.addEventListener('keydown', function (event) { if (mode === 'hex' && event.key === 'Enter') code.blur() })
+                code.addEventListener('keydown', function (event) { if (mode === 'color' && event.key === 'Enter') code.blur() })
             })
 
             if (field) {
