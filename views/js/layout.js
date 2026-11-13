@@ -62,20 +62,6 @@
         // Ink of the print on the felt, flat 2 cm sole
         if (MmCustom.effects) MmCustom.effects.configure({ ink: true, sole: { cm: 2, fill: '#333333' } })
 
-        // The ink is one filter per top-level element of the template, its region (the whole mat) worked out once in the
-        // element's own space. A text that is itself a top-level element carries its move in that space: once moved, the
-        // region moves with it and what goes past it (enlarged text, moved further) is hidden. Worked out again after a change.
-        if (MmCustom.effects && MmCustom.effects.refresh) {
-            let inkTimer = 0
-            const refreshInk = function () {
-                window.clearTimeout(inkTimer)
-                inkTimer = window.setTimeout(function () { MmCustom.effects.refresh() }, 120)
-            }
-
-            ;['text:change', 'text:moved', 'text:rotated', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:rotated', 'logo:placed']
-                .forEach(function (name) { MmCustom.on(name, refreshInk) })
-        }
-
         MmCustom.stats.watchFirstInteraction()
 
         // Proportions of this mat: the stage sizes it from them (--sx-ratio, site.css)

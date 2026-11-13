@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Encre (Mathieu) : le recalcul passe dans mm_custom
+
+- Le recalcul de l'encre après chaque modification (`MmCustom.effects.refresh()` dans `layout.js`, entrée suivante) est
+  retiré : le moteur le fait lui-même désormais (`effects.js` de mm_custom, entrée du 13/11/2026), plus légèrement (zones
+  seules, une fois par image, y compris pendant un glisser).
+
 ### Textes (Mathieu) : un texte agrandi ou déplacé n'est plus coupé ; curseurs bornés au tapis
 
 - **Bug** : l'encre du moteur (`effects.js`) est un filtre par élément de premier niveau du gabarit, sa zone (tout le tapis)
