@@ -845,7 +845,7 @@ body#module-mm_custom-customModule .sx-cart__short{display:none}
   body#module-mm_custom-customModule .sx-config-close{order:4;flex:none}
   body#module-mm_custom-customModule .module-top-bar .module-title .module-attributes{order:5;flex:1 1 50%;min-width:0}
   body#module-mm_custom-customModule .sx-variant__select{height:2rem}
-  body#module-mm_custom-customModule .sx-actions .save-custom{order:6;flex:none;width:2rem;min-width:0;height:2rem;min-height:0;padding:0;font-size:0;letter-spacing:0;overflow:hidden}
+  body#module-mm_custom-customModule .sx-actions .save-custom{order:6;flex:none;gap:0;width:2rem;min-width:0;height:2rem;min-height:0;padding:0;font-size:0;letter-spacing:0;line-height:0;overflow:hidden}
   body#module-mm_custom-customModule .module-footer .add-to-shopping-cart .mm-btn-cart{order:7;flex:none;gap:.375rem;height:2rem;min-height:0;padding:0 .625rem;font-size:.625rem;clip-path:none}
   body#module-mm_custom-customModule .sx-cart__long{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   body#module-mm_custom-customModule .sx-cart__short{display:inline}

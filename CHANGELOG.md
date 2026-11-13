@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Téléphone (Mathieu) : disquette centrée dans son bouton
+
+- `views/css/site.css` : le libellé masqué de « Sauvegarder » reste un élément du bouton ; l'écart entre lui et le
+  pictogramme (`gap`) décalait la disquette de 4 px vers la gauche. `gap:0` sur ce bouton. Vérifié sur une capture
+  agrandie en 390 px.
+
 ### Téléphone (Mathieu) : en-tête réordonné, bouton « Panier »
 
 - `views/css/site.css` (sous 992 px) : ligne 1 = S, nom, prix, fermer ; ligne 2 = Taille, Design, sauvegarder
