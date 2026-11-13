@@ -638,9 +638,9 @@
         const colorBlock = $('[data-sx-kind="colors"]')
         const textBlock = $('[data-sx-kind="text"]')
 
-        // One list of swatches, titled « Trends »: the brand colours, then black and white, then the colours of the template
-        // (in the colour tool and in the text colour tool). The module's own « Trends » list is not shown. Without brand
-        // colours, the module's list stays and takes the template colours.
+        // One list of swatches, titled « Trends »: black and white first, then the brand colours, then the colours of the
+        // template (in the colour tool and in the text colour tool). The module's own « Trends » list is not shown. Without
+        // brand colours, the module's list stays and takes the template colours.
         const templateColors = MmCustom.colors.templateColors()
 
         $$('[data-sx-kind="text"] .font-colors, [data-sx-kind="colors"] .sx-editor').forEach(function (scope) {
@@ -653,7 +653,7 @@
             const grid = $('.colors-grid', keep)
             const swatchClass = scope.closest('[data-sx-kind="text"]') ? 'font-color' : 'colors-color'
             const seen = {}
-            const add = function (hex, extraClass) {
+            const add = function (hex, extraClass, before) {
                 if (seen[hex]) return
 
                 const swatch = document.createElement('button')
@@ -663,18 +663,22 @@
                 swatch.style.backgroundColor = hex
                 swatch.title = hex.toUpperCase()
                 swatch.setAttribute('aria-label', swatch.title)
-                grid.appendChild(swatch)
+                grid.insertBefore(swatch, before || null)
                 seen[hex] = true
             }
 
-            grid.querySelectorAll('button').forEach(function (b) { seen[hexOf(b.style.backgroundColor)] = true })
-
             if (keep === brands) {
+                // Black and white lead the list (a brand colour that is black or white is then left out)
+                const first = grid.firstElementChild
+
                 $('.colors-section-title', brands).textContent = t('trends', 'Trends')
-                ;['#000000', '#ffffff'].forEach(function (hex) { add(hex, 'sx-bw-color') })
+                ;['#000000', '#ffffff'].forEach(function (hex) { add(hex, 'sx-bw-color', first) })
+                grid.querySelectorAll('.brand-color').forEach(function (b) { if (seen[hexOf(b.style.backgroundColor)]) b.remove() })
 
                 if (trends) trends.hidden = true
             }
+
+            grid.querySelectorAll('button').forEach(function (b) { seen[hexOf(b.style.backgroundColor)] = true })
 
             templateColors.forEach(function (hex) { add(hex, 'sx-tpl-color') })
             grid.querySelectorAll('button').forEach(function (b) { if (hexOf(b.style.backgroundColor) === '#ffffff') b.classList.add('white') })

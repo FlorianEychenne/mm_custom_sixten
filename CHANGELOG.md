@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Couleurs (Mathieu) : noir et blanc en tête de la liste « Tendances »
+
+- `views/js/layout.js` : le noir puis le blanc sont les deux premières pastilles de la liste (outil Couleurs et couleur
+  des textes), avant les couleurs de marques ; une couleur de marque noire ou blanche n'est pas affichée en double.
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic), dans les deux outils.
+
 ### Couleurs (Mathieu) : une seule liste « Tendances », avec le noir et le blanc
 
 - `views/js/layout.js` (outil Couleurs et couleur des textes) : la liste « Marques » prend le titre « Tendances » et
