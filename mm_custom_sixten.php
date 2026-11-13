@@ -151,6 +151,7 @@ class Mm_custom_sixten extends Module
             'dropLogo' => $this->l('Drop your logo here'),
             'dropNew' => $this->l('Drop a new logo'),
             'palette' => $this->l('Palette'),
+            'trends' => $this->l('Trends'),
             'colorWheel' => $this->l('Colour wheel'),
             'colorCode' => $this->l('Colour code'),
             'font' => $this->l('Font'),

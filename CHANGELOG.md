@@ -6,6 +6,16 @@ Une entrée par commit, la plus récente en haut.
 
 ## 13/11/2026
 
+### Couleurs (Mathieu) : une seule liste « Tendances », avec le noir et le blanc
+
+- `views/js/layout.js` (outil Couleurs et couleur des textes) : la liste « Marques » prend le titre « Tendances » et
+  reçoit le noir (#000000) et le blanc (#FFFFFF), puis les couleurs du gabarit qui n'y sont pas déjà. L'ancienne liste
+  « Tendances » du module n'est plus affichée (`hidden`). La note d'impression suit la liste. Sans couleurs de marques,
+  la liste du module reste, avec les couleurs du gabarit. Le sélecteur de couleur (`mm-wheel`) ne change pas.
+- `mm_custom_sixten.php`, traductions : chaîne `Trends` (Tendances, 5 langues). `site.css` : `.colors-section[hidden]`.
+- Vérifié au navigateur sur dev.24fluence.com (Kawasaki 95x200 Classic) : 11 pastilles dans les deux outils, blanc
+  appliqué à une zone, noir à un texte, sélecteur de couleur présent, aucune erreur dans la console.
+
 ### Téléphone (Mathieu) : volet plus haut
 
 - `views/css/site.css` : volet ouvert, le tapis garde 40 % de l'écran (50 % depuis ce matin, 34 % avant). Sur un écran de

@@ -105,3 +105,4 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9f58e53d79c72980ae1c3f6
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5bc638072849069506917d69e6775479'] = 'Breedte van het logo, in cm';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_4d70254b3a8e2bc38b6147fa6ee813be'] = 'Bibliotheek';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_630f1e08a8ca05e1d233e3c9a270c1e0'] = 'Logo uploaden';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9cf69763de83f9db7f4a87c51fe6ae23'] = 'Trends';

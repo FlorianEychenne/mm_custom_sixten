@@ -638,35 +638,56 @@
         const colorBlock = $('[data-sx-kind="colors"]')
         const textBlock = $('[data-sx-kind="text"]')
 
-        // Colours of the template, after the default swatches, in the colour tool and in the text colour tool
+        // One list of swatches, titled « Trends »: the brand colours, then black and white, then the colours of the template
+        // (in the colour tool and in the text colour tool). The module's own « Trends » list is not shown. Without brand
+        // colours, the module's list stays and takes the template colours.
         const templateColors = MmCustom.colors.templateColors()
 
-        $$('.colors-section-trends .colors-grid').forEach(function (grid) {
-            const swatchClass = grid.querySelector('.font-color') ? 'font-color' : 'colors-color'
+        $$('[data-sx-kind="text"] .font-colors, [data-sx-kind="colors"] .sx-editor').forEach(function (scope) {
+            const brands = $('.colors-section-brands', scope)
+            const trends = $('.colors-section-trends', scope)
+            const keep = brands && brands.querySelector('.brand-color') ? brands : trends
 
-            grid.querySelectorAll('button').forEach(function (b) { if (hexOf(b.style.backgroundColor) === '#ffffff') b.classList.add('white') })
-            templateColors.forEach(function (hex) {
+            if (!keep) return
+
+            const grid = $('.colors-grid', keep)
+            const swatchClass = scope.closest('[data-sx-kind="text"]') ? 'font-color' : 'colors-color'
+            const seen = {}
+            const add = function (hex, extraClass) {
+                if (seen[hex]) return
+
                 const swatch = document.createElement('button')
 
                 swatch.type = 'button'
-                swatch.className = swatchClass + ' sx-tpl-color'
+                swatch.className = swatchClass + ' ' + extraClass
                 swatch.style.backgroundColor = hex
                 swatch.title = hex.toUpperCase()
                 swatch.setAttribute('aria-label', swatch.title)
                 grid.appendChild(swatch)
-            })
+                seen[hex] = true
+            }
+
+            grid.querySelectorAll('button').forEach(function (b) { seen[hexOf(b.style.backgroundColor)] = true })
+
+            if (keep === brands) {
+                $('.colors-section-title', brands).textContent = t('trends', 'Trends')
+                ;['#000000', '#ffffff'].forEach(function (hex) { add(hex, 'sx-bw-color') })
+
+                if (trends) trends.hidden = true
+            }
+
+            templateColors.forEach(function (hex) { add(hex, 'sx-tpl-color') })
+            grid.querySelectorAll('button').forEach(function (b) { if (hexOf(b.style.backgroundColor) === '#ffffff') b.classList.add('white') })
+
+            // Printing note under the swatches of the colour tool
+            if (scope.closest('[data-sx-kind="colors"]')) {
+                const note = document.createElement('p')
+
+                note.className = 'sx-note'
+                note.textContent = t('printNote', 'Custom printed colors may vary slightly from those shown on screen, depending on your display and the printing process.')
+                keep.appendChild(note)
+            }
         })
-
-        // Printing note under the swatches of the colour tool
-        const trends = $('.colors-section-trends', colorBlock)
-
-        if (trends) {
-            const note = document.createElement('p')
-
-            note.className = 'sx-note'
-            note.textContent = t('printNote', 'Custom printed colors may vary slightly from those shown on screen, depending on your display and the printing process.')
-            trends.appendChild(note)
-        }
 
         // Wheel: a swatch (opens iro.js, ui/color-picker.js) and the hexadecimal code, in place of the module's button
         const wheels = {}
