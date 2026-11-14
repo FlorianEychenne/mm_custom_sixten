@@ -100,7 +100,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d83615d44ccee1d67942b4
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dbfe595c31d00abd919445549641e4b9'] = 'De AR-camera kon op dit apparaat niet worden gestart.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_185d266213d67ce43791f4364cb845bc'] = 'Tekstgrootte';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5cbb1f2334614765892923de63f7a571'] = 'Hoogte van de hoofdletters, in cm';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9f58e53d79c72980ae1c3f6ed3a05835'] = 'Verschuiving links / rechts';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_303f6690699127ad971f3e5319f0c08f'] = 'Positie links / rechts';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5bc638072849069506917d69e6775479'] = 'Breedte van het logo, in cm';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_4d70254b3a8e2bc38b6147fa6ee813be'] = 'Bibliotheek';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_630f1e08a8ca05e1d233e3c9a270c1e0'] = 'Logo uploaden';
@@ -118,7 +118,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 
 $_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'De 3D-weergave is niet beschikbaar op dit apparaat.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7984c9f452d24d2334b83ec2df841984'] = 'Een kwartslag draaien';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_a85eba4c6c699122b2bb1387ea4813ad'] = 'Winkelwagen';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6ed98937b2e2985c2ec7886cbd0fae54'] = 'Verschuiving omhoog / omlaag';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7584e9c36b8c44fe01c4a60eabe8a72b'] = 'Positie boven / onder';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f2d39ed805748ed130ffc6181c00bb59'] = 'Positie aanpassen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_70d9be9b139893aa6c69b5e77e614311'] = 'Bevestigen';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ea4788705e6873b424c65e91c2846b19'] = 'Annuleren';

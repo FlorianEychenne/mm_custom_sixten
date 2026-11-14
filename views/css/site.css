@@ -757,7 +757,10 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1.875rem;align-items:center;gap:.375rem .5rem}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row{display:contents}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .mm-tools-title{grid-column:1/-1;grid-row:1}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{grid-column:2;grid-row:2;min-width:3.5rem;text-align:right}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{grid-column:2;grid-row:2;display:inline-flex;align-items:center;justify-content:flex-end;gap:.3125rem;min-width:5.25rem;text-align:right}
+/* position sur un ordinateur : deux curseurs (gauche / droite, haut / bas) dont le chiffre est la distance au bord le plus proche du tapis, précédé de l'icône de ce bord (layout.js, mountEdgeRows) ; le second sous le premier, la case de gauche reste libre */
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val svg{flex:none;width:.875rem;height:.875rem;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-pos--y{grid-column:2}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos>input{grid-column:1;grid-row:2;margin:0}
 body#module-mm_custom-customModule:not(.sx-text-multi) .sx-text-bar{display:none}
 

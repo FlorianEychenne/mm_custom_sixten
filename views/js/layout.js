@@ -856,14 +856,153 @@
         // Template units to cm (MmCustom.product.cmPerUnit, from the size of the product); 0 when unknown
         const cmPerUnit = function () { return MmCustom.product.cmPerUnit() }
         const roundCm = function (value) { return Math.round(value * 10) / 10 }
-        const formatOffset = function (dx) {
-            const k = cmPerUnit()
+        // Position of a text or of a logo on a computer: two sliders, left / right and up / down as the screen shows the
+        // mat. Their figure is the distance to the nearest edge of the mat (MmCustom.position of the engine, as the wheels
+        // of the phone): an icon names the edge, « Centred » at the same distance from both, where the slider is
+        // magnetic. Dimension lines are drawn on the mat while a slider is used or an element is dragged (showGuides);
+        // on a phone the wheels own them.
+        const EDGE_ART = ui.adjust && ui.adjust.icons ? ui.adjust.icons : {}
+        const EDGE_NAME = {
+            left: function () { return t('fromLeft', 'Distance from the left edge') },
+            right: function () { return t('fromRight', 'Distance from the right edge') },
+            top: function () { return t('fromTop', 'Distance from the top edge') },
+            bottom: function () { return t('fromBottom', 'Distance from the bottom edge') },
+        }
+        const wide = window.matchMedia('(min-width: 992px)')
+        let guidesTimer = 0
+        const showGuides = function (el) {
+            if (!MmCustom.position || !wide.matches || !el) return
 
-            if (!dx || (k && !Math.round(Math.abs(dx) * k))) return '0'
+            clearTimeout(guidesTimer)
+            MmCustom.position.guides(el)
+        }
+        const hideGuides = function () {
+            if (!MmCustom.position || !wide.matches) return
 
-            const sign = dx > 0 ? '+' : '−'
+            clearTimeout(guidesTimer)
+            guidesTimer = setTimeout(function () { if (wide.matches) MmCustom.position.guides(null) }, 1500)
+        }
 
-            return k ? sign + ' ' + Math.round(Math.abs(dx) * k) + ' cm' : sign + ' ' + Math.round(Math.abs(dx))
+        MmCustom.on('drag:start', function (event) { showGuides(event.detail && event.detail.element) })
+        MmCustom.on('drag:end', hideGuides)
+
+        // first: the block of the left / right slider (.sx-logo-pos: a label, a figure, a range); the up / down one is
+        // made from it. options: { id, element(), usable(element), keep (stay in the printable part of the mat) }
+        function mountEdgeRows(first, options) {
+            if (!first) return { sync: function () {} }
+
+            const second = first.cloneNode(true)
+            const rows = {}
+            let sliding = null // axis of the slider being moved: its thumb is not put back under the pointer
+
+            first.insertAdjacentElement('afterend', second)
+
+            const figure = function (value) {
+                if (!cmPerUnit()) return String(Math.round(value))
+
+                return roundCm(value).toLocaleString(document.documentElement.lang || undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' cm'
+            }
+
+            // Along the screen: distance of the element to the left (or top) edge, room between the two edges, nearest edge
+            const read = function (axis) {
+                const el = options.element()
+
+                if (!MmCustom.position || !el || !el.isConnected || !options.usable(el)) return null
+
+                const m = MmCustom.position.measure(el)
+
+                if (!m) return null
+
+                const at = m[axis]
+                const k = cmPerUnit() || 1
+                const from = axis === 'x' ? 'left' : 'top'
+
+                return { at: at, k: k, from: from, first: (at.edge === from ? at.gap : at.far) * k, total: (at.gap + at.far) * k }
+            }
+
+            const paint = function (axis, now) {
+                const row = rows[axis]
+                const text = now.at.centred ? t('centred', 'Centred') : figure(now.at.gap * now.k)
+                const name = now.at.centred ? text : EDGE_NAME[now.at.edge]() + ' : ' + text
+
+                row.value.innerHTML = (EDGE_ART[now.at.centred ? (axis === 'x' ? 'midX' : 'midY') : now.at.edge] || '') + '<span>' + esc(text) + '</span>'
+                row.value.title = name
+                row.input.setAttribute('aria-valuetext', name)
+            }
+
+            function sync() {
+                Object.keys(rows).forEach(function (axis) {
+                    const row = rows[axis]
+                    let now = null
+
+                    try { now = read(axis) } catch (e) { return } // not drawn (hidden step): read again when shown
+
+                    row.input.disabled = !now || !(now.total > 0)
+
+                    if (!now) {
+                        row.value.textContent = ''
+
+                        return
+                    }
+
+                    if (sliding !== axis) {
+                        row.input.max = String(Math.max(0, roundCm(now.total)))
+                        row.input.value = String(roundCm(now.first))
+                    }
+
+                    paint(axis, now)
+                })
+            }
+
+            ;[['x', first], ['y', second]].forEach(function (pair) {
+                const axis = pair[0]
+                const block = pair[1]
+                const label = block.querySelector('.mm-tools-title')
+                const input = block.querySelector('input')
+
+                block.classList.add('sx-logo-pos--' + axis)
+                label.id = options.id + '-' + axis
+                label.textContent = axis === 'x' ? t('offset', 'Left / right position') : t('offsetY', 'Up / down position')
+                input.setAttribute('aria-labelledby', label.id)
+                input.min = '0'
+                input.step = '0.1'
+                rows[axis] = { input: input, value: block.querySelector('.sx-logo-pos__val') }
+
+                input.addEventListener('input', function () {
+                    const el = options.element()
+                    let now = read(axis)
+
+                    if (!now) return
+
+                    let wanted = parseFloat(input.value) || 0
+
+                    // Magnetic centre: about three pixels of the slider on each side
+                    if (Math.abs(wanted - now.total / 2) <= Math.max(0.3, now.total / 80)) wanted = now.total / 2
+
+                    sliding = axis
+                    showGuides(el)
+                    MmCustom.position.place(el, now.from, wanted / now.k, { keep: !!options.keep, snapCentre: false })
+                    sliding = null
+                    now = read(axis)
+
+                    if (!now) return
+
+                    // What was drawn: the printable part of the mat may hold the element back, the centre takes it
+                    input.value = String(roundCm(now.first))
+                    paint(axis, now)
+                })
+                input.addEventListener('change', function () {
+                    sync()
+                    hideGuides()
+                })
+                ;['pointerdown', 'focus'].forEach(function (name) { input.addEventListener(name, function () { showGuides(options.element()) }) })
+                input.addEventListener('blur', hideGuides)
+            })
+
+            ;['text:moved', 'text:change', 'text:rotated', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:rotated', 'logo:measured',
+                'history:restore', 'stage:rotate'].forEach(function (name) { MmCustom.on(name, sync) })
+
+            return { sync: sync }
         }
 
         // A figure in cm next to a slider's label: applied on Enter or when the field is left
@@ -972,12 +1111,9 @@
             textSliders = mountTextSliders(textArea, foot)
         }
 
-        // Size of the text (height of its capitals, in cm) and its offset along the mat, built like the logo's sliders
+        // Size of the text (height of its capitals, in cm) and its position (mountEdgeRows), built like the logo's sliders
         function mountTextSliders(container, before) {
             const box = document.createElement('div')
-            const view = MmCustom.svg.viewBox()
-            const half = view ? Math.round(Math.max(view.width, view.height) / 2) : 500
-            const origins = new WeakMap() // anchor of each text when first seen: the offset is measured from it
 
             box.className = 'sx-logo-sliders sx-text-sliders'
             box.innerHTML = '<div class="sx-logo-size"><div class="logo-design">'
@@ -986,17 +1122,20 @@
                 + '</div></div>'
                 + '<div class="sx-logo-pos"><div class="sx-logo-pos__row">'
                 + '<span class="mm-tools-title" id="sx-text-pos-label"></span><span class="sx-logo-pos__val">0</span>'
-                + '</div><input type="range" min="' + (-half) + '" max="' + half + '" step="5" value="0" aria-labelledby="sx-text-pos-label"></div>'
+                + '</div><input type="range" min="0" max="100" step="0.1" value="0" aria-labelledby="sx-text-pos-label"></div>'
             container.insertBefore(box, before)
 
             const design = box.querySelector('.logo-design')
             const slider = box.querySelector('#sx-text-size')
-            const offset = box.querySelector('.sx-logo-pos input')
-            const offsetValue = box.querySelector('.sx-logo-pos__val')
+            const edges = mountEdgeRows(box.querySelector('.sx-logo-pos'), {
+                id: 'sx-text-pos',
+                element: function () { return current.text },
+                usable: function (el) { return MmCustom.texts.isMovable(el) },
+                keep: true, // as the size: a text stays in the printable part of the mat
+            })
             const number = numberField('sx-text-size-cm', t('textSizeCm', 'Height of the capital letters, in cm'), function (cm) { setCm(cm) })
 
             box.querySelector('label').textContent = t('textSize', 'Text size')
-            box.querySelector('#sx-text-pos-label').textContent = t('offset', 'Left / right offset')
             design.insertBefore(number.box, slider)
 
             // Height of the capitals in cm (MmCustom.texts.capHeight: across the baseline, a slanted number keeps its height)
@@ -1015,45 +1154,7 @@
                 number.input.value = String(roundCm(sizeCm(el))) // what was drawn (the slot may hold the text smaller)
             }
 
-            // Anchor of the text along the mat: its left edge, centre or right edge, as it is aligned
-            const anchorX = function (el, anchor) {
-                const c = MmCustom.texts.frame(el)
-
-                if (anchor === 'start') return (c[0].x + c[3].x) / 2
-                if (anchor === 'end') return (c[1].x + c[2].x) / 2
-
-                return (c[0].x + c[1].x + c[2].x + c[3].x) / 4
-            }
-            const offsetOf = function (el) {
-                const anchor = MmCustom.texts.align(el)
-                let origin = origins.get(el)
-
-                if (!origin) {
-                    origin = { x: anchorX(el, anchor), anchor: anchor }
-                    origins.set(el, origin)
-                } else if (origin.anchor !== anchor) {
-                    // Aligned differently: the reference follows, the text has not moved
-                    origin.x += anchorX(el, anchor) - anchorX(el, origin.anchor)
-                    origin.anchor = anchor
-                }
-
-                return anchorX(el, anchor) - origin.x
-            }
-
             slider.addEventListener('input', function () { setCm(parseFloat(slider.value)) })
-
-            offset.addEventListener('input', function () {
-                const el = current.text
-
-                if (!el) return
-
-                const dx = parseFloat(offset.value) || 0
-
-                MmCustom.texts.moveBy(el, dx - offsetOf(el), 0)
-                MmCustom.drag.keepInside(el)
-                offsetValue.textContent = formatOffset(offsetOf(el))
-            })
-            offset.addEventListener('change', sync)
 
             function sync() {
                 const el = current.text
@@ -1061,11 +1162,9 @@
                 if (!el || !el.isConnected) return
 
                 let cm = 0
-                let dx = 0
 
                 try {
                     cm = sizeCm(el)
-                    dx = offsetOf(el)
                 } catch (e) {
                     return // not drawn (hidden step): read again when shown
                 }
@@ -1078,14 +1177,7 @@
                     slider.value = String(cm)
                 }
 
-                if (document.activeElement !== offset) {
-                    if (Math.abs(dx) > parseFloat(offset.max)) {
-                        offset.max = String(Math.ceil(Math.abs(dx)))
-                        offset.min = String(-Math.ceil(Math.abs(dx)))
-                    }
-                    offset.value = String(Math.round(dx))
-                    offsetValue.textContent = formatOffset(dx)
-                }
+                edges.sync()
             }
 
             ;['text:moved', 'text:change'].forEach(function (name) {
@@ -1336,8 +1428,6 @@
             const removeButton = $('.sx-remove', logoBlock)
             const sizeBox = $('.logo-design', logoBlock)
             const sizeSlider = $('.slider-logo-size', logoBlock)
-            const offset = $('.sx-logo-pos input', logoBlock)
-            const offsetValue = $('.sx-logo-pos__val', logoBlock)
             const tooBig = $('.sx-logo-hint', logoBlock)
             const drop = $('.sx-drop', logoBlock)
             const dropTitle = drop ? drop.querySelector('strong') : null
@@ -1354,20 +1444,13 @@
                 if (value < parseFloat(sizeSlider.min)) sizeSlider.min = String(value)
             }
 
-            // Offset along the mat: centre of the logo minus centre of its slot, in template units
-            const offsetOf = function (logo) {
-                const free = freeOf(logo)
-
-                if (free) return Math.round(free.tx)
-
-                const slot = MmCustom.logos.slotBox(logo)
-
-                if (!slot) return 0
-
-                const box = MmCustom.geometry.boundsOf(MmCustom.logos.frame(logo))
-
-                return Math.round((box.x + box.width / 2) - (slot.x + slot.width / 2))
-            }
+            // Position of the logo: as on the phone, it may go up to the edge of the mat
+            const logoEdges = mountEdgeRows($('.sx-logo-pos', logoBlock), {
+                id: 'sx-logo-pos',
+                element: function () { return current.logo },
+                usable: function (logo) { return MmCustom.logos.isPlaced(logo) || !!freeOf(logo) },
+                keep: false,
+            })
 
             // Width of the logo in cm (MmCustom.logos.width: its own width, a logo turned on a side slot keeps it), set from
             // a figure (MmCustom.logos.setWidth)
@@ -1402,7 +1485,7 @@
 
                 thumb.classList.toggle('sx-thumb--empty', !shown)
                 sizeBox.classList.toggle('hide', !shown)
-                offset.disabled = !shown
+                logoEdges.sync()
                 removeButton.hidden = !MmCustom.logos.canRemove(logo)
                 tooBig.hidden = !(placed && MmCustom.logos.overflows(logo))
 
@@ -1417,8 +1500,6 @@
                     thumb.innerHTML = emptyThumb
                     metaName.textContent = emptyName
                     metaFrom.textContent = emptyFrom
-                    offset.value = '0'
-                    offsetValue.textContent = '0'
 
                     return
                 }
@@ -1430,13 +1511,6 @@
 
                 metaName.textContent = info.title
                 metaFrom.textContent = info.meta
-
-                if (document.activeElement !== offset) {
-                    const dx = offsetOf(logo)
-
-                    offset.value = String(dx)
-                    offsetValue.textContent = formatOffset(dx)
-                }
             }
 
             syncLogo = function () {
@@ -1516,18 +1590,6 @@
 
                 showWidth()
             })
-
-            offset.addEventListener('input', function () {
-                const logo = current.logo
-
-                if (!MmCustom.logos.isPlaced(logo) && !freeOf(logo)) return
-
-                const dx = parseFloat(offset.value) || 0
-
-                MmCustom.logos.moveBy(logo, dx - offsetOf(logo), 0)
-                offsetValue.textContent = formatOffset(dx)
-            })
-            offset.addEventListener('change', refreshLogoEditor)
 
             removeButton.addEventListener('click', function () {
                 const fresh = MmCustom.logos.remove(current.logo)
@@ -1612,8 +1674,8 @@
                 enabled: function () { return phone.matches },
                 keepInside: ['text'],
                 labels: {
-                    offsetX: t('offset', 'Left / right offset'),
-                    offsetY: t('offsetY', 'Up / down offset'),
+                    offsetX: t('offset', 'Left / right position'),
+                    offsetY: t('offsetY', 'Up / down position'),
                     fromLeft: t('fromLeft', 'Distance from the left edge'),
                     fromRight: t('fromRight', 'Distance from the right edge'),
                     fromTop: t('fromTop', 'Distance from the top edge'),

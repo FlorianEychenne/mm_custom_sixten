@@ -100,7 +100,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d83615d44ccee1d67942b4
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_dbfe595c31d00abd919445549641e4b9'] = 'Impossible de démarrer la caméra de réalité augmentée sur cet appareil.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_185d266213d67ce43791f4364cb845bc'] = 'Taille du texte';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5cbb1f2334614765892923de63f7a571'] = 'Hauteur des majuscules, en cm';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9f58e53d79c72980ae1c3f6ed3a05835'] = 'Décalage gauche / droite';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_303f6690699127ad971f3e5319f0c08f'] = 'Position gauche / droite';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_5bc638072849069506917d69e6775479'] = 'Largeur du logo, en cm';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_4d70254b3a8e2bc38b6147fa6ee813be'] = 'Bibliothèque';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_630f1e08a8ca05e1d233e3c9a270c1e0'] = 'Importer un logo';
@@ -118,7 +118,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>ar_1e47e063d79d1db22ea18f4c1c6004f2'] = 
 $_MODULE['<{mm_custom_sixten}prestashop>ar_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n\'est pas disponible sur cet appareil.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7984c9f452d24d2334b83ec2df841984'] = 'Tourner d\'un quart de tour';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_a85eba4c6c699122b2bb1387ea4813ad'] = 'Panier';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6ed98937b2e2985c2ec7886cbd0fae54'] = 'Décalage haut / bas';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7584e9c36b8c44fe01c4a60eabe8a72b'] = 'Position haut / bas';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f2d39ed805748ed130ffc6181c00bb59'] = 'Ajuster la position';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_70d9be9b139893aa6c69b5e77e614311'] = 'Valider';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ea4788705e6873b424c65e91c2846b19'] = 'Annuler';

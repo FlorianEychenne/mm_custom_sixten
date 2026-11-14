@@ -6,6 +6,26 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Ordinateur (Mathieu) : position mesurée depuis le bord le plus proche, cotes sur le tapis
+
+Même mesure que les roues du téléphone (`MmCustom.position` de mm_custom) : un client qui passe du téléphone à
+l'ordinateur lit le même chiffre.
+
+- `views/js/layout.js` (`mountEdgeRows`, textes et logos) : le curseur « Décalage gauche / droite » devient « Position
+  gauche / droite », et un second, « Position haut / bas », est ajouté dessous. Ils suivent l'écran (tapis tourné
+  compris). Leur chiffre est la distance entre le bord du tapis le plus proche et le côté de l'élément qui lui fait
+  face, précédé de l'icône de ce bord ; « Centré » à égale distance des deux bords, où le curseur est aimanté. Un
+  texte reste dans la zone imprimable (4 cm du bord), un logo peut aller jusqu'au bord, comme avant. Les curseurs
+  suivent un glisser à la souris, une rotation, l'historique.
+- Cotes sur le tapis (`showGuides`) tant qu'un de ces curseurs est utilisé ou qu'un texte ou un logo est glissé à la
+  souris, effacées 1,5 s après ; à partir de 992 px seulement (sur le téléphone, les roues les affichent).
+- Les anciens décalages (depuis l'emplacement du logo ou la place d'origine du texte) sont retirés.
+- `views/css/site.css` : `.sx-logo-pos__val` avec icône, `.sx-logo-pos--y` sous le premier curseur.
+- Chaînes `offset` et `offsetY` renommées « Left / right position » et « Up / down position » (fr, de, es, it, nl).
+- Demande le mm_custom du même jour (`MmCustom.position`, `MmCustom.ui.adjust.icons`).
+- Vérifié sur le dev à 1024 x 768, 1440 x 900 et 1920 x 1080 (Chromium, WebKit) : valeurs, centre aimanté, butée, cotes
+  pendant le réglage et le glisser ; téléphone inchangé ; aucune erreur.
+
 ### Téléphone (Mathieu) : roues, hauteur et largeur, bouton du quart de tour
 
 Suit mm_custom (composant `MmCustom.ui.adjust`) : la roue de taille affiche hauteur puis largeur, et un bouton quart de
