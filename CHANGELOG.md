@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Rappel (Mathieu) : « Dépasse la zone d'impression » sur le tapis, à la place de « logo plus grand que l'emplacement »
+
+Demande de Mathieu : le rappel du logo plus grand que son emplacement n'est pas important ; il faut seulement signaler
+un logo ou un texte qui dépasse la zone d'impression.
+
+- `views/js/layout.js` (`mountPrintWarn`) : un rappel rouge posé sur la scène (`.sx-printwarn`, en bas au centre sur un
+  ordinateur, en bas à gauche sur un téléphone) quand un texte ou un logo que le client a déplacé, agrandi, tourné,
+  saisi ou posé sort de la zone d'impression (`MmCustom.position.outside` : le dessin moins sa semelle). Un appui
+  sélectionne l'élément ; le rappel disparaît quand il revient dans la zone. Les éléments du modèle laissés tels quels ne
+  sont pas contrôlés.
+- « Logo plus grand que l'emplacement : le réduire » (`.sx-logo-hint`) est retiré du volet Logos, avec ses règles de
+  `site.css` ; le bouton reste dans `configurator.tpl` et est retiré par le script (à supprimer à la prochaine
+  modification du gabarit).
+- Chaîne `logoTooBigShort` remplacée par `outsidePrint` (« Outside the print area »), traduite en fr, de, es, it, nl.
+- Demande le mm_custom du même jour ; sans `MmCustom.position.outside`, pas de rappel.
+- Vérifié sur le dev à 1440 x 900, 390 x 844 et 360 x 640 (Chromium, WebKit) ; aucune erreur.
+
 ### Échelle (Mathieu) : le tapis mesuré est le dessin du SVG (92 x 197 cm pour un 95x200)
 
 Décision de Mathieu : les SVG sont les BAT envoyés à l'impression, on mesure sur eux. Plus de bordure de 1,5 cm

@@ -131,7 +131,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_be53a0541a6d36f6ecb879f
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_c8c0125a959d9d90e95c91341e68f0a1'] = 'Instagram-Story';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_f3e4e18a859052cf4478ddefc5edbe68'] = 'Ganze Matte';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_9368c480af98b3858c47e24ce00f1b3d'] = 'Auf die Auswahl zoomen';
-$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0c647ed540f6b0b5dc8426a1b8723bb7'] = 'Logo zu groß: anpassen';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_84ab5238fbc2a3f73581ae086b3cf4eb'] = 'Außerhalb des Druckbereichs';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_04bfeee5833ff29af1922b99a205003d'] = 'Dein Bild ist fertig';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8b743dd1579f37fd6cfbf95a39a71491'] = 'Speichern';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d82790b0612935992bd564a17ce37d6'] = 'Beenden';

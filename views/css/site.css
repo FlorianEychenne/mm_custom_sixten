@@ -226,8 +226,6 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .m
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{font-family:var(--mmx-caps);font-size:.6875rem;color:var(--mmx-text-2);white-space:nowrap;font-weight:700}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-pos input:disabled{opacity:.35}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-hint{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-align:left;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;font-weight:600}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-hint[hidden]{display:none}
 /* emplacement vide : « Votre logo » (vignette vide, curseurs grisés) s'efface, bibliothèque et import suffisent */
 body#module-mm_custom-customModule .module-container .tools .sx-logo--current:has(.sx-thumb--empty) .sx-current,
 body#module-mm_custom-customModule .module-container .tools .sx-logo--current:has(.sx-thumb--empty) .sx-logo-sliders,
@@ -267,6 +265,11 @@ body#module-mm_custom-customModule .module-container .template svg#template>*{op
 body#module-mm_custom-customModule .module-container .template:not(.barnum) svg.mmc-flat{position:absolute;top:50%;left:50%;height:auto;transform:translate(-50%,-50%);mix-blend-mode:normal;opacity:1;filter:none;pointer-events:none}
 /* conseil au-dessus du tapis, résumé en bas à gauche, zoom en bas à droite */
 body#module-mm_custom-customModule .sx-stage-hint{position:absolute;z-index:5;top:1rem;left:1rem;display:flex;align-items:center;gap:.5rem;pointer-events:none}
+/* rappel posé sur la scène : un texte ou un logo dépasse la zone d'impression (layout.js, mountPrintWarn) ; au centre en bas sur un ordinateur, en bas à gauche sur un téléphone */
+body#module-mm_custom-customModule .sx-printwarn{position:absolute;z-index:6;left:50%;bottom:1rem;transform:translateX(-50%);display:inline-flex;align-items:center;gap:.4375rem;height:2rem;padding:0 .75rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;white-space:nowrap;cursor:pointer}
+body#module-mm_custom-customModule .sx-printwarn[hidden]{display:none}
+body#module-mm_custom-customModule .sx-printwarn svg{flex:none;width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:991.98px){body#module-mm_custom-customModule .sx-printwarn{left:.75rem;bottom:.5rem;transform:none}}
 
 /* interrupteurs (0.10.2) : masquer / afficher les outils (à gauche) et les repères (à droite) */
 body#module-mm_custom-customModule .sx-toggle{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;padding:0;border:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:background-color .2s,color .2s}
@@ -923,7 +926,6 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips .sx-cartdock{flex:none;display:inline-flex;align-items:center;gap:.375rem;height:2rem;padding:0 .625rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
   body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
-  body#module-mm_custom-customModule.sx-chips.sx-dock-open[data-sx-kind="logo"]:not(.sx-adjusting):not(.sx-ttool):has(.sx-logo-hint:not([hidden])){--sx-tpanel-h:9.5rem}
   body#module-mm_custom-customModule.sx-chips .sx-dock__head,
   body#module-mm_custom-customModule.sx-chips .module-container .info::after,
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-rows>.sx-row,
@@ -984,8 +986,6 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo:not([hidden]){display:flex;flex-direction:column}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo>.sx-logo--current{order:-1}
   body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-foot{display:block}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint{width:100%;height:1.25rem;margin:0 0 .5rem;font-size:0;line-height:1.25rem;white-space:nowrap;overflow:hidden}
-  body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-editor--logo .sx-logo-hint::after{content:attr(data-short);font-size:.625rem}
 
   /* outil ouvert : ni onglets, ni pastilles, et de la scène seulement « annuler » et le bouton de vue ; une rangée au bas de ce que le clavier laisse de l'écran (--sx-vvh : hauteur
      visible, --sx-vvt : où elle commence ; layout.js les mesure), la coche à sa droite, le tapis au-dessus */

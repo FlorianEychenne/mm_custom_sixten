@@ -1487,6 +1487,9 @@
             const sizeBox = $('.logo-design', logoBlock)
             const sizeSlider = $('.slider-logo-size', logoBlock)
             const tooBig = $('.sx-logo-hint', logoBlock)
+
+            // « Logo larger than its slot » is gone: the stage reminds of what sticks out of the print area (mountPrintWarn)
+            if (tooBig) tooBig.remove()
             const drop = $('.sx-drop', logoBlock)
             const dropTitle = drop ? drop.querySelector('strong') : null
             const emptyThumb = thumb.innerHTML
@@ -1545,7 +1548,6 @@
                 sizeBox.classList.toggle('hide', !shown)
                 logoEdges.sync()
                 removeButton.hidden = !MmCustom.logos.canRemove(logo)
-                tooBig.hidden = !(placed && MmCustom.logos.overflows(logo))
 
                 // A logo of a creation reopened from 2.x has no known slot: it cannot be replaced here (it can be removed
                 // from the mat, resized, moved), so the library and the drop zone are not offered for it
@@ -1653,10 +1655,6 @@
                 const fresh = MmCustom.logos.remove(current.logo)
 
                 if (fresh) MmCustom.zones.select(MmCustom.zones.of(fresh))
-            })
-
-            tooBig.addEventListener('click', function () {
-                if (current.logo) MmCustom.drag.fitToSlot(current.logo) // the slider follows (logo:resized)
             })
 
             const notPlaced = function (error) {
@@ -1786,6 +1784,68 @@
             else if (phone.addListener) phone.addListener(leave)
 
             paintButtons()
+        })()
+
+        /* ------------------------------------------------------------- rappel : hors de la zone d'impression */
+
+        // A text or a logo that the customer has moved, resized, turned, typed or placed and that sticks out of the print
+        // area (the drawing less its sole: MmCustom.position.outside) gets a reminder laid on the stage, on a phone as on a
+        // computer. It takes the place of « Logo larger than its slot » of the logo panel. A press on it chooses the
+        // element. What the template draws is not checked as long as it is left as drawn.
+        ;(function mountPrintWarn() {
+            const viewport = $('.sx-viewport')
+
+            if (!viewport || !MmCustom.position || !MmCustom.position.outside) return
+
+            const touched = new Set()
+            const warn = document.createElement('button')
+            let culprit = null
+            let timer = 0
+
+            warn.type = 'button'
+            warn.className = 'sx-printwarn'
+            warn.hidden = true
+            warn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3zM12 10v5M12 17.5v.5"/></svg>'
+                + '<span>' + esc(t('outsidePrint', 'Outside the print area')) + '</span>'
+            viewport.appendChild(warn)
+
+            const seen = function (el) {
+                if (el.tagName === 'text') return MmCustom.texts.isMovable(el)
+
+                return el.style.opacity !== '0' && window.getComputedStyle(el).display !== 'none'
+            }
+            const check = function () {
+                culprit = null
+                touched.forEach(function (el) {
+                    if (!el.isConnected) {
+                        touched.delete(el)
+                    } else if (!culprit && seen(el) && MmCustom.position.outside(el)) {
+                        culprit = el
+                    }
+                })
+                warn.hidden = !culprit
+            }
+            const soon = function () {
+                clearTimeout(timer)
+                timer = setTimeout(check, 120)
+            }
+
+            ;['text:moved', 'text:change', 'text:rotated', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:rotated', 'logo:placed'].forEach(function (name) {
+                MmCustom.on(name, function (event) {
+                    const el = event.detail && event.detail.element
+
+                    if (el && el.nodeType === 1) touched.add(el)
+
+                    soon()
+                })
+            })
+            ;['logo:removed', 'logo:hidden', 'history:restore'].forEach(function (name) { MmCustom.on(name, soon) })
+
+            warn.addEventListener('click', function () {
+                const zone = culprit && MmCustom.zones.of ? MmCustom.zones.of(culprit) : null
+
+                if (zone) MmCustom.zones.select(zone)
+            })
         })()
 
         /* ------------------------------------------------------------- téléphone : boutons de la scène (annuler, « … ») */
@@ -1970,10 +2030,6 @@
                 position: $('.sx-adjust-btn', logoBlock),
                 remove: $('.sx-remove', logoBlock),
             } : null
-            // The reminder of a logo larger than its slot has a short name here (style sheet)
-            const tooLarge = logoBlock ? logoBlock.querySelector('.sx-logo-hint') : null
-
-            if (tooLarge) tooLarge.dataset.short = t('logoTooBigShort', 'Logo too large: fit it')
 
             const logoTools = logoKind && press && editors.logo ? toolRow('logo', [
                 ['library', press.library ? press.library.textContent.trim() : 'Library'], ['upload', t('toolUpload', 'Upload')],
