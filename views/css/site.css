@@ -899,15 +899,15 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
 @media (max-width:991.98px){
   /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
   /* volet ouvert : plus d'en-tête (titre, taille, design), il revient quand on ferme le volet ; à sa place un bandeau noir de 2,75 rem (.sx-band), y compris
-     dans les outils : à gauche le S de Sixten, à droite le prix, la sauvegarde (l'icône de l'en-tête) puis le panier (.sx-cartdock, comme le
+     dans les outils : à gauche le S de Sixten, à droite la sauvegarde (l'icône de l'en-tête et son nom, pas de prix) puis le panier (.sx-cartdock, comme le
      bouton de l'en-tête). Le tapis commence sous le bandeau : le panier ne recouvre plus son coin */
   body#module-mm_custom-customModule.sx-chips.sx-dock-open{--sx-band-h:2.75rem;--mm-header-h:var(--sx-band-h)}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open.sx-adjusting{--mm-stage-h:calc(100svh - var(--sx-band-h) - var(--sx-adjust-h))}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open .sx-band{position:absolute;z-index:10;top:var(--sx-vvt,0px);left:0;right:0;display:flex;align-items:center;gap:.625rem;height:var(--sx-band-h);padding:0 .75rem;background:#000;color:#fff}
   body#module-mm_custom-customModule.sx-chips .sx-band__logo{flex:none;width:1.75rem;height:1.75rem;padding:0;border:0;border-radius:0;background:none;cursor:pointer}
-  body#module-mm_custom-customModule.sx-chips .sx-band__price{flex:none;margin-left:auto;font-family:var(--mmx-caps);font-size:1rem;font-weight:800;line-height:1;white-space:nowrap}
-  body#module-mm_custom-customModule.sx-chips .sx-band__save{flex:none;display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:0;border-radius:0;background:#fff;color:#000;cursor:pointer}
-  body#module-mm_custom-customModule.sx-chips .sx-band__save svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  body#module-mm_custom-customModule.sx-chips .sx-band__save{flex:0 1 auto;min-width:0;display:inline-flex;align-items:center;gap:.375rem;height:2rem;margin-left:auto;padding:0 .625rem;border:0;border-radius:0;background:#fff;color:#000;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-band__save svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  body#module-mm_custom-customModule.sx-chips .sx-band__save-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-top-bar{display:none}
   body#module-mm_custom-customModule.sx-chips .sx-cartdock{flex:none;display:inline-flex;align-items:center;gap:.375rem;height:2rem;padding:0 .625rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
   body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}

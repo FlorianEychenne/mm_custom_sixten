@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : bandeau sans prix, « Sauvegarder » écrit à côté de son icône
+
+Demande de Mathieu après essai.
+
+- `views/js/layout.js` (`mountPhonePanels`) : le bandeau du volet ouvert (en-tête réduit) n'affiche plus le prix ; le
+  bouton de sauvegarde porte son nom à côté de l'icône, toujours le nom court « Sauvegarder » (« Enregistrer les
+  modifications » d'une création rouverte ne tient pas : il reste dans l'info-bulle et pour les lecteurs d'écran).
+- `views/css/site.css` : `.sx-band__price` retiré, `.sx-band__save` en bouton blanc avec icône et nom, comme le panier.
+- Nouvelle chaîne `bandSave` (« Save », clé propre au bandeau) traduite en fr, de, es, it, nl.
+- Vérifié à 390 x 844 et 360 x 640 (clics transmis à l'en-tête, nom long) et 1440 x 900 inchangé ; aucune erreur.
+
 ### Téléphone (Mathieu) : les roues de position viennent du moteur
 
 Les roues sont désormais le composant `MmCustom.ui.adjust` de mm_custom (même comportement), pour être partagées avec

@@ -140,3 +140,4 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_658489a7581b7b674317d96
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7557c88953b5bacfc499cb2a812a8aef'] = 'Distance au bord haut';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_508186a0dded4c4c4cf876b17963d30a'] = 'Distance au bord bas';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_398124682999fe955755feb5cfccf031'] = 'Centré';
+$_MODULE['<{mm_custom_sixten}prestashop>band_c9cc8cce247e49bae79f15173ce97354'] = 'Sauvegarder';

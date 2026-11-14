@@ -1886,13 +1886,13 @@
             container.appendChild(ok)
 
             // The header goes away while a panel is open: a band takes its place at the top of the screen (.sx-band) and
-            // the mat starts under it. On the left the S of Sixten; on the right the price, the save button (the icon
-            // the header has on a phone) and the cart, with the short name it has in the header. Each one presses its
-            // twin of the header: the exit guard, the account and the cart are not wired a second time.
+            // the mat starts under it. On the left the S of Sixten; on the right the save button (the icon the header has
+            // on a phone, with its name) and the cart, with the short name it has in the header. No price: the band is the
+            // short header. Each one presses its twin of the header: the exit guard, the account and the cart are not
+            // wired a second time.
             const band = document.createElement('div')
             const twins = {
                 logo: document.querySelector('.module-top-bar .sx-config-logo'),
-                price: document.querySelector('.module-top-bar .add-to-shopping-cart .price'),
                 save: document.querySelector('.module-top-bar .save-custom'),
                 cart: document.getElementById('add-to-cart'),
             }
@@ -1915,20 +1915,13 @@
 
             if (twins.logo) bandButton(twins.logo, 'sx-band__logo', '<span class="sx-config-logo__s" aria-hidden="true"></span>', twins.logo.getAttribute('aria-label') || 'Sixten')
 
-            if (twins.price) {
-                const price = document.createElement('span')
-                const paintPrice = function () { price.textContent = twins.price.textContent.replace(/\s+/g, ' ').trim() }
-
-                price.className = 'sx-band__price'
-                paintPrice()
-                new MutationObserver(paintPrice).observe(twins.price, { childList: true, characterData: true, subtree: true })
-                band.appendChild(price)
-            }
-
             if (twins.save) {
-                const save = bandButton(twins.save, 'sx-band__save', ART.save, twins.save.textContent.trim())
+                // Always the short name on the button (« Save changes » of a creation opened again does not fit the
+                // band); the name of the header in its tooltip
+                const name = twins.save.textContent.trim()
+                const save = bandButton(twins.save, 'sx-band__save', ART.save + '<span class="sx-band__save-label">' + esc(t('bandSave', 'Save')) + '</span>', name)
 
-                // « Save » becomes « Save changes » once the creation is saved: the name follows
+                // « Save » becomes « Save changes » once the creation is saved: the tooltip follows
                 new MutationObserver(function () {
                     save.title = twins.save.textContent.trim()
                     save.setAttribute('aria-label', save.title)
