@@ -6,6 +6,21 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : les roues de position viennent du moteur
+
+Les roues sont désormais le composant `MmCustom.ui.adjust` de mm_custom (même comportement), pour être partagées avec
+Rhythm Golf et Matbuilder. Sixten garde l'habillage et ses libellés.
+
+- `views/js/layout.js` (`mountAdjust`) : 371 lignes de moins. Monte le composant avec `prefix: 'sx-adjust'` (le CSS de
+  `site.css` est inchangé), `bodyClass: 'sx-adjusting'`, le téléphone seulement, `keepInside: ['text']` (un texte reste
+  dans la zone imprimable, un logo peut aller jusqu'au bord, comme avant), les libellés de Sixten, et `onChange` pour
+  les curseurs du volet et le zoom sur la zone. Garde les boutons « Ajuster la position » et leur état.
+- Demande mm_custom avec `MmCustom.ui.adjust` : avec un moteur plus ancien, pas de bouton « Ajuster la position » (les
+  deux modules sont à déployer ensemble).
+- Vérifié sur le dev, Chromium et WebKit, à 390 x 844 et 360 x 640 : mêmes valeurs qu'avant le déplacement (texte et
+  logo, centre, butée, flèche de retour, cotes) ; parcours téléphone, volets, bandeau et 1440 x 900 inchangés ; aucune
+  erreur. Pas encore essayé sur un vrai téléphone.
+
 ### Téléphone (Mathieu) : roues de position mesurées depuis le bord le plus proche du tapis
 
 Demande de Mathieu. Le calcul est dans le moteur (`MmCustom.position`, mm_custom d2554a8) : Rhythm Golf et Matbuilder
