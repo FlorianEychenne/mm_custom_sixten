@@ -80,12 +80,11 @@
         if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true, touchHandles: false })
         // Ink of the print on the felt; border of the mat (Mercury, 2.5 cm): 1 cm laid over the edge of the drawing (kept
         // in the creation, as the 2 cm sole before it), 1.5 cm beyond it (on the screen only). The mat sold (95x200) is the
-        // drawing (92 x 197) and that border; the figures stay measured from the edge of the drawing. Barnums keep their
-        // 2 cm sole
+        // drawing (92 x 197) and that border; the figures stay measured from the edge of the drawing. Barnums have no sole
         if (MmCustom.effects) {
             MmCustom.effects.configure({
                 ink: true,
-                sole: MmCustom.product.isBarnum ? { cm: 2, fill: '#333333' } : { cm: 1, outsideCm: 1.5, fill: '#333333' },
+                sole: MmCustom.product.isBarnum ? null : { cm: 1, outsideCm: 1.5, fill: '#333333' },
             })
         }
 

@@ -6,6 +6,11 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnums (Mathieu) : pas de semelle
+
+Décision de Mathieu : les barnums n'ont pas besoin de semelle. `views/js/layout.js` : `sole: null` pour un barnum (la
+bordure de 2,5 cm reste réservée aux tapis). Vérifié sur le dev : toit 3x3 sans `g#fixed`, aucune erreur.
+
 ### Bordure (Mathieu) : bordure de 2,5 cm des tapis, 1 cm sur le dessin et 1,5 cm autour
 
 Décision de Mathieu : les tapis sont vendus avec bordure (Mercury : 2,5 cm). Le dessin du SVG (92 x 197 cm pour un 95x200)
