@@ -224,6 +224,7 @@ class Mm_custom_sixten extends Module
             'more' => $this->l('More tools'),
             'moreImage' => $this->l('Image'),
             'moreStory' => $this->l('Instagram story'),
+            'moreQuit' => $this->l('Quit'),
             'viewWhole' => $this->l('Whole mat'),
             'viewZone' => $this->l('Zoom on the selection'),
             'logoTooBigShort' => $this->l('Logo too large: fit it'),

@@ -1930,8 +1930,10 @@
         /* ------------------------------------------------------------- téléphone : boutons de la scène (annuler, « … ») */
 
         // Phone (layout under 992 px): of the buttons laid on the stage, only « undo » stays, over a « … » button that
-        // unfolds the others as a menu, each with its name: markers, image, Instagram story, reset. A choice, a tap
-        // elsewhere or Escape folds it back. On a computer the five buttons stay in their row, without « … ».
+        // unfolds the others as a menu, each with its name: markers, image, Instagram story, reset, then « Quit », which
+        // presses the × of the header (hidden while a panel is open; the exit guard asks before unsaved changes are
+        // lost). A choice, a tap elsewhere or Escape folds it back. On a computer the five buttons stay in their row,
+        // without « … » nor « Quit ».
         ;(function mountStageMore() {
             const hint = $('.sx-stage-hint')
 
@@ -1945,6 +1947,19 @@
             more.setAttribute('aria-label', t('more', 'More tools'))
             more.setAttribute('aria-expanded', 'false')
             hint.appendChild(more)
+
+            const exit = document.querySelector('.module-top-bar .sx-config-close')
+
+            if (exit) {
+                const quit = document.createElement('button')
+
+                quit.type = 'button'
+                quit.className = 'sx-shot sx-quit'
+                quit.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/></svg>'
+                    + '<span class="sx-more__label">' + esc(t('moreQuit', 'Quit')) + '</span>'
+                quit.addEventListener('click', function () { exit.click() })
+                hint.appendChild(quit)
+            }
 
             // The name of each button in the menu (the markers button has its own, which says what it will do)
             ;[['.sx-shot:not(.sx-shot--story):not(.sx-hist):not(.sx-more)', t('moreImage', 'Image')], ['.sx-shot--story', t('moreStory', 'Instagram story')], ['.sx-hist--reset', t('resetGo', 'Reset')]].forEach(function (item) {

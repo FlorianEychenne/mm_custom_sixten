@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : « Quitter » dans le menu « … »
+
+- Volet ouvert, l'en-tête et sa croix sont masqués : le menu « … » de la scène gagne une dernière ligne « Quitter »
+  (`.sx-quit`, icône de sortie), sous « Réinitialiser ». Elle presse la croix de l'en-tête : même adresse de retour
+  (la page d'où vient le client) et même confirmation « Quitter sans enregistrer ? » si le design a des modifications.
+- Ordinateur inchangé (le bouton y est masqué). Nouvelle chaîne `moreQuit` (« Quit ») traduite en fr, de, es, it, nl.
+- Vérifié à 390 × 844 : sortie directe sans modification, fenêtre de confirmation après une modification ; à 1440 × 900,
+  rangée de boutons inchangée ; aucune erreur.
+
 ### Téléphone (Mathieu) : un bandeau en haut quand le volet est ouvert
 
 - L'en-tête disparaît toujours quand un volet est ouvert (Couleurs, Textes, Logos, outils, Position). À sa place, un
