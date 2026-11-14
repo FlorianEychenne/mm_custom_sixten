@@ -6,6 +6,16 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnum (Mathieu) : logos verrouillés sur la tente 3D
+
+Demande de Mathieu : « garder l'édition des logos sur la 3D barnum pour plus tard. Verrouiller pour le moment. »
+
+- `views/js/layout.js` (`LOGOS_LOCKED`) : sur la tente, un logo n'est plus choisi par un clic ni déplacé par un glisser
+  (le glisser relayé est arrêté aussitôt, la tente tourne). Les logos se modifient avec le volet Logos et sur le patron
+  à plat ; les textes et les couleurs restent modifiables sur la tente. `LOGOS_LOCKED = false` rendra l'édition.
+- Vérifié sur le dev (Chromium, 1440 x 900 et 390 x 844) : clic et glisser sur un logo de la tente sans effet sur lui,
+  clic et glisser d'un texte toujours actifs ; aucune erreur.
+
 ### Ordinateur (Mathieu) : la ligne de l'élément choisi sur le tapis visible dans le volet
 
 Demande de Mathieu : un logo ou un texte choisi sur le tapis (2D ou 3D) en bas de liste n'était pas visible dans le

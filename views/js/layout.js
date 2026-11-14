@@ -3069,8 +3069,8 @@
          * Barnum (Mathieu, 2026-11-14) : la tente montée, son patron collé sur le toit (viewer3d.js), sans limite de taille ni
          * « Voir chez moi ». La scène s'ouvre sur le patron à plat (2D) ; le bouton 3D pose la tente sur la scène
          * (viewer3d.mountBarnum) et revient au patron. La tente se modifie comme le patron : un clic choisit la zone, le texte
-         * ou le logo touché (le volet s'ouvre), un texte ou un logo se fait glisser sur son panneau ; les volets marchent
-         * aussi. Chaque geste est relayé au patron à plat resté dessous (même point du patron, événements de pointeur
+         * touché (le volet s'ouvre), un texte se fait glisser sur son panneau ; les volets marchent aussi. Les logos sont
+         * verrouillés sur la tente pour le moment (LOGOS_LOCKED : ni choisis ni déplacés ; volet et patron à plat). Chaque geste est relayé au patron à plat resté dessous (même point du patron, événements de pointeur
          * rejoués) : sélection, butées, aimantation et historique sont ceux du moteur. La tente suit chaque changement
          * (image refaite 350 ms après le dernier, plus petite et à chaque image pendant un glisser).
          */
@@ -3139,10 +3139,20 @@
 
                     return event
                 }
+                // Logos locked on the tent for now (Mathieu, 2026-11-14: their editing on the 3D comes later): a press on a logo
+                // turns the tent, a click on it chooses nothing; they are edited with the panel and on the flat pattern
+                const LOGOS_LOCKED = true
+                let started = null // kind of the drag that drag.js has just started (drag:start, sent during the replay)
+
+                MmCustom.on('drag:start', function (event) { started = event.detail ? event.detail.kind : null })
+
                 // A click on the tent: the click on the flat pattern at the same point (customModule / Sixten select the zone)
                 const clickAt = function (point) {
                     const root = MmCustom.svg.root()
                     const under = document.elementsFromPoint(point.x, point.y).find(function (el) { return el !== root && root.contains(el) })
+                    const zone = under && LOGOS_LOCKED ? MmCustom.zones.of(under) : null
+
+                    if (zone && zone.kind === 'logo') return
 
                     if (under) under.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: point.x, clientY: point.y }))
                 }
@@ -3155,9 +3165,18 @@
 
                     const point = toClient(hit)
                     // drag.js starts a drag if a text or a logo is there (event.mmcDrag), else the tent turns (OrbitControls)
-                    const down = relay('pointerdown', MmCustom.svg.root(), point, event.pointerType)
+                    started = null
 
-                    gesture = { id: event.pointerId, type: event.pointerType, face: hit.face, x: event.clientX, y: event.clientY, point: point, drag: !!down.mmcDrag, moved: false }
+                    const down = relay('pointerdown', MmCustom.svg.root(), point, event.pointerType)
+                    let drag = !!down.mmcDrag
+
+                    // A logo under the pointer: the drag is ended at once (nothing moved), the tent turns
+                    if (drag && LOGOS_LOCKED && started === 'logo') {
+                        relay('pointerup', window, point, event.pointerType)
+                        drag = false
+                    }
+
+                    gesture = { id: event.pointerId, type: event.pointerType, face: hit.face, x: event.clientX, y: event.clientY, point: point, drag: drag, moved: false }
                     if (gesture.drag) {
                         event.stopPropagation() // not to the orbit of the camera
                         event.preventDefault()
