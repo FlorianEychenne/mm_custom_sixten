@@ -78,13 +78,14 @@
         // Logos: dragged anywhere on the mat (as on new.sixten), size handles and free rotation
         // (at the finger: the frame alone, the handles would hide the design on a phone)
         if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true, touchHandles: false })
-        // Ink of the print on the felt; border of the mat (Mercury, 2.5 cm): 1 cm laid over the edge of the drawing (kept
-        // in the creation, as the 2 cm sole before it), 1.5 cm beyond it (on the screen only). The mat sold (95x200) is the
-        // drawing (92 x 197) and that border; the figures stay measured from the edge of the drawing. Barnums have no sole
+        // Ink of the print on the felt; border of the mat (Mercury, 2.5 cm): all of it beyond the drawing, on every side
+        // (decision of Mathieu, 14/11/2026): the mat is the drawing (92 x 197 for a 95x200), printed whole, and the border
+        // is drawn around it on the screen only, nothing laid over the drawing (a sole of an older creation is taken away).
+        // The figures are measured from the edge of the drawing. Barnums have no sole
         if (MmCustom.effects) {
             MmCustom.effects.configure({
                 ink: true,
-                sole: MmCustom.product.isBarnum ? null : { cm: 1, outsideCm: 1.5, fill: '#333333' },
+                sole: MmCustom.product.isBarnum ? null : { cm: 0, outsideCm: 2.5, fill: '#333333' },
             })
         }
 

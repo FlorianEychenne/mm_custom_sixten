@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Bordure (Mathieu) : tapis à la taille du dessin, bordure de 2,5 cm autour
+
+Décision de Mathieu : « Le tapis doit faire la taille du svg : 92x197. La semelle doit faire 2,5cm de plus de chaque
+coté. »
+
+- `views/js/layout.js` : `effects.configure({ sole: { cm: 0, outsideCm: 2.5 } })` sur les tapis (avant : 1 cm sur le
+  dessin et 1,5 cm autour). Le dessin est montré et imprimé en entier, la bordure est dessinée autour à l'écran seulement.
+  Une création enregistrée avec l'ancienne semelle la perd en se rouvrant. Barnums toujours sans semelle.
+- Zone d'impression = le dessin entier (92 × 197) : le rappel « Dépasse la zone d'impression » s'affiche quand un texte
+  ou un logo sort du dessin ; un texte s'arrête à 2 cm du bord (avant : 3 cm).
+- Vérifié sur le dev (Chromium, WebKit ; 390 x 844, 1440 x 900) : anneau de 2,5 cm autour du 95x200 et du 150x190,
+  rappel, volet de l'ordinateur, roues ; aucune erreur. Nécessite mm_custom avec `sole.cm: 0` (même jour).
+
 ### Ordinateur (Mathieu) : volets Textes et Logos allégés, position en deux boutons
 
 Demande de Mathieu : l'interface de l'ordinateur était trop chargée (quatre blocs, trois curseurs). Maquette validée.
