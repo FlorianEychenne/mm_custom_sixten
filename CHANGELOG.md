@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnum (Mathieu) : édition sur la tente 3D coupée pour le moment
+
+Demande de Mathieu : désactiver temporairement toutes les éditions sur le barnum 3D, en gardant le code pour plus tard.
+
+- `views/js/layout.js` (`TENT_EDITING = false`) : sur la tente, un clic ou un glisser ne choisit ni ne déplace plus
+  rien (textes, couleurs, logos) ; la tente tourne et zoome seulement. Le code des clics et glisser relayés reste en
+  place (`TENT_EDITING = true` le rend, `LOGOS_LOCKED` garde les logos verrouillés). Les volets et le patron à plat
+  modifient toujours le dessin, et la tente suit.
+- Vérifié sur le dev (Chromium, 1440 x 900) : clic et glisser sur un texte et sur un logo de la tente sans effet ;
+  texte modifié par le volet ; aucune erreur.
+
 ### Barnum (Mathieu) : tente 3D montée sur 4 pieds en aluminium
 
 Demande de Mathieu : 4 pieds en aluminium sur le barnum 3D.

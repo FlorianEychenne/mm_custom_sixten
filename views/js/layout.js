@@ -3070,7 +3070,8 @@
          * « Voir chez moi ». La scène s'ouvre sur le patron à plat (2D) ; le bouton 3D pose la tente sur la scène
          * (viewer3d.mountBarnum) et revient au patron. La tente se modifie comme le patron : un clic choisit la zone, le texte
          * touché (le volet s'ouvre), un texte se fait glisser sur son panneau ; les volets marchent aussi. Les logos sont
-         * verrouillés sur la tente pour le moment (LOGOS_LOCKED : ni choisis ni déplacés ; volet et patron à plat). Chaque geste est relayé au patron à plat resté dessous (même point du patron, événements de pointeur
+         * verrouillés sur la tente pour le moment (LOGOS_LOCKED : ni choisis ni déplacés ; volet et patron à plat).
+         * Pour le moment, toute édition sur la tente est coupée (TENT_EDITING = false) : elle tourne et zoome seulement. Chaque geste est relayé au patron à plat resté dessous (même point du patron, événements de pointeur
          * rejoués) : sélection, butées, aimantation et historique sont ceux du moteur. La tente suit chaque changement
          * (image refaite 350 ms après le dernier, plus petite et à chaque image pendant un glisser).
          */
@@ -3142,6 +3143,9 @@
                 // Logos locked on the tent for now (Mathieu, 2026-11-14: their editing on the 3D comes later): a press on a logo
                 // turns the tent, a click on it chooses nothing; they are edited with the panel and on the flat pattern
                 const LOGOS_LOCKED = true
+                // All editing on the tent switched off for now (Mathieu, 2026-11-14): the tent only turns and zooms; the code of
+                // the clicks and drags stays, for later (true gives them back). The panels and the flat pattern still edit.
+                const TENT_EDITING = false
                 let started = null // kind of the drag that drag.js has just started (drag:start, sent during the replay)
 
                 MmCustom.on('drag:start', function (event) { started = event.detail ? event.detail.kind : null })
@@ -3157,7 +3161,7 @@
                     if (under) under.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: point.x, clientY: point.y }))
                 }
                 const onDown = function (event) {
-                    if (!view || gesture || (event.pointerType === 'mouse' && event.button !== 0)) return
+                    if (!TENT_EDITING || !view || gesture || (event.pointerType === 'mouse' && event.button !== 0)) return
 
                     const hit = view.pick(event.clientX, event.clientY)
 
