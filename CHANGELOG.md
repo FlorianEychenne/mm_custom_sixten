@@ -6,6 +6,21 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Bordure (Mathieu) : bordure de 2,5 cm des tapis, 1 cm sur le dessin et 1,5 cm autour
+
+Décision de Mathieu : les tapis sont vendus avec bordure (Mercury : 2,5 cm). Le dessin du SVG (92 x 197 cm pour un 95x200)
+et cette bordure font la taille vendue : elle recouvre 1 cm du dessin et dépasse de 1,5 cm. Les mesures restent prises
+depuis le bord du dessin (choix de Mathieu).
+
+- `views/js/layout.js` : `effects.configure({ sole: { cm: 1, outsideCm: 1.5 } })` au lieu de la semelle de 2 cm ; les
+  barnums gardent leur semelle de 2 cm.
+- Effet : la zone d'impression visible fait 90 x 195 cm sur un 95x200 ; un texte s'arrête à 3 cm du bord du dessin
+  (1 cm de bordure + 2 cm de marge) ; le rappel « Dépasse la zone d'impression » part du bord intérieur de la bordure.
+  Les créations rouvertes reçoivent la nouvelle bordure.
+- Demande le mm_custom du même jour (`sole.outsideCm`) ; sans lui, la bordure fait 1 cm, sans la partie extérieure.
+- Vérifié sur le dev (Chromium et WebKit, 1440 x 900 et 390 x 844) : bordure d'un seul tenant, 95x200, 150x190, barnum
+  3x3 inchangé ; aucune erreur.
+
 ### Rappel (Mathieu) : « Dépasse la zone d'impression » sur le tapis, à la place de « logo plus grand que l'emplacement »
 
 Demande de Mathieu : le rappel du logo plus grand que son emplacement n'est pas important ; il faut seulement signaler
