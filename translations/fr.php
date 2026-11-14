@@ -81,6 +81,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Annuler la dernière modification';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Réinitialiser le design';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Voir le tapis en 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_02d0f6fca067db75217b669078a09840'] = 'Voir le barnum en 3D';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = 'Préparation de la vue 3D…';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vue 3D n’est pas disponible sur cet appareil.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vue 3D';

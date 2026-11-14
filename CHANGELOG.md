@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Vue 3D (Mathieu) : barnum monté en tente, son patron collé sur le toit
+
+Demande de Mathieu : la 3D du barnum ne doit pas être celle des tapis ; reprendre la 3D des barnums de l'ancien
+configurateur (`mountBarnum3D`, `_assets/sx_configurator/views/js/sx-mat3d.js`).
+
+- `views/js/viewer3d.js` : `open({ barnum: true })` monte une tente au lieu d'un tapis. Le gabarit est le patron déplié
+  du toit (4 pans + 4 bandes) : chaque panneau est collé coin par coin sur sa face d'un toit à quatre pans (3x6, patron
+  repris de l'ancien code) ou d'une pyramide (3x3, patron relevé dans `sixcustbar-roo-3x3-stripe.svg`) ; patron choisi
+  d'après les proportions de l'image. Toile vue des deux côtés, éclairage et ombre de la vue des tapis ; ni feutre, ni
+  bordure, ni « Voir chez moi ». Caméra visant la mi-hauteur de la tente. Tapis inchangés.
+- `views/js/layout.js` : le bouton 3D passe `barnum` ; pas de limite de 4 m pour un barnum (3x6) ; pas de partage pour
+  le QR code ; libellé « Voir le barnum en 3D ».
+- Chaîne `view3dBarnum` (« See the gazebo in 3D ») traduite en fr, de, es, it, nl.
+- Vérifié sur le dev (Chromium, 1440 x 900 et 390 x 844) : 3x3 Stripe en 3D, vue de dessus, quart de tour, fermeture ;
+  tapis 95x200 inchangé (« Voir chez moi » présent) ; aucune erreur. Le 3x6 n'a pas pu être ouvert (ses références
+  renvoient vers l'accueil sur le dev).
+
 ### Rappel d'impression (Mathieu) : à la limite des repères rouges
 
 Demande de Mathieu : « La zone d'impression correspond à la zone rouge et non la zone bord a bord. Le message doit donc

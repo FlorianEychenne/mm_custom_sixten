@@ -81,6 +81,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_62a5e490880a92eef74f167
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf4775f'] = 'Annulla l\'ultima modifica';
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Reimposta il design';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Vedi il tappeto in 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_02d0f6fca067db75217b669078a09840'] = 'Vedi il gazebo in 3D';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = 'Preparazione della vista 3D…';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vista 3D non è disponibile su questo dispositivo.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vista 3D';

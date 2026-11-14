@@ -176,6 +176,7 @@ class Mm_custom_sixten extends Module
             'font' => $this->l('Font'),
             'yourText' => $this->l('Your text'),
             'view3d' => $this->l('See the mat in 3D'),
+            'view3dBarnum' => $this->l('See the gazebo in 3D'),
             'view3dLoading' => $this->l('Preparing the 3D view…'),
             'view3dFailed' => $this->l('The 3D view is not available on this device.'),
             'view3dTitle' => $this->l('3D view'),

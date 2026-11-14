@@ -3031,17 +3031,21 @@
          * Vue 3D (Mathieu, 2026-11-12) : bouton « 3D » après la story. Au premier clic seulement, views/js/viewer3d.js et three.js
          * (jsDelivr, version figée) sont chargés ; la texture est l'image du tapis telle qu'elle est (MmCustom.export.canvas).
          * Proposé pour un tapis dont la taille est connue (MmCustom.product.sizeCm, 4 m au plus) et si le navigateur a WebGL.
+         * Barnum (Mathieu, 2026-11-14) : la tente montée, son patron collé sur le toit (viewer3d.js, options.barnum), sans
+         * limite de taille ni « Voir chez moi ».
          */
         const VIEWER_URL = window.mm_custom_sixten && window.mm_custom_sixten.viewer3d
         const matSize = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
+        const barnum3d = !!(MmCustom.product && MmCustom.product.isBarnum)
+        const label3d = barnum3d ? t('view3dBarnum', 'See the gazebo in 3D') : t('view3d', 'See the mat in 3D')
 
-        if (MmCustom.export && VIEWER_URL && matSize && matSize.length && matSize.width && matSize.length <= 400 && story) {
+        if (MmCustom.export && VIEWER_URL && matSize && matSize.length && matSize.width && (barnum3d || matSize.length <= 400) && story) {
             const view3d = document.createElement('button')
 
             view3d.type = 'button'
             view3d.className = 'sx-shot sx-shot--3d'
             view3d.innerHTML = '<span aria-hidden="true">3D</span>'
-            view3d.title = t('view3d', 'See the mat in 3D')
+            view3d.title = label3d
             view3d.setAttribute('aria-label', view3d.title)
             // With the view controls (rotation, zoom), at their head: on a phone as on a computer
             if (zoomWrap) zoomWrap.insertBefore(view3d, zoomWrap.firstChild)
@@ -3094,7 +3098,7 @@
                     if (!viewer.supported()) throw new Error('webgl')
 
                     view3d.classList.remove('is-busy')
-                    view3d.title = t('view3d', 'See the mat in 3D')
+                    view3d.title = label3d
 
                     const design = $('.sx-design-btn span', topBar)
 
@@ -3104,19 +3108,20 @@
                         // flou d'encre de la démo : 2 unités du gabarit, ramenées en pixels de l'image
                         inkBlur: box && box.width ? 2 * results[1].width / box.width : 1.2,
                         sizeCm: matSize,
+                        barnum: barnum3d,
                         title: title(),
                         subtitle: [matSize.width + ' × ' + matSize.length + ' cm', design ? design.textContent.trim() : ''].filter(Boolean).join(' · '),
                         fileName: MmCustom.export.fileName(title()).replace(/\.png$/, ''),
                         t: t,
                         // « Voir chez moi » from a computer: the print goes to the server (48 h) for the phone (QR code)
-                        share: window.mm_custom_sixten.ar ? function () { return shareArt(results[1], box, matSize, design) } : null,
+                        share: window.mm_custom_sixten.ar && !barnum3d ? function () { return shareArt(results[1], box, matSize, design) } : null,
                     })
                 }).catch(function (error) {
                     console.error('mm_custom_sixten: 3D', error)
                     window.alert(t('view3dFailed', 'The 3D view is not available on this device.'))
                 }).then(function () {
                     view3d.classList.remove('is-busy')
-                    view3d.title = t('view3d', 'See the mat in 3D')
+                    view3d.title = label3d
                     view3d.focus({ preventScroll: true })
                 })
             })

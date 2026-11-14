@@ -23,7 +23,14 @@
  *     serveur (controllers/front/ar.php, gardée 48 h) et rend l'adresse d'une page qui ouvre cette vue 3D sur le téléphone ;
  *   - téléphone sans RA : pas de bouton.
  *
- * open({ art, felt, inkBlur, sizeCm, title, subtitle, fileName, t, share }) -> Promise<void>
+ * Barnums (options.barnum, Mathieu, 2026-11-14) : une tente, pas un tapis. Le gabarit est le patron déplié du toit : 4 pans
+ * et les 4 bandes au pied des pans (lambrequins). Chaque panneau du patron est collé sur sa face d'un toit à quatre pans
+ * (3x6) ou d'une pyramide (3x3), coin par coin, sans projection ; les coutures blanches du patron n'ont pas de face. Repris
+ * de mountBarnum3D (ancien sx_configurator, _assets/sx_configurator/views/js/sx-mat3d.js) ; ni feutre, ni bordure, ni
+ * réalité augmentée, ni armature.
+ *
+ * open({ art, felt, inkBlur, sizeCm, barnum, title, subtitle, fileName, t, share }) -> Promise<void>
+ *   barnum : facultatif, true pour un barnum (taille : sizeCm, patron choisi d'après les proportions de art)
  *   share : facultatif, () -> Promise<string> (adresse pour le téléphone) ; sans lui, pas de QR code sur ordinateur
  *   art : canvas de l'impression ; felt : URL de la photo de feutre ; inkBlur : rayon du flou en px de art
  */
@@ -51,6 +58,93 @@ const ICONS = {
     top: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10"/></svg>',
     shot: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
     ar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>',
+}
+
+// ---- barnums : patrons des toits ----
+// Coins de chaque face en 3D et sur le patron, en unités du SVG. Coin = [x, z, niveau, x du patron, y du patron] :
+// x '-' / '+' = bouts de la longueur, 'ridge-' / 'ridge+' = bouts du faîtage (confondus au centre d'une pyramide),
+// z -1 / 0 / 1 = arrière / milieu / avant, niveau 'b' = pied des bandes, 'e' = égout du toit, 'r' = faîtage.
+const NET_3X6 = { // relevé dans sixcustbar-roo-*-3x6-*.svg (viewBox 6010.7 x 3679.2), repris de l'ancien sx_configurator
+    width: 6010.7,
+    height: 3679.2,
+    eaveWidth: 5487.7 - 523,
+    slopeLength: 1764.1 - 317.6,
+    valance: 317.6,
+    faces: [
+        [['-', -1, 'e', 523, 317.6], ['+', -1, 'e', 5487.7, 317.6], ['ridge+', 0, 'r', 4239.4, 1764.1], ['ridge-', 0, 'r', 1764.1, 1764.1]],
+        [['-', 1, 'e', 523, 3361.6], ['+', 1, 'e', 5487.7, 3361.6], ['ridge+', 0, 'r', 4246.6, 1915.1], ['ridge-', 0, 'r', 1771.3, 1915.1]],
+        [['-', -1, 'e', 317.4, 586.8], ['-', 1, 'e', 317.4, 3085.1], ['ridge-', 0, 'r', 1764.1, 1836.1]],
+        [['+', -1, 'e', 5693.3, 586.8], ['+', 1, 'e', 5693.3, 3085.1], ['ridge+', 0, 'r', 4246.6, 1836.1]],
+        [['-', -1, 'e', 523, 317.6], ['+', -1, 'e', 5487.7, 317.6], ['+', -1, 'b', 5494.7, 0], ['-', -1, 'b', 516, 0]],
+        [['-', 1, 'e', 523, 3361.6], ['+', 1, 'e', 5487.7, 3361.6], ['+', 1, 'b', 5494.7, 3679.2], ['-', 1, 'b', 516, 3679.2]],
+        [['-', -1, 'e', 317.4, 586.8], ['-', 1, 'e', 317.4, 3085.1], ['-', 1, 'b', 0, 3092.1], ['-', -1, 'b', 0, 579.6]],
+        [['+', -1, 'e', 5693.3, 586.8], ['+', 1, 'e', 5693.3, 3085.1], ['+', 1, 'b', 6010.7, 3092.1], ['+', -1, 'b', 6010.7, 579.6]],
+    ],
+}
+const NET_3X3 = { // relevé dans sixcustbar-roo-3x3-stripe.svg (viewBox 3679.2 x 3679.2) : pyramide, quatre triangles
+    width: 3679.2,
+    height: 3679.2,
+    eaveWidth: 3088.7 - 590.4,
+    slopeLength: 1764.1 - 317.4,
+    valance: 317.4,
+    faces: [
+        [['-', -1, 'e', 590.2, 317.4], ['+', -1, 'e', 3088.7, 317.4], ['ridge-', 0, 'r', 1839.6, 1764.1]],
+        [['-', 1, 'e', 590.4, 3361.8], ['+', 1, 'e', 3088.7, 3361.8], ['ridge-', 0, 'r', 1839.6, 1915.1]],
+        [['-', -1, 'e', 317.4, 586.8], ['-', 1, 'e', 317.4, 3085.3], ['ridge-', 0, 'r', 1764.1, 1836]],
+        [['+', -1, 'e', 3361.8, 586.6], ['+', 1, 'e', 3361.8, 3085.1], ['ridge-', 0, 'r', 1915.1, 1836]],
+        [['-', -1, 'e', 590.2, 317.4], ['+', -1, 'e', 3088.7, 317.4], ['+', -1, 'b', 3095.9, 0], ['-', -1, 'b', 583.2, 0]],
+        [['-', 1, 'e', 590.4, 3361.8], ['+', 1, 'e', 3088.7, 3361.8], ['+', 1, 'b', 3095.9, 3679.2], ['-', 1, 'b', 583.2, 3679.2]],
+        [['-', -1, 'e', 317.4, 586.8], ['-', 1, 'e', 317.4, 3085.3], ['-', 1, 'b', 0, 3092.3], ['-', -1, 'b', 0, 579.6]],
+        [['+', -1, 'e', 3361.8, 586.6], ['+', 1, 'e', 3361.8, 3085.1], ['+', 1, 'b', 3679.2, 3092.3], ['+', -1, 'b', 3679.2, 579.6]],
+    ],
+}
+
+/**
+ * Toit d'un barnum : chaque panneau du patron (art, l'image du gabarit) collé sur sa face. W : longueur, D : profondeur (m).
+ * Le patron est celui dont les proportions sont celles de art. null si aucun ne convient.
+ */
+function canopy(art, W, D) {
+    const ratio = art.width / art.height
+    const net = [NET_3X6, NET_3X3].find((n) => Math.abs(n.width / n.height - ratio) < 0.02)
+
+    if (!net) return null
+
+    const L = Math.max(W - D, 0) // longueur du faîtage (0 : pyramide)
+    const unit = net.eaveWidth / W // unités du patron par mètre
+    const run = D / 2
+    const slope = net.slopeLength / unit
+    const rise = Math.sqrt(Math.max(slope * slope - run * run, 0.01)) // le pan a la longueur du panneau du patron
+    const levels = { b: 0, e: net.valance / unit, r: net.valance / unit + rise }
+    const positions = []
+    const uvs = []
+    const indices = []
+
+    net.faces.forEach((corners) => {
+        const base = positions.length / 3
+        // Les arêtes des pans sont un peu courbes sur le patron : les coins des pans sont tirés vers le centre du panneau,
+        // pour ne pas prendre la couture blanche sur les arêtes
+        const isSlope = corners.some((c) => c[2] === 'r')
+        const cx = corners.reduce((a, c) => a + c[3], 0) / corners.length
+        const cy = corners.reduce((a, c) => a + c[4], 0) / corners.length
+        const pull = isSlope ? 0.07 : 0
+
+        corners.forEach(([sx, sz, level, nx0, ny0]) => {
+            const x = { '-': -W / 2, '+': W / 2, 'ridge-': -L / 2, 'ridge+': L / 2 }[sx]
+
+            positions.push(x, levels[level], sz * (D / 2))
+            uvs.push((nx0 + (cx - nx0) * pull) / net.width, 1 - (ny0 + (cy - ny0) * pull) / net.height)
+        })
+        for (let i = 1; i < corners.length - 1; i++) indices.push(base, base + i, base + i + 1)
+    })
+
+    const geometry = new THREE.BufferGeometry()
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
+    geometry.setIndex(indices)
+    geometry.computeVertexNormals()
+
+    return { geometry, height: levels.r }
 }
 
 // ---- réalité augmentée : outils ----
@@ -336,6 +430,13 @@ export async function open(options) {
     const t = options.t || function (key, fallback) { return fallback }
     const W = options.sizeCm.length / 100
     const H = options.sizeCm.width / 100
+    const tent = options.barnum ? canopy(options.art, W, H) : null
+
+    if (options.barnum && !tent) throw new Error('barnum: no pattern for this template')
+
+    // Hauteur visée par la caméra et plus basse position de la caméra : dessus du tapis, ou mi-hauteur de la tente
+    const AIM_Y = tent ? tent.height * 0.45 : FELT_TOP
+    const FLOOR_Y = tent ? 0.15 : FELT_TOP + 0.04
     // Éclairage (réglable par options.lighting pour les essais) : voir LIGHTING
     const L = Object.assign({}, LIGHTING, options.lighting || {})
 
@@ -483,26 +584,48 @@ export async function open(options) {
     ground.receiveShadow = true
     world.add(ground)
 
-    // ---- tapis ----
-    const feltImg = options.felt ? await loadImage(options.felt).catch(() => null) : null
-    const map = printTexture(options.art, feltImg, options.inkBlur || 0, W, H, renderer)
-    const top = new THREE.MeshPhysicalMaterial({
-        map, roughness: 0.95, metalness: 0, sheen: L.sheen, sheenRoughness: 0.6, sheenColor: new THREE.Color(0x3a3a3a),
-    })
+    // ---- tapis (ou barnum) ----
+    let map = null
+    let top = null
+    let feltSide = null
+    let rubberMat = null
+    let rubber = null
+    let felt = null
 
-    if (feltImg) {
-        top.bumpMap = bumpTexture(feltImg, W, H, renderer)
-        top.bumpScale = 1.5
+    if (tent) {
+        // Toile du barnum : l'image du gabarit telle quelle, vue des deux côtés
+        map = new THREE.CanvasTexture(options.art)
+        map.colorSpace = THREE.SRGBColorSpace
+        map.anisotropy = renderer.capabilities.getMaxAnisotropy()
+
+        const cloth = new THREE.Mesh(tent.geometry, new THREE.MeshStandardMaterial({ map, roughness: 0.9, metalness: 0, side: THREE.DoubleSide }))
+
+        cloth.castShadow = true
+        world.add(cloth)
+    } else {
+        const feltImg = options.felt ? await loadImage(options.felt).catch(() => null) : null
+
+        map = printTexture(options.art, feltImg, options.inkBlur || 0, W, H, renderer)
+        top = new THREE.MeshPhysicalMaterial({
+            map, roughness: 0.95, metalness: 0, sheen: L.sheen, sheenRoughness: 0.6, sheenColor: new THREE.Color(0x3a3a3a),
+        })
+
+        if (feltImg) {
+            top.bumpMap = bumpTexture(feltImg, W, H, renderer)
+            top.bumpScale = 1.5
+        }
+
+        feltSide = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.95, metalness: 0 })
+        rubberMat = new THREE.MeshStandardMaterial({ color: 0x2f2f2f, roughness: 0.62, metalness: 0 })
+
+        const mat = new THREE.Group()
+
+        rubber = new THREE.Mesh(slab(W, H, W, H, RADIUS, 0, RUBBER_THICK, 0.0007, false), rubberMat)
+        felt = new THREE.Mesh(slab(W, H, W - BORDER * 2, H - BORDER * 2, FELT_RADIUS, RUBBER_THICK - 0.0005, FELT_TOP, 0.0006, true), [top, feltSide])
+
+        for (const m of [rubber, felt]) { m.castShadow = true; m.receiveShadow = true; mat.add(m) }
+        world.add(mat)
     }
-
-    const feltSide = new THREE.MeshStandardMaterial({ color: 0x141414, roughness: 0.95, metalness: 0 })
-    const rubberMat = new THREE.MeshStandardMaterial({ color: 0x2f2f2f, roughness: 0.62, metalness: 0 })
-    const mat = new THREE.Group()
-    const rubber = new THREE.Mesh(slab(W, H, W, H, RADIUS, 0, RUBBER_THICK, 0.0007, false), rubberMat)
-    const felt = new THREE.Mesh(slab(W, H, W - BORDER * 2, H - BORDER * 2, FELT_RADIUS, RUBBER_THICK - 0.0005, FELT_TOP, 0.0006, true), [top, feltSide])
-
-    for (const m of [rubber, felt]) { m.castShadow = true; m.receiveShadow = true; mat.add(m) }
-    world.add(mat)
 
     // ---- cadrage : tout le tapis dans la zone libre entre l'en-tête et les outils ----
     function size() {
@@ -529,7 +652,7 @@ export async function open(options) {
         const hy = (y1 - y0) / 2 * FILL
         const corners = []
 
-        for (const x of [-W / 2, W / 2]) for (const y of [0, FELT_TOP]) for (const z of [-H / 2, H / 2]) corners.push(new THREE.Vector3(x, y, z))
+        for (const x of [-W / 2, W / 2]) for (const y of [0, tent ? tent.height : FELT_TOP]) for (const z of [-H / 2, H / 2]) corners.push(new THREE.Vector3(x, y, z))
 
         const cam = camera.clone()
         const target = new THREE.Vector3()
@@ -569,7 +692,7 @@ export async function open(options) {
         // alors de la surface sans jamais la traverser
         const pos = target.clone().addScaledVector(dir, dist)
 
-        if (dir.y > 0.05) target.copy(pos).addScaledVector(dir, -(pos.y - FELT_TOP) / dir.y)
+        if (dir.y > 0.05) target.copy(pos).addScaledVector(dir, -(pos.y - AIM_Y) / dir.y)
 
         return { pos, target }
     }
@@ -631,8 +754,8 @@ export async function open(options) {
     // Garde-fous : la cible reste sur le dessus du tapis, la caméra au-dessus (jamais dans le tapis ni dessous)
     controls.addEventListener('change', () => {
         dirty = true
-        controls.target.y = FELT_TOP
-        if (camera.position.y < FELT_TOP + 0.04) camera.position.y = FELT_TOP + 0.04
+        controls.target.y = AIM_Y
+        if (camera.position.y < FLOOR_Y) camera.position.y = FLOOR_Y
     })
 
     renderer.setAnimationLoop((time, frame) => {
@@ -921,7 +1044,7 @@ export async function open(options) {
 
     arMode().then(async (m) => {
         // Computer (main pointer not a finger, no AR): the button shows a QR code towards the same 3D view on the phone
-        mode = m || (typeof options.share === 'function' && !window.matchMedia('(pointer: coarse)').matches ? 'qr' : '')
+        mode = tent ? '' : m || (typeof options.share === 'function' && !window.matchMedia('(pointer: coarse)').matches ? 'qr' : '')
         if (!mode) return
         if (mode === 'qr') {
             bAR.hidden = false
