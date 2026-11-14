@@ -893,14 +893,21 @@ body#module-mm_custom-customModule .sx-adjust-btn,body#module-mm_custom-customMo
    (Couleurs : palette ; Textes : texte, police, couleur, position ; Logos : bibliothèque, fichier, position, retirer). Les trois volets ont la
    même hauteur, le tapis prend le reste. Un outil des textes ouvert (body.sx-ttool) prend la place des onglets et du volet : champ juste au-dessus du
    clavier pour le texte, une grille sous le tapis pour les polices, une rangée pour les couleurs, coche rouge .sx-ttool-ok pour revenir ---------- */
-body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok,body#module-mm_custom-customModule .sx-zoneview,body#module-mm_custom-customModule .sx-cartdock{display:none}
+body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule .sx-ttools,body#module-mm_custom-customModule .sx-ttool-ok,body#module-mm_custom-customModule .sx-zoneview,body#module-mm_custom-customModule .sx-band{display:none}
 @media (max-width:991.98px){
   /* volet : la hauteur des pastilles et d'une rangée, le tapis prend le reste (un peu plus haut quand un logo dépasse de son emplacement : rappel au-dessus des outils) */
-  /* volet ouvert : plus d'en-tête (titre, prix, taille, design), il revient quand on ferme le volet ; le panier reste, seul en haut à droite de l'écran
-     (.sx-cartdock, comme le bouton de l'en-tête), y compris dans les outils */
-  body#module-mm_custom-customModule.sx-chips.sx-dock-open{--mm-header-h:0rem}
+  /* volet ouvert : plus d'en-tête (titre, taille, design), il revient quand on ferme le volet ; à sa place un bandeau noir de 2,75 rem (.sx-band), y compris
+     dans les outils : à gauche le S de Sixten, à droite le prix, la sauvegarde (l'icône de l'en-tête) puis le panier (.sx-cartdock, comme le
+     bouton de l'en-tête). Le tapis commence sous le bandeau : le panier ne recouvre plus son coin */
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open{--sx-band-h:2.75rem;--mm-header-h:var(--sx-band-h)}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open.sx-adjusting{--mm-stage-h:calc(100svh - var(--sx-band-h) - var(--sx-adjust-h))}
+  body#module-mm_custom-customModule.sx-chips.sx-dock-open .sx-band{position:absolute;z-index:10;top:var(--sx-vvt,0px);left:0;right:0;display:flex;align-items:center;gap:.625rem;height:var(--sx-band-h);padding:0 .75rem;background:#000;color:#fff}
+  body#module-mm_custom-customModule.sx-chips .sx-band__logo{flex:none;width:1.75rem;height:1.75rem;padding:0;border:0;border-radius:0;background:none;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-band__price{flex:none;margin-left:auto;font-family:var(--mmx-caps);font-size:1rem;font-weight:800;line-height:1;white-space:nowrap}
+  body#module-mm_custom-customModule.sx-chips .sx-band__save{flex:none;display:grid;place-items:center;width:2rem;height:2rem;padding:0;border:0;border-radius:0;background:#fff;color:#000;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-band__save svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open .module-top-bar{display:none}
-  body#module-mm_custom-customModule.sx-chips.sx-dock-open .sx-cartdock{position:absolute;z-index:10;top:calc(var(--sx-vvt,0px) + .5rem);right:.75rem;display:inline-flex;align-items:center;gap:.375rem;height:2rem;padding:0 .625rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
+  body#module-mm_custom-customModule.sx-chips .sx-cartdock{flex:none;display:inline-flex;align-items:center;gap:.375rem;height:2rem;padding:0 .625rem;border:0;border-radius:0;background:var(--sx-red,#E4032E);color:#fff;font-family:var(--mmx-font);font-size:.625rem;font-weight:800;letter-spacing:.09em;line-height:1;text-transform:uppercase;cursor:pointer}
   body#module-mm_custom-customModule.sx-chips .sx-cartdock svg{flex:none;width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open:not(.sx-adjusting):not(.sx-ttool){--sx-tpanel-h:7.75rem;--mm-stage-h:calc(100svh - var(--mm-header-h) - var(--sx-tabs-h) - var(--sx-tpanel-h) - .5rem)}
   body#module-mm_custom-customModule.sx-chips.sx-dock-open[data-sx-kind="logo"]:not(.sx-adjusting):not(.sx-ttool):has(.sx-logo-hint:not([hidden])){--sx-tpanel-h:9.5rem}
@@ -969,7 +976,7 @@ body#module-mm_custom-customModule .sx-tchips,body#module-mm_custom-customModule
 
   /* outil ouvert : ni onglets, ni pastilles, et de la scène seulement « annuler » et le bouton de vue ; une rangée au bas de ce que le clavier laisse de l'écran (--sx-vvh : hauteur
      visible, --sx-vvt : où elle commence ; layout.js les mesure), la coche à sa droite, le tapis au-dessus */
-  body#module-mm_custom-customModule.sx-chips.sx-ttool{--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--sx-ttool-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttool-h));--mm-header-h:var(--sx-vvt,0px);--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-ttool-h))}
+  body#module-mm_custom-customModule.sx-chips.sx-ttool{--sx-ttool-h:calc(4rem + env(safe-area-inset-bottom,0px));--sx-ttool-top:calc(var(--sx-vvt,0px) + var(--sx-vvh,100svh) - var(--sx-ttool-h));--mm-header-h:calc(var(--sx-vvt,0px) + var(--sx-band-h));--mm-stage-h:calc(var(--sx-vvh,100svh) - var(--sx-band-h) - var(--sx-ttool-h))}
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container>.sx-steps,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .sx-zoomwrap,
   body#module-mm_custom-customModule.sx-chips.sx-ttool .module-container .tools .sx-tchips,

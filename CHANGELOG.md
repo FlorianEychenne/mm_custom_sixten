@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : un bandeau en haut quand le volet est ouvert
+
+- L'en-tête disparaît toujours quand un volet est ouvert (Couleurs, Textes, Logos, outils, Position). À sa place, un
+  bandeau noir de 2,75 rem (`.sx-band`) : à gauche le S de Sixten, à droite le prix, la sauvegarde (l'icône
+  disquette de l'en-tête) puis le panier.
+- Chaque bouton presse son double de l'en-tête : le S passe par la confirmation de sortie, la sauvegarde ouvre la
+  connexion si besoin, le panier ajoute la création. Le prix et le nom de la sauvegarde (« Sauvegarder » /
+  « Enregistrer les modifications ») suivent l'en-tête.
+- Le tapis commence sous le bandeau : le panier ne recouvre plus le coin du tapis. Le panier seul en haut à droite
+  (`.sx-cartdock`) devient le dernier bouton du bandeau.
+- Ordinateur inchangé. Vérifié à 390 × 844 et 360 × 640 (volets, outil texte avec clavier simulé, Position, palette)
+  et à 1440 × 900, sans erreur ; aucun panier ni sauvegarde envoyés pendant les essais.
+
 ### Fichiers JS et CSS (Mathieu) : un numéro de version dans leur adresse
 
 - Constat après la copie sur new.sixten : `layout.js`, `site.css` et `charter.css` étaient servis sans numéro de

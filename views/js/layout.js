@@ -2006,6 +2006,7 @@
                 whole: SVG('M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5'),
                 zone: SVG('M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM20 20l-4.9-4.9M10.5 8v5M8 10.5h5'),
                 cart: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.2l2.3 11h10l2-8H6.3"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></svg>',
+                save: SVG('M5 3h11l3 3v15H5zM8 3v5h7V3M8 21v-7h8v7'),
             }
             const ZOOM_MAX = 2 // times the whole mat, on the zone of the chosen text or logo
             const EDGE = 72 // px the edge of the zoomed mat may come inside the view: an element of the border clears the buttons
@@ -2128,21 +2129,66 @@
             ok.addEventListener('click', function () { leave() })
             container.appendChild(ok)
 
-            // The header goes away while a panel is open: the cart stays, alone at the top right of the screen, with the
-            // short name it has in the header (it presses the button of the header)
-            const cartButton = document.getElementById('add-to-cart')
-
-            if (cartButton) {
-                const cart = document.createElement('button')
-
-                cart.type = 'button'
-                cart.className = 'sx-cartdock'
-                cart.innerHTML = ART.cart + '<span>' + esc((cartButton.querySelector('.sx-cart__short') || cartButton).textContent.trim()) + '</span>'
-                cart.title = (cartButton.querySelector('.sx-cart__long') || cartButton).textContent.trim()
-                cart.setAttribute('aria-label', cart.title)
-                cart.addEventListener('click', function () { cartButton.click() })
-                container.appendChild(cart)
+            // The header goes away while a panel is open: a band takes its place at the top of the screen (.sx-band) and
+            // the mat starts under it. On the left the S of Sixten; on the right the price, the save button (the icon
+            // the header has on a phone) and the cart, with the short name it has in the header. Each one presses its
+            // twin of the header: the exit guard, the account and the cart are not wired a second time.
+            const band = document.createElement('div')
+            const twins = {
+                logo: document.querySelector('.module-top-bar .sx-config-logo'),
+                price: document.querySelector('.module-top-bar .add-to-shopping-cart .price'),
+                save: document.querySelector('.module-top-bar .save-custom'),
+                cart: document.getElementById('add-to-cart'),
             }
+
+            function bandButton(twin, className, html, label) {
+                const b = document.createElement('button')
+
+                b.type = 'button'
+                b.className = className
+                b.innerHTML = html
+                b.title = label
+                b.setAttribute('aria-label', label)
+                b.addEventListener('click', function () { twin.click() })
+                band.appendChild(b)
+
+                return b
+            }
+
+            band.className = 'sx-band'
+
+            if (twins.logo) bandButton(twins.logo, 'sx-band__logo', '<span class="sx-config-logo__s" aria-hidden="true"></span>', twins.logo.getAttribute('aria-label') || 'Sixten')
+
+            if (twins.price) {
+                const price = document.createElement('span')
+                const paintPrice = function () { price.textContent = twins.price.textContent.replace(/\s+/g, ' ').trim() }
+
+                price.className = 'sx-band__price'
+                paintPrice()
+                new MutationObserver(paintPrice).observe(twins.price, { childList: true, characterData: true, subtree: true })
+                band.appendChild(price)
+            }
+
+            if (twins.save) {
+                const save = bandButton(twins.save, 'sx-band__save', ART.save, twins.save.textContent.trim())
+
+                // « Save » becomes « Save changes » once the creation is saved: the name follows
+                new MutationObserver(function () {
+                    save.title = twins.save.textContent.trim()
+                    save.setAttribute('aria-label', save.title)
+                }).observe(twins.save, { childList: true, characterData: true, subtree: true })
+            }
+
+            if (twins.cart) {
+                bandButton(
+                    twins.cart,
+                    'sx-cartdock',
+                    ART.cart + '<span>' + esc((twins.cart.querySelector('.sx-cart__short') || twins.cart).textContent.trim()) + '</span>',
+                    (twins.cart.querySelector('.sx-cart__long') || twins.cart).textContent.trim()
+                )
+            }
+
+            container.appendChild(band)
 
             function paintChips(kind, zones) {
                 const strip = strips[kind.key]
