@@ -135,3 +135,8 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0c647ed540f6b0b5dc8426a
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_04bfeee5833ff29af1922b99a205003d'] = 'Ton image est prête';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8b743dd1579f37fd6cfbf95a39a71491'] = 'Enregistrer';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_0d82790b0612935992bd564a17ce37d6'] = 'Quitter';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_ab10621ccf3c1a13c8aa8f3a584adae0'] = 'Distance au bord gauche';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_658489a7581b7b674317d96cf831e50d'] = 'Distance au bord droit';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7557c88953b5bacfc499cb2a812a8aef'] = 'Distance au bord haut';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_508186a0dded4c4c4cf876b17963d30a'] = 'Distance au bord bas';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_398124682999fe955755feb5cfccf031'] = 'Centré';

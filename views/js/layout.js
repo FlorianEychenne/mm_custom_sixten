@@ -1593,10 +1593,13 @@
 
         // Phone (layout under 992 px): the size and offset sliders of a text or of a logo give way to one button, « Adjust
         // the position ». It hides the header, the panel and the tabs: the mat takes the screen, with three wheels under
-        // it (left / right, up / down, size) and their figure in cm. The two offsets follow the screen, not the mat: a mat
-        // turned a quarter turn moves the way the customer sees it. They are measured from the slot of a placed logo, else
-        // from where the element was when first seen. The arrow puts the element back as it was when the tool opened, the
-        // tick keeps it; both bring the panel back.
+        // it (left / right, up / down, size) and their figure in cm. The first two follow the screen, not the mat: a mat
+        // turned a quarter turn moves the way the customer sees it. Their figure is the distance to the nearest edge of
+        // the mat, what a customer measures on it (MmCustom.position of the engine: the icon of the wheel names the edge,
+        // « Centred » at the same distance from both, dimension lines drawn on the mat) ; the wheel stops once on the
+        // centre when crossing it. With an engine that has no MmCustom.position, they are offsets from the slot of a
+        // placed logo, else from where the element was when first seen. The arrow puts the element back as it was when
+        // the tool opened, the tick keeps it; both bring the panel back.
         ;(function mountAdjust() {
             const phone = window.matchMedia('(max-width: 991.98px)')
             const container = $('.module-container')
@@ -1614,7 +1617,23 @@
                 z: SVG('M5 19L19 5M13 5h6v6M11 19H5v-6'),
                 ok: SVG('M5 12.5l4.5 4.5L19 7.5'),
                 back: SVG('M19 12H5M11 6l-6 6 6 6'),
+                // The edge of the mat a distance is measured from, and the centre
+                left: SVG('M4 4v16M20 12H8M12 8l-4 4 4 4'),
+                right: SVG('M20 4v16M4 12h12M12 8l4 4-4 4'),
+                top: SVG('M4 4h16M12 20V8M8 12l4-4 4 4'),
+                bottom: SVG('M4 20h16M12 4v12M8 12l4 4 4-4'),
+                midX: SVG('M12 3v18M3 12h5M21 12h-5M5.5 9.5L8 12l-2.5 2.5M18.5 9.5L16 12l2.5 2.5'),
+                midY: SVG('M3 12h18M12 3v5M12 21v-5M9.5 5.5L12 8l2.5-2.5M9.5 18.5L12 16l2.5 2.5'),
             }
+            const edges = !!MmCustom.position // distances to the edges of the mat (engine), else offsets
+            const EDGE = {
+                left: function () { return t('fromLeft', 'Distance from the left edge') },
+                right: function () { return t('fromRight', 'Distance from the right edge') },
+                top: function () { return t('fromTop', 'Distance from the top edge') },
+                bottom: function () { return t('fromBottom', 'Distance from the bottom edge') },
+            }
+            // A wheel turned to the right moves the element to the right (or down): away from the left or top edge
+            const wayOf = function (edge) { return edge === 'right' || edge === 'bottom' ? -1 : 1 }
             const homes = new WeakMap() // centre of an element when first seen, in template units
             const parts = {} // key -> { wheel, value }
             const buttons = {} // kind -> its « Adjust the position » button
@@ -1682,23 +1701,34 @@
                 return { x: { x: i.a * k, y: i.b * k }, y: { x: i.c * k, y: i.d * k } }
             }
 
-            // Offsets along the screen and size, in cm (template units when the size of the product is unknown)
+            // Distances to the nearest edges along the screen (`at`: which edge, centred or not), or offsets along the
+            // screen, and size, in cm (template units when the size of the product is unknown)
             const read = function () {
                 const el = target.element
+                const k = cmPerUnit() || 1
+                const z = api[target.kind].size(el) * k
+
+                if (edges) {
+                    const m = MmCustom.position.measure(el)
+
+                    return { x: m.x.gap * k, y: m.y.gap * k, z: z, at: { x: m.x, y: m.y } }
+                }
+
                 const c = centreOf(target.kind, el)
                 const home = homeOf(target.kind, el)
                 const a = axes()
-                const k = cmPerUnit() || 1
                 const dx = c.x - home.x
                 const dy = c.y - home.y
 
-                return { x: (dx * a.x.x + dy * a.x.y) * k, y: (dx * a.y.x + dy * a.y.y) * k, z: api[target.kind].size(el) * k }
+                return { x: (dx * a.x.x + dy * a.x.y) * k, y: (dx * a.y.x + dy * a.y.y) * k, z: z }
             }
 
-            const format = function (key, value) {
+            const format = function (key, value, at) {
+                if (at && at.centred) return t('centred', 'Centred')
+
                 const shown = roundCm(value)
                 const figure = Math.abs(shown).toLocaleString(document.documentElement.lang || undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })
-                const sign = key === 'z' || !shown ? '' : (shown > 0 ? '+ ' : '− ')
+                const sign = key === 'z' || !shown ? '' : (shown > 0 ? (at ? '' : '+ ') : '− ')
 
                 return sign + figure + (cmPerUnit() ? ' cm' : '')
             }
@@ -1717,18 +1747,32 @@
                 try { now = read() } catch (e) { return } // not drawn
 
                 KEYS.forEach(function (key) {
-                    const text = format(key, now[key])
+                    const at = now.at ? now.at[key] : null
+                    const text = format(key, now[key], at)
+                    const art = at ? (at.centred ? (key === 'x' ? 'midX' : 'midY') : at.edge) : null
 
                     parts[key].value.textContent = text
                     parts[key].wheel.setAttribute('aria-valuetext', text)
                     parts[key].wheel.setAttribute('aria-valuenow', String(roundCm(now[key])))
-                    // The ruler follows the figure (a tick every 0.5 cm), a tick under the red mark at each half
-                    parts[key].wheel.style.backgroundPositionX = 'calc(50% + ' + (4.5 + Math.round(now[key] / TICK_CM * 10)) + 'px)'
+                    // The ruler follows the finger (a tick every 0.5 cm), a tick under the red mark at each half
+                    parts[key].wheel.style.backgroundPositionX = 'calc(50% + ' + (4.5 + Math.round((at ? wayOf(at.edge) : 1) * now[key] / TICK_CM * 10)) + 'px)'
+
+                    // The icon of the wheel shows the edge the figure is measured from
+                    if (art && parts[key].art !== art) {
+                        parts[key].art = art
+                        parts[key].icon.innerHTML = ART[art]
+                    }
+
+                    if (at && parts[key].edge !== at.edge) {
+                        parts[key].edge = at.edge
+                        parts[key].wheel.setAttribute('aria-label', EDGE[at.edge]())
+                    }
                 })
             }
 
-            // Sets one figure (cm) and returns what was drawn (the mat may hold the element back)
-            function set(key, value) {
+            // Sets one figure (cm; x and y: from the given edge of the mat) and returns what was drawn, { value, edge }:
+            // the mat may hold the element back, the centre stops it once, the nearest edge may have become the other one
+            function set(key, value, edge) {
                 const el = target.element
                 const kind = api[target.kind]
                 const k = cmPerUnit() || 1
@@ -1742,6 +1786,11 @@
                     const after = centreOf(target.kind, el)
 
                     kind.moveBy(el, before.x - after.x, before.y - after.y)
+                } else if (edges) {
+                    // Not past the edge of the mat (an element that already sticks out is left free)
+                    const gap = value < 0 && read()[key] >= 0 ? 0 : value
+
+                    MmCustom.position.place(el, edge, gap / k, { keep: false }) // settle() below keeps a text in
                 } else {
                     const axis = axes()[key]
                     const d = (value - read()[key]) / k
@@ -1755,14 +1804,25 @@
 
                 if (phonePanel) phonePanel.follow(el)
 
-                return target ? read()[key] : value
+                if (!target) return { value: value, edge: edge }
+
+                const now = read()
+
+                return { value: now[key], edge: now.at && now.at[key] ? now.at[key].edge : undefined }
+            }
+
+            // What a wheel starts from: its figure and, for x and y, the edge it is measured from
+            const grip = function (key) {
+                const now = read()
+
+                return { from: now[key], edge: now.at && now.at[key] ? now.at[key].edge : undefined }
             }
 
             function wheel(key) {
                 const row = document.createElement('div')
 
                 row.className = 'sx-adjust__row'
-                row.innerHTML = ART[key] + '<div class="sx-adjust__wheel" role="slider" tabindex="0"></div><output class="sx-adjust__val"></output>'
+                row.innerHTML = '<span class="sx-adjust__ico">' + ART[key] + '</span><div class="sx-adjust__wheel" role="slider" tabindex="0"></div><output class="sx-adjust__val"></output>'
 
                 const el = row.querySelector('.sx-adjust__wheel')
                 let drag = null
@@ -1775,7 +1835,7 @@
 
                     event.preventDefault()
                     el.setPointerCapture(event.pointerId)
-                    drag = { x: event.clientX, from: read()[key], steps: 0 }
+                    drag = Object.assign({ x: event.clientX, steps: 0 }, grip(key))
                 })
                 el.addEventListener('pointermove', function (event) {
                     if (!drag || !target) return
@@ -1786,11 +1846,14 @@
 
                     drag.steps = steps
 
-                    const wanted = Math.round((drag.from + steps * 0.1) * 10) / 10
-                    const drawn = set(key, wanted)
+                    const wanted = Math.round((drag.from + wayOf(drag.edge) * steps * 0.1) * 10) / 10
+                    const drawn = set(key, wanted, drag.edge)
 
-                    // Held back (edge of the mat, smallest size): the wheel starts again from what was drawn
-                    if (Math.abs(drawn - wanted) > 0.06) drag = { x: event.clientX, from: drawn, steps: 0 }
+                    // Held back (edge of the mat, centre, smallest size) or measured from the other edge now: the wheel
+                    // starts again from what was drawn
+                    if (drawn.edge !== drag.edge || Math.abs(drawn.value - wanted) > 0.06) {
+                        drag = { x: event.clientX, from: drawn.value, edge: drawn.edge, steps: 0 }
+                    }
                 })
                 ;['pointerup', 'pointercancel'].forEach(function (name) { el.addEventListener(name, function () { drag = null }) })
                 el.addEventListener('keydown', function (event) {
@@ -1799,10 +1862,13 @@
                     if (!way || !target) return
 
                     event.preventDefault()
-                    set(key, Math.round((read()[key] + way * TICK_CM) * 10) / 10)
+
+                    const now = grip(key)
+
+                    set(key, Math.round((now.from + wayOf(now.edge) * way * TICK_CM) * 10) / 10, now.edge)
                 })
 
-                parts[key] = { wheel: el, value: row.querySelector('output') }
+                parts[key] = { wheel: el, value: row.querySelector('output'), icon: row.querySelector('.sx-adjust__ico') }
 
                 return row
             }
@@ -1828,6 +1894,8 @@
                 target.start = { centre: centreOf(kind, el), size: api[kind].size(el) }
                 parts.z.wheel.setAttribute('aria-label', api[kind].sizeLabel())
                 paint()
+
+                if (edges) MmCustom.position.guides(el) // dimension lines on the mat
             }
 
             function open(kind) {
@@ -1870,6 +1938,8 @@
                         kind.sync()
                     } catch (e) { /* not drawn */ }
                 }
+
+                if (edges) MmCustom.position.guides(null)
 
                 body.classList.remove('sx-adjusting')
                 tool.hidden = true

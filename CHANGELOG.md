@@ -6,6 +6,26 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : roues de position mesurées depuis le bord le plus proche du tapis
+
+Demande de Mathieu. Le calcul est dans le moteur (`MmCustom.position`, mm_custom d2554a8) : Rhythm Golf et Matbuilder
+auront les mêmes contraintes de positionnement.
+
+- `views/js/layout.js` (`mountAdjust`) : les deux premières roues n'affichent plus un décalage (« + 3,0 cm ») mais la
+  distance entre le bord du tapis le plus proche et le côté de l'élément qui lui fait face, ce qu'un client mesure sur
+  son tapis. L'icône de la roue montre le bord mesuré (gauche, droite, haut, bas, ceux de l'écran) et change quand
+  l'élément passe de l'autre côté ; « Centré » à égale distance des deux bords, et la roue s'y arrête une fois quand
+  elle franchit le centre. Des cotes sont dessinées sur le tapis tant que l'outil est ouvert. La roue suit toujours
+  le doigt (à droite : vers la droite ou vers le bas). Butées inchangées : un texte s'arrête à la zone imprimable
+  (4 cm du bord : semelle + marge), un logo au bord du tapis.
+- Avec un moteur sans `MmCustom.position` (mm_custom avant d2554a8), les roues gardent leurs décalages : le compagnon
+  peut être déployé avant le moteur.
+- `views/css/site.css` : `.sx-adjust__ico`. Cinq chaînes (`fromLeft`, `fromRight`, `fromTop`, `fromBottom`, `centred`)
+  traduites en fr, de, es, it, nl. Curseurs de l'ordinateur inchangés.
+- Vérifié sur le dev, Chromium et WebKit, à 390 x 844 et 360 x 640 : texte et logo, cran de centrage au doigt et au
+  clavier, butée, flèche de retour, cotes ; 1440 x 900 inchangé ; aucune erreur. Pas encore essayé sur un vrai
+  téléphone.
+
 ### Téléphone (Mathieu) : « Quitter » dans le menu « … »
 
 - Volet ouvert, l'en-tête et sa croix sont masqués : le menu « … » de la scène gagne une dernière ligne « Quitter »
