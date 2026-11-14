@@ -3032,9 +3032,12 @@
          * (jsDelivr, version figée) sont chargés ; la texture est l'image du tapis telle qu'elle est (MmCustom.export.canvas).
          * Proposé pour un tapis dont la taille est connue (MmCustom.product.sizeCm, 4 m au plus) et si le navigateur a WebGL.
          * Barnum (Mathieu, 2026-11-14) : la tente montée, son patron collé sur le toit (viewer3d.js), sans limite de taille ni
-         * « Voir chez moi », affichée sur la scène à l'ouverture, à la place du patron à plat (viewer3d.mountBarnum) : on la
-         * personnalise avec les volets et elle suit chaque changement (image refaite 350 ms après le dernier). Le bouton 3D
-         * passe du patron à plat (pour placer finement) à la tente et retour.
+         * « Voir chez moi ». La scène s'ouvre sur le patron à plat (2D) ; le bouton 3D pose la tente sur la scène
+         * (viewer3d.mountBarnum) et revient au patron. La tente se modifie comme le patron : un clic choisit la zone, le texte
+         * ou le logo touché (le volet s'ouvre), un texte ou un logo se fait glisser sur son panneau ; les volets marchent
+         * aussi. Chaque geste est relayé au patron à plat resté dessous (même point du patron, événements de pointeur
+         * rejoués) : sélection, butées, aimantation et historique sont ceux du moteur. La tente suit chaque changement
+         * (image refaite 350 ms après le dernier, plus petite et à chaque image pendant un glisser).
          */
         const VIEWER_URL = window.mm_custom_sixten && window.mm_custom_sixten.viewer3d
         const matSize = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
@@ -3068,20 +3071,95 @@
                 let busy = false
                 let again = false
                 let observer = null
-                const art = function () { return MmCustom.export.canvas({ width: 2048, texture: false }) }
+                const art = function (fast) { return MmCustom.export.canvas({ width: fast ? 1024 : 2048, texture: false }) }
                 const label = function (on) {
                     view3d.title = on ? flatLabel : label3d
                     view3d.setAttribute('aria-label', view3d.title)
                     view3d.setAttribute('aria-pressed', on ? 'true' : 'false')
                 }
+                let gesture = null // geste en cours sur la tente
                 const refresh = function () {
                     if (!view) return
                     if (busy) { again = true; return }
                     busy = true
-                    art().then(function (canvas) { if (view) view.update(canvas) })
+                    art(!!(gesture && gesture.drag)).then(function (canvas) { if (view) view.update(canvas) })
                         .catch(function (error) { console.error('mm_custom_sixten: 3D barnum', error) })
                         .then(function () { busy = false; if (again) { again = false; refresh() } })
                 }
+
+                // ---- gestes sur la tente, relayés au patron à plat ----
+                const RELAY_ID = 9731 // pointerId of the replayed events: drag.js ignores the real ones of the same gesture
+                const toClient = function (hit) {
+                    const vb = MmCustom.svg.viewBox()
+
+                    return MmCustom.geometry.rootToClient(vb.x + hit.u * vb.width, vb.y + hit.v * vb.height)
+                }
+                const relay = function (type, target, point, pointerType) {
+                    const event = new PointerEvent(type, {
+                        bubbles: true, cancelable: true, composed: true, clientX: point.x, clientY: point.y,
+                        pointerId: RELAY_ID, pointerType: pointerType || 'mouse', isPrimary: true, button: 0, buttons: type === 'pointerup' ? 0 : 1,
+                    })
+
+                    target.dispatchEvent(event)
+
+                    return event
+                }
+                // A click on the tent: the click on the flat pattern at the same point (customModule / Sixten select the zone)
+                const clickAt = function (point) {
+                    const root = MmCustom.svg.root()
+                    const under = document.elementsFromPoint(point.x, point.y).find(function (el) { return el !== root && root.contains(el) })
+
+                    if (under) under.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: point.x, clientY: point.y }))
+                }
+                const onDown = function (event) {
+                    if (!view || gesture || (event.pointerType === 'mouse' && event.button !== 0)) return
+
+                    const hit = view.pick(event.clientX, event.clientY)
+
+                    if (!hit) return
+
+                    const point = toClient(hit)
+                    // drag.js starts a drag if a text or a logo is there (event.mmcDrag), else the tent turns (OrbitControls)
+                    const down = relay('pointerdown', MmCustom.svg.root(), point, event.pointerType)
+
+                    gesture = { id: event.pointerId, type: event.pointerType, face: hit.face, x: event.clientX, y: event.clientY, point: point, drag: !!down.mmcDrag, moved: false }
+                    if (gesture.drag) {
+                        event.stopPropagation() // not to the orbit of the camera
+                        event.preventDefault()
+                    }
+                }
+                const onMove = function (event) {
+                    if (!gesture || event.pointerId !== gesture.id) return
+                    if (Math.abs(event.clientX - gesture.x) + Math.abs(event.clientY - gesture.y) > 6) gesture.moved = true
+                    if (!gesture.drag) return
+
+                    event.preventDefault()
+
+                    const hit = view && view.pick(event.clientX, event.clientY)
+
+                    // On its own panel only: the panels that meet on a hip are far apart on the pattern
+                    if (!hit || hit.face !== gesture.face) return
+
+                    gesture.point = toClient(hit)
+                    relay('pointermove', window, gesture.point, gesture.type)
+                }
+                const onUp = function (event) {
+                    if (!gesture || event.pointerId !== gesture.id) return
+
+                    const done = gesture
+
+                    gesture = null
+                    if (done.drag) {
+                        relay('pointerup', window, done.point, done.type)
+                        refresh()
+                    }
+                    if (!done.moved) clickAt(done.point)
+                }
+
+                box.addEventListener('pointerdown', onDown, true)
+                window.addEventListener('pointermove', onMove, { passive: false })
+                window.addEventListener('pointerup', onUp)
+                window.addEventListener('pointercancel', onUp)
 
                 box.className = 'sx-tent3d'
                 box.hidden = true
@@ -3096,14 +3174,16 @@
                         if (!results[0].supported() || !results[0].mountBarnum) throw new Error('webgl')
 
                         box.hidden = false
-                        view = results[0].mountBarnum(box, { art: results[1], sizeCm: matSize })
+                        view = box.sxTent = results[0].mountBarnum(box, { art: results[1], sizeCm: matSize }) // sxTent: for the tests
                         document.body.classList.add('sx-tent3d-on')
                         label(true)
                         // Every change of the design (colours, texts, logos), not the classes of hover and selection
                         observer = new MutationObserver(function (records) {
                             if (records.every(function (r) { return r.type === 'attributes' && r.attributeName === 'class' })) return
                             clearTimeout(timer)
-                            timer = setTimeout(refresh, 350)
+                            // While a text or a logo is dragged on the tent: at once (refresh waits for the image before)
+                            if (gesture && gesture.drag) refresh()
+                            else timer = setTimeout(refresh, 350)
                         })
                         observer.observe(MmCustom.svg.root(), { subtree: true, attributes: true, childList: true, characterData: true })
                     }).catch(function (error) {
@@ -3114,9 +3194,10 @@
                 const hide = function () {
                     if (observer) observer.disconnect()
                     observer = null
+                    gesture = null
                     clearTimeout(timer)
                     if (view) view.dispose()
-                    view = null
+                    view = box.sxTent = null
                     box.hidden = true
                     document.body.classList.remove('sx-tent3d-on')
                     label(false)
@@ -3204,9 +3285,6 @@
                     view3d.focus({ preventScroll: true })
                 })
             })
-
-            // A barnum opens on its tent in 3D
-            if (tent) tent.show()
         }
 
         /*

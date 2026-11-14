@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnum (Mathieu) : scène en 2D d'abord, tente 3D modifiable directement
+
+Demandes de Mathieu : « La première vue doit être en 2D » ; « Je veux que la 3D soit éditable ».
+
+- `views/js/layout.js` : un barnum s'ouvre sur le patron à plat ; le bouton 3D pose la tente. Sur la tente, un clic (ou
+  un toucher) choisit la zone de couleur, le texte ou le logo touché et ouvre son volet ; un texte ou un logo se fait
+  glisser sur son panneau ; ailleurs, glisser fait tourner la tente. Chaque geste est relayé au patron à plat resté
+  dessous, au même point du patron (événements de pointeur rejoués, `pointerId` à part) : sélection, butées,
+  aimantation et historique sont ceux du moteur. Pendant un glisser, la tente est redessinée à chaque image (image de
+  1024 px), puis en 2048 px à la fin.
+- `views/js/viewer3d.js` : `mountBarnum` rend aussi `pick(x, y)` (point du patron et panneau sous le pointeur) et
+  `toScreen(u, v)` (l'inverse, pour les tests) ; `canopy` note le panneau de chaque triangle (un glisser reste sur son
+  panneau : deux pans qui se touchent sur une arête sont loin l'un de l'autre sur le patron).
+- Vérifié sur le dev (Chromium à 1440 x 900 et 390 x 844, WebKit, toucher et glisser au doigt) : 2D à l'ouverture, clic
+  sur un texte ou un logo de la tente = sélection et volet, glisser un texte de 4 % du patron = déplacé de 147 unités,
+  glisser sur un pan = la tente tourne sans rien changer ; aucune erreur.
+
 ### Barnum (Mathieu) : la tente en 3D sur la scène, modifiable avec les volets
 
 Demande de Mathieu : le barnum en 3D doit être visible et modifiable dans le configurateur ; choix : la 3D à la place du

@@ -118,8 +118,9 @@ function canopy(art, W, D) {
     const positions = []
     const uvs = []
     const indices = []
+    const faceOf = [] // panneau du patron de chaque triangle (pour ne pas sauter d'un panneau à l'autre en glissant)
 
-    net.faces.forEach((corners) => {
+    net.faces.forEach((corners, f) => {
         const base = positions.length / 3
         // Les arêtes des pans sont un peu courbes sur le patron : les coins des pans sont tirés vers le centre du panneau,
         // pour ne pas prendre la couture blanche sur les arêtes
@@ -134,7 +135,7 @@ function canopy(art, W, D) {
             positions.push(x, levels[level], sz * (D / 2))
             uvs.push((nx0 + (cx - nx0) * pull) / net.width, 1 - (ny0 + (cy - ny0) * pull) / net.height)
         })
-        for (let i = 1; i < corners.length - 1; i++) indices.push(base, base + i, base + i + 1)
+        for (let i = 1; i < corners.length - 1; i++) { indices.push(base, base + i, base + i + 1); faceOf.push(f) }
     })
 
     const geometry = new THREE.BufferGeometry()
@@ -144,14 +145,16 @@ function canopy(art, W, D) {
     geometry.setIndex(indices)
     geometry.computeVertexNormals()
 
-    return { geometry, height: levels.r }
+    return { geometry, height: levels.r, faceOf }
 }
 
 /**
  * Barnum en 3D sur la scène du configurateur (Mathieu, 2026-11-14) : la tente montée, à la place du patron à plat, pendant
  * qu'on personnalise avec les volets. update(art) remplace l'image du patron (la tente suit chaque changement).
  *
- * mountBarnum(container, { art, sizeCm }) -> { update(art), reset(), dispose() }
+ * mountBarnum(container, { art, sizeCm }) -> { update(art), pick(clientX, clientY), reset(), dispose() }
+ *   pick : le point du patron sous le pointeur, { u, v, face } (u, v de 0 à 1 depuis le coin haut gauche du patron ; face :
+ *   le panneau touché), ou null hors de la tente
  */
 export function mountBarnum(container, options) {
     const W = options.sizeCm.length / 100
@@ -266,7 +269,49 @@ export function mountBarnum(container, options) {
         renderer.render(scene, camera)
     })
 
+    const raycaster = new THREE.Raycaster()
+    const ndc = new THREE.Vector2()
+
     return {
+        pick(clientX, clientY) {
+            const r = renderer.domElement.getBoundingClientRect()
+
+            ndc.set((clientX - r.left) / r.width * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1)
+            raycaster.setFromCamera(ndc, camera)
+
+            const hit = raycaster.intersectObject(cloth, false)[0]
+
+            return hit && hit.uv ? { u: hit.uv.x, v: 1 - hit.uv.y, face: tent.faceOf[hit.faceIndex] } : null
+        },
+        // Point de l'écran d'un point du patron (u, v comme pick), ou null s'il n'est sur aucun panneau
+        toScreen(u, v) {
+            const uv = tent.geometry.attributes.uv
+            const pos = tent.geometry.attributes.position
+            const index = tent.geometry.index
+            const r = renderer.domElement.getBoundingClientRect()
+
+            for (let i = 0; i < index.count; i += 3) {
+                const [a, b, c] = [index.getX(i), index.getX(i + 1), index.getX(i + 2)]
+                const ax = uv.getX(a); const ay = 1 - uv.getY(a)
+                const d = (uv.getX(b) - ax) * ((1 - uv.getY(c)) - ay) - (uv.getX(c) - ax) * ((1 - uv.getY(b)) - ay)
+
+                if (!d) continue
+
+                const s1 = ((u - ax) * ((1 - uv.getY(c)) - ay) - (uv.getX(c) - ax) * (v - ay)) / d
+                const s2 = ((uv.getX(b) - ax) * (v - ay) - (u - ax) * ((1 - uv.getY(b)) - ay)) / d
+
+                if (s1 < 0 || s2 < 0 || s1 + s2 > 1) continue
+
+                const p = new THREE.Vector3().fromBufferAttribute(pos, a).multiplyScalar(1 - s1 - s2)
+                    .addScaledVector(new THREE.Vector3().fromBufferAttribute(pos, b), s1)
+                    .addScaledVector(new THREE.Vector3().fromBufferAttribute(pos, c), s2)
+                    .project(camera)
+
+                return { x: r.left + (p.x + 1) / 2 * r.width, y: r.top + (1 - p.y) / 2 * r.height }
+            }
+
+            return null
+        },
         update(art) {
             const old = material.map
 
