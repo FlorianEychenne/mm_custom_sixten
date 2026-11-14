@@ -188,7 +188,7 @@
 
                 // Keyboard: the focus follows into the panel, on the chosen row
                 window.requestAnimationFrame(function () {
-                    const row = $('[data-sx-kind="' + kind.key + '"] .sx-row.on')
+                    const row = $('[data-sx-kind="' + kind.key + '"]:not(body) .sx-row.on')
 
                     if (row && event.detail === 0) row.focus()
                 })
@@ -492,7 +492,7 @@
             }
 
             const tools = $('.tools', dock)
-            const row = $('[data-sx-kind="' + key + '"] .sx-row.on')
+            const row = $('[data-sx-kind="' + key + '"]:not(body) .sx-row.on')
 
             if (!tools || !row) return
 
@@ -504,7 +504,7 @@
 
         // The chosen row of a kind and its editor in sight in the panel that scrolls them (computer)
         function revealRow(key) {
-            const row = $('[data-sx-kind="' + key + '"] .sx-row.on')
+            const row = $('[data-sx-kind="' + key + '"]:not(body) .sx-row.on')
             let box = row && row.parentElement
 
             while (box && box !== document.body) {

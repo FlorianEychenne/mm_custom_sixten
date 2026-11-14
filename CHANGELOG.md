@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Ordinateur (Mathieu) : le volet va aussi à la ligne choisie quand il change de type
+
+Signalé par Mathieu : sur l'ordinateur, un clic sur un logo ou un texte du tapis ne faisait pas défiler le volet
+jusqu'à son éditeur.
+
+- Cause : `body` porte lui aussi `data-sx-kind` (le type du volet actif). Le sélecteur de la ligne choisie
+  (`[data-sx-kind="logo"] .sx-row.on`) prenait donc la première ligne cochée de la page, souvent celle d'un autre
+  type, cachée : après un clic sur un logo, volet fermé ou ouvert sur Textes, le volet restait en haut.
+- `views/js/layout.js` : `:not(body)` dans les sélecteurs de la ligne choisie (`revealRow`, `showChosenRow`, rail),
+  sur l'ordinateur comme sur le téléphone.
+- Vérifié sur le dev (Chromium, 1440 x 900 et 1280 x 720 ; barnum 3x3, tapis Honda, Kawasaki, Aprilia) : volet fermé,
+  volet sur l'autre type ou sur le même, texte et logo en bas de liste : ligne et éditeur visibles ; aucune erreur.
+
 ### Barnum (Mathieu) : édition sur la tente 3D coupée pour le moment
 
 Demande de Mathieu : désactiver temporairement toutes les éditions sur le barnum 3D, en gardant le code pour plus tard.
