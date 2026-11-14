@@ -881,12 +881,10 @@
         // Template units to cm (MmCustom.product.cmPerUnit, from the size of the product); 0 when unknown
         const cmPerUnit = function () { return MmCustom.product.cmPerUnit() }
         const roundCm = function (value) { return Math.round(value * 10) / 10 }
-        // Position of a text or of a logo on a computer: two sliders, left / right and up / down as the screen shows the
-        // mat. Their figure is the distance to the nearest edge of the mat (MmCustom.position of the engine, as the wheels
-        // of the phone): an icon names the edge, « Centred » at the same distance from both, where the slider is
-        // magnetic. Between the two, the height and the width of the element (in its own direction, MmCustom.position.dims)
-        // and a button that turns it a quarter turn (MmCustom.position.quarterTurn). Dimension lines are drawn on the mat
-        // while a slider is used or an element is dragged (showGuides); on a phone the wheels own them.
+        // Position of a text or of a logo on a computer (mountEdgeRows): left / right and up / down as the screen shows the
+        // mat, as distances to the nearest edge of the mat (MmCustom.position of the engine, as the wheels of the phone): an
+        // icon names the edge, « Centred » at the same distance from both. Dimension lines are drawn on the mat while a
+        // figure is pointed at or typed, or an element is dragged (showGuides); on a phone the wheels own them.
         const EDGE_ART = ui.adjust && ui.adjust.icons ? ui.adjust.icons : {}
         const EDGE_NAME = {
             left: function () { return t('fromLeft', 'Distance from the left edge') },
@@ -912,156 +910,182 @@
         MmCustom.on('drag:start', function (event) { showGuides(event.detail && event.detail.element) })
         MmCustom.on('drag:end', hideGuides)
 
-        // first: the block of the left / right slider (.sx-logo-pos: a label, a figure, a range); the up / down one is
-        // made from it. options: { id, element(), usable(element), keep (stay in the printable part of the mat) }
-        function mountEdgeRows(first, options) {
-            if (!first) return { sync: function () {} }
+        // A computer: the position of a text or of a logo is one line under its size (.sx-place-block, in the place of the
+        // .sx-logo-pos block given): its distance to the nearest edge left / right and up / down, each a button that turns
+        // into a field to type a figure in cm (Enter or leaving the field applies it, Escape cancels), then « centre left /
+        // right » and the quarter turn. The height and the width of the element are a line under the size (sizeBox). On the
+        // mat, the element is moved with the mouse; the figures follow.
+        // options: { id, element(), usable(element), keep (stay in the printable part of the mat), sizeBox }
+        function mountEdgeRows(block, options) {
+            if (!block || !MmCustom.position || !MmCustom.position.measure) return { sync: function () {} }
 
-            const second = first.cloneNode(true)
-            const rows = {}
-            let sliding = null // axis of the slider being moved: its thumb is not put back under the pointer
-            let dims = null // { value, turn }: height x width and the quarter turn, under the size
+            const turnName = MmCustom.t('adjustRotate', 'Turn a quarter turn')
+            const centreName = t('centreX', 'Centre left / right')
+            const dims = document.createElement('p')
+            const buttons = {}
+            let editing = null // axis whose figure is being typed
 
-            first.insertAdjacentElement('afterend', second)
+            block.className = 'sx-place-block'
+            block.innerHTML = '<span class="mm-tools-title"></span><div class="sx-place">'
+                + '<button type="button" class="sx-place__edge" data-axis="x"></button>'
+                + '<button type="button" class="sx-place__edge" data-axis="y"></button>'
+                + '<span class="sx-place__gap"></span>'
+                + '<button type="button" class="sx-place__btn sx-place__centre"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h5M21 12h-5M5.5 9.5L8 12l-2.5 2.5M18.5 9.5L16 12l2.5 2.5"/></svg></button>'
+                + '<button type="button" class="sx-place__btn sx-place__turn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>'
+            block.querySelector('.mm-tools-title').textContent = t('toolPosition', 'Position')
 
-            if (MmCustom.position && MmCustom.position.dims && MmCustom.position.quarterTurn) {
-                const block = document.createElement('div')
-                const name = MmCustom.t('adjustRotate', 'Turn a quarter turn')
+            const centre = block.querySelector('.sx-place__centre')
+            const turn = block.querySelector('.sx-place__turn')
 
-                block.className = 'sx-dims'
-                block.innerHTML = '<span class="mm-tools-title"></span><div class="sx-dims__row"><span class="sx-dims__val"></span>'
-                    + '<button type="button" class="sx-dims__turn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>'
-                block.querySelector('.mm-tools-title').textContent = MmCustom.t('adjustHeight', 'Height') + ' × ' + MmCustom.t('adjustWidth', 'Width')
-                dims = { value: block.querySelector('.sx-dims__val'), turn: block.querySelector('button') }
-                dims.turn.title = name
-                dims.turn.setAttribute('aria-label', name)
-                dims.turn.addEventListener('click', function () {
-                    const el = options.element()
+            centre.title = centreName
+            centre.setAttribute('aria-label', centreName)
+            turn.title = turnName
+            turn.setAttribute('aria-label', turnName)
+            buttons.x = block.querySelector('[data-axis="x"]')
+            buttons.y = block.querySelector('[data-axis="y"]')
+            dims.className = 'sx-dimsline'
 
-                    if (!el || !el.isConnected || !options.usable(el)) return
-
-                    showGuides(el)
-                    MmCustom.position.quarterTurn(el, { keep: !!options.keep })
-                    sync()
-                    hideGuides()
-                })
-                first.insertAdjacentElement('afterend', block)
-            }
+            if (options.sizeBox) options.sizeBox.insertAdjacentElement('afterend', dims)
 
             const figure = function (value) {
                 if (!cmPerUnit()) return String(Math.round(value))
 
                 return roundCm(value).toLocaleString(document.documentElement.lang || undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' cm'
             }
-
-            // Along the screen: distance of the element to the left (or top) edge, room between the two edges, nearest edge
-            const read = function (axis) {
+            const target = function () {
                 const el = options.element()
 
-                if (!MmCustom.position || !el || !el.isConnected || !options.usable(el)) return null
+                return el && el.isConnected && options.usable(el) ? el : null
+            }
+            const measure = function () {
+                const el = target()
 
-                const m = MmCustom.position.measure(el)
+                try { return el ? MmCustom.position.measure(el) : null } catch (e) { return null } // not drawn
+            }
 
-                if (!m) return null
+            function paintButton(axis, m) {
+                const b = buttons[axis]
+
+                if (editing === axis) return
+
+                if (!m) {
+                    b.innerHTML = ''
+                    b.disabled = true
+
+                    return
+                }
 
                 const at = m[axis]
                 const k = cmPerUnit() || 1
-                const from = axis === 'x' ? 'left' : 'top'
+                const text = at.centred ? t('centred', 'Centred') : figure(at.gap * k)
+                const name = at.centred ? (axis === 'x' ? t('offset', 'Left / right position') : t('offsetY', 'Up / down position')) + ' : ' + text : EDGE_NAME[at.edge]() + ' : ' + text
 
-                return { at: at, k: k, from: from, first: (at.edge === from ? at.gap : at.far) * k, total: (at.gap + at.far) * k }
-            }
-
-            const paint = function (axis, now) {
-                const row = rows[axis]
-                const text = now.at.centred ? t('centred', 'Centred') : figure(now.at.gap * now.k)
-                const name = now.at.centred ? text : EDGE_NAME[now.at.edge]() + ' : ' + text
-
-                row.value.innerHTML = (EDGE_ART[now.at.centred ? (axis === 'x' ? 'midX' : 'midY') : now.at.edge] || '') + '<span>' + esc(text) + '</span>'
-                row.value.title = name
-                row.input.setAttribute('aria-valuetext', name)
+                b.disabled = false
+                b.innerHTML = (EDGE_ART[at.centred ? (axis === 'x' ? 'midX' : 'midY') : at.edge] || '') + '<span>' + esc(text) + '</span>'
+                b.title = name
+                b.setAttribute('aria-label', name)
             }
 
             function sync() {
-                if (dims) {
-                    const el = options.element()
-                    let size = null
+                const el = target()
+                const m = measure()
 
-                    try {
-                        size = el && el.isConnected && options.usable(el) ? MmCustom.position.dims(el) : null
-                    } catch (e) { size = null } // not drawn
+                paintButton('x', m)
+                paintButton('y', m)
+                centre.disabled = !m
+                turn.disabled = !m
 
-                    const k = cmPerUnit() || 1
+                let size = null
 
-                    dims.turn.disabled = !size
-                    dims.value.textContent = size ? figure(size.height * k).replace(/ cm$/, '') + ' × ' + figure(size.width * k) : ''
-                }
+                try { size = el && MmCustom.position.dims ? MmCustom.position.dims(el) : null } catch (e) { size = null }
 
-                Object.keys(rows).forEach(function (axis) {
-                    const row = rows[axis]
-                    let now = null
+                const k = cmPerUnit() || 1
 
-                    try { now = read(axis) } catch (e) { return } // not drawn (hidden step): read again when shown
-
-                    row.input.disabled = !now || !(now.total > 0)
-
-                    if (!now) {
-                        row.value.textContent = ''
-
-                        return
-                    }
-
-                    if (sliding !== axis) {
-                        row.input.max = String(Math.max(0, roundCm(now.total)))
-                        row.input.value = String(roundCm(now.first))
-                    }
-
-                    paint(axis, now)
-                })
+                dims.hidden = !size
+                dims.textContent = size
+                    ? MmCustom.t('adjustHeight', 'Height') + ' × ' + MmCustom.t('adjustWidth', 'Width').toLowerCase() + ' : '
+                        + figure(size.height * k).replace(/ cm$/, '') + ' × ' + figure(size.width * k)
+                    : ''
             }
 
-            ;[['x', first], ['y', second]].forEach(function (pair) {
-                const axis = pair[0]
-                const block = pair[1]
-                const label = block.querySelector('.mm-tools-title')
-                const input = block.querySelector('input')
+            // A figure typed in place of the button: from the edge the button showed
+            function edit(axis) {
+                const m = measure()
 
-                block.classList.add('sx-logo-pos--' + axis)
-                label.id = options.id + '-' + axis
-                label.textContent = axis === 'x' ? t('offset', 'Left / right position') : t('offsetY', 'Up / down position')
-                input.setAttribute('aria-labelledby', label.id)
-                input.min = '0'
-                input.step = '0.1'
-                rows[axis] = { input: input, value: block.querySelector('.sx-logo-pos__val') }
+                if (!m || editing) return
 
-                input.addEventListener('input', function () {
-                    const el = options.element()
-                    let now = read(axis)
+                const at = m[axis]
+                const k = cmPerUnit() || 1
+                const edge = at.centred ? (axis === 'x' ? 'left' : 'top') : at.edge
+                const gap = at.centred ? at.gap : (edge === at.edge ? at.gap : at.far)
+                const b = buttons[axis]
+                const input = document.createElement('input')
+                let done = false
 
-                    if (!now) return
+                editing = axis
+                input.type = 'text'
+                input.inputMode = 'decimal'
+                input.className = 'sx-place__field'
+                input.value = String(roundCm(gap * k)).replace('.', ',')
+                input.setAttribute('aria-label', EDGE_NAME[edge]())
+                b.innerHTML = (EDGE_ART[edge] || '')
+                b.appendChild(input)
+                b.insertAdjacentHTML('beforeend', cmPerUnit() ? '<i>cm</i>' : '')
+                showGuides(target())
+                input.focus()
+                input.select()
 
-                    let wanted = parseFloat(input.value) || 0
+                const finish = function (apply) {
+                    if (done) return
 
-                    // Magnetic centre: about three pixels of the slider on each side
-                    if (Math.abs(wanted - now.total / 2) <= Math.max(0.3, now.total / 80)) wanted = now.total / 2
+                    done = true
+                    editing = null
 
-                    sliding = axis
-                    showGuides(el)
-                    MmCustom.position.place(el, now.from, wanted / now.k, { keep: !!options.keep, snapCentre: false })
-                    sliding = null
-                    now = read(axis)
+                    const value = parseFloat(String(input.value).replace(',', '.'))
+                    const el = target()
 
-                    if (!now) return
+                    if (apply && el && value >= 0) {
+                        MmCustom.position.place(el, edge, value / k, { keep: !!options.keep, snapCentre: false })
+                    }
 
-                    // What was drawn: the printable part of the mat may hold the element back, the centre takes it
-                    input.value = String(roundCm(now.first))
-                    paint(axis, now)
-                })
-                input.addEventListener('change', function () {
                     sync()
                     hideGuides()
+                }
+
+                input.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') { event.preventDefault(); finish(true); b.focus() }
+                    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finish(false); b.focus() }
                 })
-                ;['pointerdown', 'focus'].forEach(function (name) { input.addEventListener(name, function () { showGuides(options.element()) }) })
-                input.addEventListener('blur', hideGuides)
+                input.addEventListener('blur', function () { finish(true) })
+                input.addEventListener('click', function (event) { event.stopPropagation() })
+            }
+
+            ;['x', 'y'].forEach(function (axis) {
+                buttons[axis].addEventListener('click', function () { edit(axis) })
+                buttons[axis].addEventListener('mouseenter', function () { showGuides(target()) })
+                buttons[axis].addEventListener('mouseleave', function () { if (!editing) hideGuides() })
+            })
+
+            centre.addEventListener('click', function () {
+                const el = target()
+                const m = measure()
+
+                if (!el || !m) return
+
+                showGuides(el)
+                MmCustom.position.place(el, m.x.edge, (m.x.gap + m.x.far) / 2, { keep: !!options.keep, snapCentre: false })
+                sync()
+                hideGuides()
+            })
+            turn.addEventListener('click', function () {
+                const el = target()
+
+                if (!el || !MmCustom.position.quarterTurn) return
+
+                showGuides(el)
+                MmCustom.position.quarterTurn(el, { keep: !!options.keep })
+                sync()
+                hideGuides()
             })
 
             ;['text:moved', 'text:change', 'text:rotated', 'logo:moved', 'logo:resized', 'logo:scaled', 'logo:rotated', 'logo:measured',
@@ -1197,10 +1221,12 @@
                 element: function () { return current.text },
                 usable: function (el) { return MmCustom.texts.isMovable(el) },
                 keep: true, // as the size: a text stays in the printable part of the mat
+                sizeBox: box.querySelector('.sx-logo-size'),
             })
             const number = numberField('sx-text-size-cm', t('textSizeCm', 'Height of the capital letters, in cm'), function (cm) { setCm(cm) })
 
-            box.querySelector('label').textContent = t('textSize', 'Text size')
+            box.querySelector('label').textContent = t('sizeShort', 'Size')
+            box.querySelector('label').title = t('textSize', 'Text size')
             design.insertBefore(number.box, slider)
 
             // Height of the capitals in cm (MmCustom.texts.capHeight: across the baseline, a slanted number keeps its height)
@@ -1518,6 +1544,13 @@
                 element: function () { return current.logo },
                 usable: function (logo) { return MmCustom.logos.isPlaced(logo) || !!freeOf(logo) },
                 keep: false,
+                sizeBox: $('.sx-logo-size', logoBlock),
+            })
+
+            // Short names, as for the texts: the four lines of the panel share one column of names
+            $$('.sx-logo-size .mm-tools-title', logoBlock).forEach(function (title) {
+                title.title = title.textContent.trim()
+                title.textContent = t('sizeShort', 'Size')
             })
 
             // Width of the logo in cm (MmCustom.logos.width: its own width, a logo turned on a side slot keeps it), set from

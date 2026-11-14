@@ -211,7 +211,7 @@ body#module-mm_custom-customModule .module-container .tools .sx-meta small{font-
 body#module-mm_custom-customModule .module-container .tools .sx-remove{padding:0;border:0;background:transparent;color:var(--sx-red);font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.06em;text-decoration:underline;text-underline-offset:.2em;cursor:pointer;font-weight:600}
 body#module-mm_custom-customModule .module-container .tools .sx-remove[hidden]{display:none}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-size,body#module-mm_custom-customModule .module-container .tools .sx-logo-pos{display:flex;flex-direction:column;gap:.375rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size{display:flex;flex-direction:column;gap:.375rem}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.375rem .5rem;margin:0;padding:0}
 
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>input[type=range]{grid-column:1/-1;margin:0!important}
@@ -221,10 +221,6 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-size>.logo-
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty{display:none;flex-direction:column;gap:.375rem;opacity:.45}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty .mm-tools-title{display:flex;align-items:center;height:1.0625rem;margin:0}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty input{height:1.125rem;margin:0}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;height:1.0625rem}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .mm-tools-title{margin:0}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{font-family:var(--mmx-caps);font-size:.6875rem;color:var(--mmx-text-2);white-space:nowrap;font-weight:700}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos input:disabled{opacity:.35}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 /* emplacement vide : « Votre logo » (vignette vide, curseurs grisés) s'efface, bibliothèque et import suffisent */
 body#module-mm_custom-customModule .module-container .tools .sx-logo--current:has(.sx-thumb--empty) .sx-current,
@@ -757,22 +753,6 @@ body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>input[type=range]{grid-column:1;grid-row:2}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>.sx-num{grid-column:2;grid-row:2}
 body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty input{height:1.875rem}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto 1.875rem;align-items:center;gap:.375rem .5rem}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row{display:contents}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__row .mm-tools-title{grid-column:1/-1;grid-row:1}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val{grid-column:2;grid-row:2;display:inline-flex;align-items:center;justify-content:flex-end;gap:.3125rem;min-width:5.25rem;text-align:right}
-/* position sur un ordinateur : deux curseurs (gauche / droite, haut / bas) dont le chiffre est la distance au bord le plus proche du tapis, précédé de l'icône de ce bord (layout.js, mountEdgeRows) ; le second sous le premier, la case de gauche reste libre */
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos__val svg{flex:none;width:.875rem;height:.875rem;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos--y{grid-column:2}
-/* sous la taille : hauteur × largeur de l'élément et bouton du quart de tour (layout.js, mountEdgeRows) */
-body#module-mm_custom-customModule .module-container .tools .sx-dims{display:grid;grid-template-rows:auto 1.875rem;align-items:center;gap:.375rem;min-width:0}
-body#module-mm_custom-customModule .module-container .tools .sx-dims .mm-tools-title{margin:0}
-body#module-mm_custom-customModule .module-container .tools .sx-dims__row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-width:0}
-body#module-mm_custom-customModule .module-container .tools .sx-dims__val{font-family:var(--mmx-caps);font-size:.6875rem;font-weight:700;color:var(--mmx-text-2);white-space:nowrap}
-body#module-mm_custom-customModule .module-container .tools .sx-dims__turn{flex:none;display:grid;place-items:center;width:1.875rem;height:1.875rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
-body#module-mm_custom-customModule .module-container .tools .sx-dims__turn:disabled{opacity:.35;cursor:default}
-body#module-mm_custom-customModule .module-container .tools .sx-dims__turn svg{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-body#module-mm_custom-customModule .module-container .tools .sx-logo-pos>input{grid-column:1;grid-row:2;margin:0}
 body#module-mm_custom-customModule:not(.sx-text-multi) .sx-text-bar{display:none}
 
 /* Téléphone (2026-11-13) : bibliothèque et import en deux boutons (rien à déposer) ; volet ouvert : le tapis garde 40 % de l'écran (50 % le 13/11 au matin, 34 % avant) */
@@ -809,6 +789,32 @@ body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d.is-busy span{animat
 @media (prefers-reduced-motion:reduce){body#module-mm_custom-customModule .sx-zoomwrap .sx-shot--3d.is-busy span{animation:none}}
 /* les deux colonnes alignées par le bas : un libellé sur deux lignes (téléphone) ne décale pas les curseurs */
 body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{align-items:end}
+/* ordinateur : réglages d'un texte ou d'un logo sur une colonne (layout.js, mountEdgeRows) : « Taille » curseur et cm, puis hauteur × largeur en petit, puis « Position » : deux distances au bord en boutons (un clic : un champ en cm), centrer gauche / droite et quart de tour */
+body#module-mm_custom-customModule .module-container .tools .sx-logo-sliders{grid-template-columns:minmax(0,1fr);gap:.625rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design{grid-template-columns:4.75rem minmax(0,1fr) auto;grid-template-rows:1.875rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>label{grid-column:1;grid-row:1;height:auto}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>input[type=range]{grid-column:2;grid-row:1}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size .logo-design>.sx-num{grid-column:3;grid-row:1}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty{flex-direction:row;align-items:center;gap:.5rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty .mm-tools-title{flex:none;width:4.75rem}
+body#module-mm_custom-customModule .module-container .tools .sx-logo-size__empty input{flex:1;min-width:0}
+body#module-mm_custom-customModule .module-container .tools .sx-dimsline{margin:-.25rem 0 0 5.25rem;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:700;color:var(--mmx-text-2);white-space:nowrap}
+body#module-mm_custom-customModule .module-container .tools .sx-dimsline[hidden]{display:none}
+body#module-mm_custom-customModule .module-container .tools .sx-place-block{display:grid;grid-template-columns:4.75rem minmax(0,1fr);align-items:center;gap:.5rem}
+body#module-mm_custom-customModule .module-container .tools .sx-place-block .mm-tools-title{margin:0}
+body#module-mm_custom-customModule .module-container .tools .sx-place{display:flex;align-items:center;gap:.375rem;min-width:0}
+body#module-mm_custom-customModule .module-container .tools .sx-place__gap{flex:1}
+body#module-mm_custom-customModule .module-container .tools .sx-place__edge{flex:none;display:inline-flex;align-items:center;gap:.3125rem;height:1.875rem;padding:0 .5rem;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.75rem;font-weight:700;white-space:nowrap;cursor:text}
+body#module-mm_custom-customModule .module-container .tools .sx-place__edge:hover{box-shadow:inset 0 0 0 2px #000}
+body#module-mm_custom-customModule .module-container .tools .sx-place__edge:focus-within{box-shadow:inset 0 0 0 2px var(--sx-red)}
+body#module-mm_custom-customModule .module-container .tools .sx-place__edge:disabled{opacity:.35;cursor:default}
+body#module-mm_custom-customModule .module-container .tools .sx-place__edge i{color:var(--mmx-text-2);font-size:.625rem;font-style:normal;letter-spacing:.06em}
+body#module-mm_custom-customModule .module-container .tools .sx-place__field{width:2.75rem;height:1.5rem;padding:0;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.8125rem;font-weight:700;text-align:right}
+body#module-mm_custom-customModule .module-container .tools .sx-place__field:focus{outline:0}
+body#module-mm_custom-customModule .module-container .tools .sx-place__btn{flex:none;display:grid;place-items:center;width:1.875rem;height:1.875rem;padding:0;border:0;border-radius:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;cursor:pointer}
+body#module-mm_custom-customModule .module-container .tools .sx-place__btn:hover{background:#000;color:#fff}
+body#module-mm_custom-customModule .module-container .tools .sx-place__btn:disabled{opacity:.35;cursor:default;background:#fff;color:#000}
+body#module-mm_custom-customModule .module-container .tools .sx-place svg{flex:none;width:.9375rem;height:.9375rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* Logos (2026-11-13) : pas de bloc « Votre logo » (vignette, nom, origine), doublon de la ligne L1… ; « Retirer » passe dans le pied */
 body#module-mm_custom-customModule .module-container .tools .sx-logo--current>.mm-tools-title,body#module-mm_custom-customModule .module-container .tools .sx-logo--current .sx-current{display:none!important}

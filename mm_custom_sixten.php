@@ -233,6 +233,8 @@ class Mm_custom_sixten extends Module
             'viewWhole' => $this->l('Whole mat'),
             'viewZone' => $this->l('Zoom on the selection'),
             'outsidePrint' => $this->l('Outside the print area'),
+            'sizeShort' => $this->l('Size'),
+            'centreX' => $this->l('Centre left / right'),
             'imageReady' => $this->l('Your image is ready'),
             'saveImage' => $this->l('Save the image'),
             'logoSizeCm' => $this->l('Width of the logo, in cm'),

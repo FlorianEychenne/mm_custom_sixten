@@ -6,6 +6,26 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Ordinateur (Mathieu) : volets Textes et Logos allégés, position en deux boutons
+
+Demande de Mathieu : l'interface de l'ordinateur était trop chargée (quatre blocs, trois curseurs). Maquette validée.
+
+- `views/js/layout.js` (`mountEdgeRows`) : les réglages d'un texte ou d'un logo tiennent sur une colonne de trois lignes :
+  - « Taille » : curseur et champ en cm, sur une ligne ;
+  - sous elle, en petit, « Hauteur × largeur : 6,0 × 21,8 cm » (`MmCustom.position.dims`) ;
+  - « Position » : la distance au bord le plus proche à gauche / droite et en haut / bas, chacune un bouton avec l'icône
+    du bord (« Centré » à égale distance) ; un clic en fait un champ où taper la distance en cm (Entrée ou sortie du champ
+    l'applique, Échap annule) ; puis « centrer gauche / droite » et le quart de tour.
+  Les deux curseurs de position et le bloc « Hauteur × largeur » sont retirés : l'élément se déplace à la souris sur le
+  tapis et les chiffres suivent. Les cotes s'affichent au survol d'une distance, pendant la saisie et le glisser.
+- Noms courts : « Taille » (le nom complet reste en info-bulle), « Position ».
+- `views/css/site.css` : `.sx-place-block`, `.sx-place__edge`, `.sx-place__btn`, `.sx-dimsline`, taille sur une ligne ;
+  règles `.sx-logo-pos*` et `.sx-dims*` retirées. Le bloc `.sx-logo-pos` de `configurator.tpl` est réécrit par le script.
+- Chaînes `sizeShort` (« Size ») et `centreX` (« Centre left / right ») traduites en fr, de, es, it, nl.
+- Téléphone inchangé (roues).
+- Vérifié sur le dev à 1024 x 768, 1440 x 900 et 1920 x 1080 (Chromium, WebKit) : saisie, butée, Échap, centrer, quart
+  de tour, cotes, texte et logo ; téléphone inchangé ; aucune erreur.
+
 ### Barnums (Mathieu) : pas de semelle
 
 Décision de Mathieu : les barnums n'ont pas besoin de semelle. `views/js/layout.js` : `sole: null` pour un barnum (la

@@ -140,3 +140,5 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_658489a7581b7b674317d96
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7557c88953b5bacfc499cb2a812a8aef'] = 'Distanza dal bordo superiore';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_508186a0dded4c4c4cf876b17963d30a'] = 'Distanza dal bordo inferiore';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_398124682999fe955755feb5cfccf031'] = 'Centrato';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6f6cb72d544962fa333e2e34ce64f719'] = 'Dimensione';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6664a7258c81622e59f381237e62e947'] = 'Centra sinistra / destra';
