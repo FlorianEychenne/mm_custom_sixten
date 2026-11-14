@@ -6,6 +6,20 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Échelle (Mathieu) : mesures en cm à l'échelle réelle des tapis
+
+Signalé par Mathieu : un logo en pleine largeur d'un 95x200 affichait 89,2 cm. Les gabarits sont dessinés en points à la
+taille imprimée (92 x 197 cm pour un 95x200), imprimés tels quels avec 1,5 cm de bordure non imprimée autour (voir
+mm_custom, même jour).
+
+- `views/js/layout.js` (`matScale`, avant les réglages du moteur) : `MmCustom.product.configure({ cmPerUnit: 2.54 / 72,
+  borderCm: 1.5 })` pour les tapis dont le petit côté du gabarit vaut bien la largeur vendue moins 3 cm (à 1 cm près) ;
+  les barnums et tout autre gabarit gardent l'échelle calculée par le moteur.
+- Effet : tailles des textes et des logos réduites de 1,5 % (ce logo fait 88,0 cm : 95 - 2 x 1,5 de bordure - 2 x 2 de
+  semelle) ; distances au bord comptées depuis le bord réel du tapis (1,5 cm de plus) ; un texte s'arrête à 5,5 cm du
+  bord. Téléphone et ordinateur.
+- Demande le mm_custom du même jour (`MmCustom.product.configure`) ; sans lui, l'ancienne échelle reste.
+
 ### Ordinateur (Mathieu) : hauteur × largeur et quart de tour dans les volets Textes et Logos
 
 Suite de la position mesurée depuis le bord : ce que les roues du téléphone ont déjà.

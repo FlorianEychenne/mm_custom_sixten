@@ -57,6 +57,24 @@
 
         /* ------------------------------------------------------------- réglages du moteur (propres à Sixten) */
 
+        // Scale of the mats: their templates are drawn in points, at the size they are printed, which is the size sold less
+        // 3 cm each way (a 95x200 is a drawing of 92 x 197 cm), and the mat keeps an unprinted border of 1.5 cm around the
+        // print. The figures in cm (sizes, distances to the edge, sole, margin) follow. Checked on the short side of the
+        // template: another kind of template (the barnums) keeps the scale the engine works out from the size sold.
+        ;(function matScale() {
+            const POINT_CM = 2.54 / 72
+            const BORDER_CM = 1.5
+            const product = MmCustom.product
+            const size = product && product.configure ? product.sizeCm() : null
+            const view = MmCustom.svg.viewBox()
+
+            if (!size || !view || product.isBarnum) return
+
+            if (Math.abs(Math.min(view.width, view.height) * POINT_CM - (size.width - 2 * BORDER_CM)) < 1) {
+                product.configure({ cmPerUnit: POINT_CM, borderCm: BORDER_CM })
+            }
+        })()
+
         // Logos: dragged anywhere on the mat (as on new.sixten), size handles and free rotation
         // (at the finger: the frame alone, the handles would hide the design on a phone)
         if (MmCustom.drag) MmCustom.drag.configure({ logoZone: 'template', handles: true, rotation: true, touchHandles: false })
