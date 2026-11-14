@@ -61,6 +61,9 @@ const ICONS = {
 }
 
 // ---- barnums : patrons des toits ----
+const EAVE_M = 2.0  // hauteur de l'égout du toit monté (haut des pieds)
+const LEG_M = 0.04  // section des pieds en aluminium (tube carré de 4 cm)
+
 // Coins de chaque face en 3D et sur le patron, en unités du SVG. Coin = [x, z, niveau, x du patron, y du patron] :
 // x '-' / '+' = bouts de la longueur, 'ridge-' / 'ridge+' = bouts du faîtage (confondus au centre d'une pyramide),
 // z -1 / 0 / 1 = arrière / milieu / avant, niveau 'b' = pied des bandes, 'e' = égout du toit, 'r' = faîtage.
@@ -145,7 +148,7 @@ function canopy(art, W, D) {
     geometry.setIndex(indices)
     geometry.computeVertexNormals()
 
-    return { geometry, height: levels.r, faceOf }
+    return { geometry, height: levels.r, eave: levels.e, faceOf }
 }
 
 /**
@@ -181,7 +184,7 @@ export function mountBarnum(container, options) {
     scene.environment = envTarget.texture
     scene.environmentIntensity = LIGHTING.env
 
-    const reach = Math.max(W, D)
+    const reach = Math.max(W, D) * 2 // the shadow of the raised roof falls beyond the tent
     const key = new THREE.DirectionalLight(0xffffff, LIGHTING.key)
 
     key.castShadow = true
@@ -209,14 +212,43 @@ export function mountBarnum(container, options) {
         return map
     }
     const material = new THREE.MeshStandardMaterial({ map: texture(options.art), roughness: 0.9, metalness: 0, side: THREE.DoubleSide })
+    // Monté (Mathieu, 2026-11-14) : le toit sur 4 pieds en aluminium, égout à EAVE_M du sol ; la toile est levée dans sa
+    // géométrie (pick et toScreen restent justes)
+    const lift = EAVE_M - tent.eave
+
+    tent.geometry.translate(0, lift, 0)
+    tent.height += lift
+
     const cloth = new THREE.Mesh(tent.geometry, material)
 
     cloth.castShadow = true
     scene.add(cloth)
 
+    const alu = new THREE.MeshStandardMaterial({ color: 0xe1e4e8, metalness: 0.55, roughness: 0.38 }) // aluminium brossé
+    const legGeo = new THREE.BoxGeometry(LEG_M, EAVE_M, LEG_M)
+    const footGeo = new THREE.BoxGeometry(LEG_M * 3, 0.006, LEG_M * 3)
+    const stand = new THREE.Group()
+
+    for (const sx of [-1, 1]) {
+        for (const sz of [-1, 1]) {
+            // Dans l'angle de la toile, juste à l'intérieur des bandes
+            const x = sx * (W / 2 - LEG_M / 2 - 0.004)
+            const z = sz * (D / 2 - LEG_M / 2 - 0.004)
+            const leg = new THREE.Mesh(legGeo, alu)
+            const foot = new THREE.Mesh(footGeo, alu)
+
+            leg.position.set(x, EAVE_M / 2, z)
+            foot.position.set(x, 0.003, z)
+            leg.castShadow = foot.castShadow = true
+            leg.receiveShadow = true
+            stand.add(leg, foot)
+        }
+    }
+    scene.add(stand)
+
     const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 100)
     const controls = new OrbitControls(camera, renderer.domElement)
-    const aim = new THREE.Vector3(0, tent.height * 0.45, 0)
+    const aim = new THREE.Vector3(0, tent.height * 0.5, 0)
 
     controls.enableDamping = true
     controls.dampingFactor = 0.08
@@ -328,6 +360,9 @@ export function mountBarnum(container, options) {
             material.map.dispose()
             material.dispose()
             tent.geometry.dispose()
+            legGeo.dispose()
+            footGeo.dispose()
+            alu.dispose()
             ground.geometry.dispose()
             ground.material.dispose()
             envTarget.dispose()

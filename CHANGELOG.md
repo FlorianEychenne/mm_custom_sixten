@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnum (Mathieu) : tente 3D montée sur 4 pieds en aluminium
+
+Demande de Mathieu : 4 pieds en aluminium sur le barnum 3D.
+
+- `views/js/viewer3d.js` (`mountBarnum`) : le toit est levé, égout à 2 m du sol (`EAVE_M`), sur 4 pieds en tube carré de
+  4 cm (`LEG_M`), aluminium brossé, chacun dans un angle juste à l'intérieur des bandes, avec une platine au pied ;
+  ombre portée de l'ensemble (zone d'ombre élargie). Décor seulement : le patron imprimé ne change pas ; clic et glisser
+  sur la toile inchangés (la toile est levée dans sa géométrie). Caméra visant la mi-hauteur.
+- Vérifié sur le dev (Chromium, 1440 x 900 et 390 x 844) : rendu, clic et glisser d'un texte, logos verrouillés ;
+  aucune erreur.
+
 ### Barnum (Mathieu) : logos verrouillés sur la tente 3D
 
 Demande de Mathieu : « garder l'édition des logos sur la 3D barnum pour plus tard. Verrouiller pour le moment. »
