@@ -1887,7 +1887,7 @@
 
             // The header goes away while a panel is open: a band takes its place at the top of the screen (.sx-band) and
             // the mat starts under it. On the left the S of Sixten; on the right the save button (the icon the header has
-            // on a phone, with its name) and the cart, with the short name it has in the header. No price: the band is the
+            // on a phone, alone) and the cart, with the short name it has in the header. No price: the band is the
             // short header. Each one presses its twin of the header: the exit guard, the account and the cart are not
             // wired a second time.
             const band = document.createElement('div')
@@ -1916,10 +1916,8 @@
             if (twins.logo) bandButton(twins.logo, 'sx-band__logo', '<span class="sx-config-logo__s" aria-hidden="true"></span>', twins.logo.getAttribute('aria-label') || 'Sixten')
 
             if (twins.save) {
-                // Always the short name on the button (« Save changes » of a creation opened again does not fit the
-                // band); the name of the header in its tooltip
-                const name = twins.save.textContent.trim()
-                const save = bandButton(twins.save, 'sx-band__save', ART.save + '<span class="sx-band__save-label">' + esc(t('bandSave', 'Save')) + '</span>', name)
+                // The icon alone; its name (the one of the header) in its tooltip
+                const save = bandButton(twins.save, 'sx-band__save', ART.save, twins.save.textContent.trim())
 
                 // « Save » becomes « Save changes » once the creation is saved: the tooltip follows
                 new MutationObserver(function () {

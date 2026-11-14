@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : bandeau, la sauvegarde revient à l'icône seule
+
+Choix final de Mathieu : dans le bandeau du volet ouvert, l'icône de sauvegarde sans son nom (le prix reste retiré).
+
+- `views/js/layout.js` : plus de `.sx-band__save-label` ; le nom de l'en-tête reste dans l'info-bulle et pour les
+  lecteurs d'écran. `views/css/site.css` : `.sx-band__save` redevient un carré blanc de 2 rem, poussé à droite.
+- Chaîne `bandSave` retirée (et ses traductions).
+- Vérifié à 390 x 844 et 360 x 640 (clics transmis à l'en-tête) ; aucune erreur.
+
 ### Téléphone (Mathieu) : bandeau sans prix, « Sauvegarder » écrit à côté de son icône
 
 Demande de Mathieu après essai.
