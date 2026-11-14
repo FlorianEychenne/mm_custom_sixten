@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Échelle (Mathieu) : le tapis mesuré est le dessin du SVG (92 x 197 cm pour un 95x200)
+
+Décision de Mathieu : les SVG sont les BAT envoyés à l'impression, on mesure sur eux. Plus de bordure de 1,5 cm
+ajoutée autour du dessin (entrée précédente) : les distances au bord partent du bord du SVG, et les deux distances d'un
+élément plus sa propre taille font 92 ou 197 cm. L'échelle (2.54 / 72 cm par unité) ne change pas.
+
+- `views/js/layout.js` (`matScale`) : `MmCustom.product.configure({ cmPerUnit: 2.54 / 72, borderCm: 0 })`.
+- Effet : distances au bord réduites de 1,5 cm par rapport à l'entrée précédente ; un texte s'arrête à 4 cm du bord
+  (semelle + marge), un logo va jusqu'au bord du dessin.
+- Vérifié sur le dev à 1440 x 900 : tapis 197 x 92 cm, somme des distances et de la taille, butées ; aucune erreur.
+
 ### Échelle (Mathieu) : mesures en cm à l'échelle réelle des tapis
 
 Signalé par Mathieu : un logo en pleine largeur d'un 95x200 affichait 89,2 cm. Les gabarits sont dessinés en points à la
