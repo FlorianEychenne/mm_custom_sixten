@@ -3031,8 +3031,10 @@
          * Vue 3D (Mathieu, 2026-11-12) : bouton « 3D » après la story. Au premier clic seulement, views/js/viewer3d.js et three.js
          * (jsDelivr, version figée) sont chargés ; la texture est l'image du tapis telle qu'elle est (MmCustom.export.canvas).
          * Proposé pour un tapis dont la taille est connue (MmCustom.product.sizeCm, 4 m au plus) et si le navigateur a WebGL.
-         * Barnum (Mathieu, 2026-11-14) : la tente montée, son patron collé sur le toit (viewer3d.js, options.barnum), sans
-         * limite de taille ni « Voir chez moi ».
+         * Barnum (Mathieu, 2026-11-14) : la tente montée, son patron collé sur le toit (viewer3d.js), sans limite de taille ni
+         * « Voir chez moi », affichée sur la scène à l'ouverture, à la place du patron à plat (viewer3d.mountBarnum) : on la
+         * personnalise avec les volets et elle suit chaque changement (image refaite 350 ms après le dernier). Le bouton 3D
+         * passe du patron à plat (pour placer finement) à la tente et retour.
          */
         const VIEWER_URL = window.mm_custom_sixten && window.mm_custom_sixten.viewer3d
         const matSize = MmCustom.product && MmCustom.product.sizeCm ? MmCustom.product.sizeCm() : null
@@ -3052,6 +3054,82 @@
             else story.insertAdjacentElement('afterend', view3d)
 
             let viewerModule = null
+            const loadViewer = function () {
+                return viewerModule ? Promise.resolve(viewerModule) : import(VIEWER_URL).then(function (m) { viewerModule = m; return m })
+            }
+
+            // Barnum : la tente sur la scène
+            const tent = barnum3d ? (function () {
+                const host = $('.sx-viewport')
+                const box = document.createElement('div')
+                const flatLabel = t('view3dFlat', 'Show the flat pattern')
+                let view = null
+                let timer = 0
+                let busy = false
+                let again = false
+                let observer = null
+                const art = function () { return MmCustom.export.canvas({ width: 2048, texture: false }) }
+                const label = function (on) {
+                    view3d.title = on ? flatLabel : label3d
+                    view3d.setAttribute('aria-label', view3d.title)
+                    view3d.setAttribute('aria-pressed', on ? 'true' : 'false')
+                }
+                const refresh = function () {
+                    if (!view) return
+                    if (busy) { again = true; return }
+                    busy = true
+                    art().then(function (canvas) { if (view) view.update(canvas) })
+                        .catch(function (error) { console.error('mm_custom_sixten: 3D barnum', error) })
+                        .then(function () { busy = false; if (again) { again = false; refresh() } })
+                }
+
+                box.className = 'sx-tent3d'
+                box.hidden = true
+                if (host) host.appendChild(box)
+
+                const show = function () {
+                    if (view || !host || view3d.classList.contains('is-busy')) return Promise.resolve()
+
+                    view3d.classList.add('is-busy')
+
+                    return Promise.all([loadViewer(), art()]).then(function (results) {
+                        if (!results[0].supported() || !results[0].mountBarnum) throw new Error('webgl')
+
+                        box.hidden = false
+                        view = results[0].mountBarnum(box, { art: results[1], sizeCm: matSize })
+                        document.body.classList.add('sx-tent3d-on')
+                        label(true)
+                        // Every change of the design (colours, texts, logos), not the classes of hover and selection
+                        observer = new MutationObserver(function (records) {
+                            if (records.every(function (r) { return r.type === 'attributes' && r.attributeName === 'class' })) return
+                            clearTimeout(timer)
+                            timer = setTimeout(refresh, 350)
+                        })
+                        observer.observe(MmCustom.svg.root(), { subtree: true, attributes: true, childList: true, characterData: true })
+                    }).catch(function (error) {
+                        box.hidden = true
+                        console.error('mm_custom_sixten: 3D barnum', error)
+                    }).then(function () { view3d.classList.remove('is-busy') })
+                }
+                const hide = function () {
+                    if (observer) observer.disconnect()
+                    observer = null
+                    clearTimeout(timer)
+                    if (view) view.dispose()
+                    view = null
+                    box.hidden = true
+                    document.body.classList.remove('sx-tent3d-on')
+                    label(false)
+                }
+
+                // Position wheels of a phone: they place on the flat pattern, shown while they are open, then the tent again
+                let back = false
+
+                MmCustom.on('adjust:open', function () { back = !!view; if (back) hide() })
+                MmCustom.on('adjust:close', function () { if (back) { back = false; show() } })
+
+                return { show: show, hide: hide, toggle: function () { back = false; return view ? hide() : show() } }
+            })() : null
 
             // The print, at most 3000 px wide, in JPEG (under the server's 6 MB), sent with what the phone page shows
             const shareArt = function (art, box, size, design) {
@@ -3083,12 +3161,13 @@
             }
 
             view3d.addEventListener('click', function () {
+                if (tent) { tent.toggle(); return }
                 if (view3d.classList.contains('is-busy')) return
 
                 view3d.classList.add('is-busy')
                 view3d.title = t('view3dLoading', 'Preparing the 3D view…')
 
-                const load = viewerModule ? Promise.resolve(viewerModule) : import(VIEWER_URL).then(function (m) { viewerModule = m; return m })
+                const load = loadViewer()
                 const box = MmCustom.svg.viewBox()
 
                 // l'impression sans le feutre : la vue 3D pose elle-même le feutre répété à l'échelle réelle (comme la démo)
@@ -3125,6 +3204,9 @@
                     view3d.focus({ preventScroll: true })
                 })
             })
+
+            // A barnum opens on its tent in 3D
+            if (tent) tent.show()
         }
 
         /*

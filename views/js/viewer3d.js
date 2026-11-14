@@ -147,6 +147,153 @@ function canopy(art, W, D) {
     return { geometry, height: levels.r }
 }
 
+/**
+ * Barnum en 3D sur la scène du configurateur (Mathieu, 2026-11-14) : la tente montée, à la place du patron à plat, pendant
+ * qu'on personnalise avec les volets. update(art) remplace l'image du patron (la tente suit chaque changement).
+ *
+ * mountBarnum(container, { art, sizeCm }) -> { update(art), reset(), dispose() }
+ */
+export function mountBarnum(container, options) {
+    const W = options.sizeCm.length / 100
+    const D = options.sizeCm.width / 100
+    const tent = canopy(options.art, W, D)
+
+    if (!tent) throw new Error('barnum: no pattern for this template')
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.toneMapping = THREE.NeutralToneMapping
+    renderer.toneMappingExposure = LIGHTING.exposure
+    renderer.shadowMap.enabled = true
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap
+    renderer.domElement.className = 'sx-tent3d__canvas'
+    container.appendChild(renderer.domElement)
+
+    const scene = new THREE.Scene()
+    const pmrem = new THREE.PMREMGenerator(renderer)
+    const envTarget = pmrem.fromScene(new RoomEnvironment(renderer), 0.04)
+
+    scene.environment = envTarget.texture
+    scene.environmentIntensity = LIGHTING.env
+
+    const reach = Math.max(W, D)
+    const key = new THREE.DirectionalLight(0xffffff, LIGHTING.key)
+
+    key.castShadow = true
+    key.shadow.mapSize.set(2048, 2048)
+    key.shadow.camera.left = -reach; key.shadow.camera.right = reach
+    key.shadow.camera.top = reach; key.shadow.camera.bottom = -reach
+    key.shadow.camera.near = 0.1; key.shadow.camera.far = 20
+    key.shadow.radius = 6
+    key.position.set(Math.cos(0.61) * 4, 6, Math.sin(0.61) * 4)
+    scene.add(key, new THREE.HemisphereLight(0xffffff, 0x444444, LIGHTING.hemi))
+
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.18 }))
+
+    ground.rotation.x = -Math.PI / 2
+    ground.position.y = -0.0005
+    ground.receiveShadow = true
+    scene.add(ground)
+
+    const texture = (art) => {
+        const map = new THREE.CanvasTexture(art)
+
+        map.colorSpace = THREE.SRGBColorSpace
+        map.anisotropy = renderer.capabilities.getMaxAnisotropy()
+
+        return map
+    }
+    const material = new THREE.MeshStandardMaterial({ map: texture(options.art), roughness: 0.9, metalness: 0, side: THREE.DoubleSide })
+    const cloth = new THREE.Mesh(tent.geometry, material)
+
+    cloth.castShadow = true
+    scene.add(cloth)
+
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.05, 100)
+    const controls = new OrbitControls(camera, renderer.domElement)
+    const aim = new THREE.Vector3(0, tent.height * 0.45, 0)
+
+    controls.enableDamping = true
+    controls.dampingFactor = 0.08
+    controls.enablePan = false
+    controls.maxPolarAngle = Math.PI * 0.49
+    controls.target.copy(aim)
+
+    // Cadrage : la tente entière (sphère englobante) dans la scène, vue de trois quarts
+    const radius = Math.hypot(W / 2, D / 2, tent.height / 2)
+    const DIR = new THREE.Vector3(-0.62, 0.5, 0.6).normalize()
+    let dirty = true
+
+    function frame() {
+        const fov = THREE.MathUtils.degToRad(camera.fov)
+        const fit = Math.min(Math.tan(fov / 2), Math.tan(fov / 2) * camera.aspect)
+        const dist = radius / fit * 1.08
+
+        controls.minDistance = dist * 0.35
+        controls.maxDistance = dist * 2.5
+        controls.target.copy(aim)
+        camera.position.copy(aim).addScaledVector(DIR, dist)
+        controls.update()
+        dirty = true
+    }
+
+    let moved = false
+
+    function resize() {
+        const w = Math.max(1, container.clientWidth)
+        const h = Math.max(1, container.clientHeight)
+
+        renderer.setSize(w, h, false)
+        camera.aspect = w / h
+        camera.updateProjectionMatrix()
+        if (!moved) frame()
+        dirty = true
+    }
+
+    controls.addEventListener('start', () => { moved = true })
+    controls.addEventListener('change', () => { dirty = true })
+
+    const ro = new ResizeObserver(resize)
+
+    ro.observe(container)
+    resize()
+    renderer.setAnimationLoop(() => {
+        if (controls.update()) dirty = true
+        if (!dirty) return
+        dirty = false
+        renderer.render(scene, camera)
+    })
+
+    return {
+        update(art) {
+            const old = material.map
+
+            material.map = texture(art)
+            material.needsUpdate = true
+            old.dispose()
+            dirty = true
+        },
+        reset() { moved = false; frame() },
+        dispose() {
+            ro.disconnect()
+            renderer.setAnimationLoop(null)
+            controls.dispose()
+            material.map.dispose()
+            material.dispose()
+            tent.geometry.dispose()
+            ground.geometry.dispose()
+            ground.material.dispose()
+            envTarget.dispose()
+            pmrem.dispose()
+            renderer.dispose()
+            renderer.forceContextLoss()
+            renderer.domElement.remove()
+        },
+    }
+}
+
 // ---- réalité augmentée : outils ----
 // Sépare une géométrie par groupe de matériaux (l'exporteur USDZ ne gère pas les tableaux de matériaux)
 function splitByGroups(geo) {

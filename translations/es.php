@@ -82,6 +82,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>configurator_0026e5f448f283e198bafcb1bcf
 $_MODULE['<{mm_custom_sixten}prestashop>configurator_c82fef8b7c63945012914b06ffa2c293'] = 'Restablecer el diseño';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_1e47e063d79d1db22ea18f4c1c6004f2'] = 'Ver la alfombra en 3D';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_02d0f6fca067db75217b669078a09840'] = 'Ver la carpa en 3D';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e2494bee02bd92f6f7179e57dde271cd'] = 'Ver el patrón plano';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_8ab779ff0e7088848ddf847dd4808cc0'] = 'Preparando la vista 3D…';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_449f5d9b515f70d3e428eccd500bc0a5'] = 'La vista 3D no está disponible en este dispositivo.';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e93aa9da6116a806349f5518b8335243'] = 'Vista 3D';

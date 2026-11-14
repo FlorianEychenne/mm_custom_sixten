@@ -6,6 +6,23 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Barnum (Mathieu) : la tente en 3D sur la scène, modifiable avec les volets
+
+Demande de Mathieu : le barnum en 3D doit être visible et modifiable dans le configurateur ; choix : la 3D à la place du
+patron à plat, les volets Couleurs, Textes et Logos pour modifier, la tente suit en direct.
+
+- `views/js/viewer3d.js` : `mountBarnum(conteneur, { art, sizeCm })` monte la tente (même patron, `canopy`) dans la
+  scène, sans fenêtre : orbite, zoom, ombre ; `update(art)` remplace l'image du patron ; `dispose()`.
+- `views/js/layout.js` : un barnum s'ouvre sur sa tente en 3D (`.sx-tent3d` dans `.sx-viewport`). Chaque changement du
+  SVG (hors classes de survol et de sélection) refait l'image 350 ms après le dernier et la pose sur la tente. Le bouton
+  3D passe au patron à plat (« Voir le patron à plat », pour placer finement) et retour. Les roues de position du
+  téléphone montrent le patron à plat pendant qu'elles sont ouvertes, puis la tente revient.
+- `views/css/site.css` : `.sx-tent3d`, bouton 3D enfoncé en noir ; en 3D, zoom, rotation du patron et zoom de zone
+  masqués (`body.sx-tent3d-on`).
+- Chaîne `view3dFlat` (« Show the flat pattern ») traduite en fr, de, es, it, nl.
+- Vérifié sur le dev (Chromium, 1440 x 900 et 390 x 844) : tente à l'ouverture, couleur et texte changés dans le volet
+  repris sur la tente, bascule patron / tente, roues ; tapis inchangés (3D en fenêtre) ; aucune erreur.
+
 ### Vue 3D (Mathieu) : barnum monté en tente, son patron collé sur le toit
 
 Demande de Mathieu : la 3D du barnum ne doit pas être celle des tapis ; reprendre la 3D des barnums de l'ancien
