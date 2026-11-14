@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Rappel d'impression (Mathieu) : à la limite des repères rouges
+
+Demande de Mathieu : « La zone d'impression correspond à la zone rouge et non la zone bord a bord. Le message doit donc
+s'afficher si le logo ou le texte dépasse cette zone. »
+
+- Le rappel « Dépasse la zone d'impression » s'affiche quand un texte ou un logo passe les repères rouges du glisser, à
+  2 cm du bord du dessin (`MmCustom.position.outside`, mm_custom du même jour) ; commentaire de `mountPrintWarn` à jour.
+- Nécessite mm_custom avec `MmCustom.drag.templateZone` (même jour).
+
 ### Bordure (Mathieu) : tapis à la taille du dessin, bordure de 2,5 cm autour
 
 Décision de Mathieu : « Le tapis doit faire la taille du svg : 92x197. La semelle doit faire 2,5cm de plus de chaque

@@ -1830,8 +1830,8 @@
         /* ------------------------------------------------------------- rappel : hors de la zone d'impression */
 
         // A text or a logo that the customer has moved, resized, turned, typed or placed and that sticks out of the print
-        // area (the drawing less its sole: MmCustom.position.outside) gets a reminder laid on the stage, on a phone as on a
-        // computer. It takes the place of « Logo larger than its slot » of the logo panel. A press on it chooses the
+        // area (the zone of the red guides of the drag, 2 cm inside the edge of the drawing: MmCustom.position.outside) gets
+        // a reminder laid on the stage, on a phone as on a computer. It takes the place of « Logo larger than its slot » of the logo panel. A press on it chooses the
         // element. What the template draws is not checked as long as it is left as drawn.
         ;(function mountPrintWarn() {
             const viewport = $('.sx-viewport')
