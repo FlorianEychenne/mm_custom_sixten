@@ -6,6 +6,16 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Téléphone (Mathieu) : roues, hauteur et largeur, bouton du quart de tour
+
+Suit mm_custom (composant `MmCustom.ui.adjust`) : la roue de taille affiche hauteur puis largeur, et un bouton quart de
+tour se place entre valider et retour.
+
+- `views/css/site.css` : trois boutons de même hauteur (`.sx-adjust__btns`, valider en rouge, quart de tour et retour
+  cerclés de noir), deux lignes de mesure (`.sx-adjust__dim`), chiffre plus large (4,75 rem).
+- Demande le mm_custom du même jour (bouton et deux lignes viennent du moteur).
+- Vérifié à 390 x 844 et 360 x 640, Chromium et WebKit ; aucune erreur. Pas encore essayé sur un vrai téléphone.
+
 ### Téléphone (Mathieu) : bandeau, la sauvegarde revient à l'icône seule
 
 Choix final de Mathieu : dans le bandeau du volet ouvert, l'icône de sauvegarde sans son nom (le prix reste retiré).
