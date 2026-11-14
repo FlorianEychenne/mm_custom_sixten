@@ -6,6 +6,20 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Ordinateur (Mathieu) : hauteur × largeur et quart de tour dans les volets Textes et Logos
+
+Suite de la position mesurée depuis le bord : ce que les roues du téléphone ont déjà.
+
+- `views/js/layout.js` (`mountEdgeRows`) : sous la taille, un bloc « Hauteur × largeur » donne les dimensions de
+  l'élément dans son propre sens (« 6,1 × 22,1 cm », `MmCustom.position.dims`) et un bouton le tourne d'un quart de
+  tour (`MmCustom.position.quarterTurn` : 90° dans le sens des aiguilles d'une montre, sans le rapprocher d'un bord ;
+  un texte reste dans la zone imprimable). Les cotes s'affichent pendant le quart de tour ; « annuler » le défait.
+  Les quatre réglages tiennent en deux rangées : taille et position gauche / droite, dimensions et position haut / bas.
+- `views/css/site.css` : `.sx-dims`. Libellés pris dans mm_custom (`adjustHeight`, `adjustWidth`, `adjustRotate`).
+- Demande le mm_custom du même jour ; sans `MmCustom.position.dims`, le bloc n'est pas affiché.
+- Vérifié sur le dev à 1024 x 768, 1440 x 900 et 1920 x 1080 (Chromium, WebKit) : dimensions, quart de tour d'un texte
+  et d'un logo, annuler ; téléphone inchangé ; aucune erreur.
+
 ### Ordinateur (Mathieu) : position mesurée depuis le bord le plus proche, cotes sur le tapis
 
 Même mesure que les roues du téléphone (`MmCustom.position` de mm_custom) : un client qui passe du téléphone à

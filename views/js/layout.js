@@ -859,8 +859,9 @@
         // Position of a text or of a logo on a computer: two sliders, left / right and up / down as the screen shows the
         // mat. Their figure is the distance to the nearest edge of the mat (MmCustom.position of the engine, as the wheels
         // of the phone): an icon names the edge, « Centred » at the same distance from both, where the slider is
-        // magnetic. Dimension lines are drawn on the mat while a slider is used or an element is dragged (showGuides);
-        // on a phone the wheels own them.
+        // magnetic. Between the two, the height and the width of the element (in its own direction, MmCustom.position.dims)
+        // and a button that turns it a quarter turn (MmCustom.position.quarterTurn). Dimension lines are drawn on the mat
+        // while a slider is used or an element is dragged (showGuides); on a phone the wheels own them.
         const EDGE_ART = ui.adjust && ui.adjust.icons ? ui.adjust.icons : {}
         const EDGE_NAME = {
             left: function () { return t('fromLeft', 'Distance from the left edge') },
@@ -894,8 +895,33 @@
             const second = first.cloneNode(true)
             const rows = {}
             let sliding = null // axis of the slider being moved: its thumb is not put back under the pointer
+            let dims = null // { value, turn }: height x width and the quarter turn, under the size
 
             first.insertAdjacentElement('afterend', second)
+
+            if (MmCustom.position && MmCustom.position.dims && MmCustom.position.quarterTurn) {
+                const block = document.createElement('div')
+                const name = MmCustom.t('adjustRotate', 'Turn a quarter turn')
+
+                block.className = 'sx-dims'
+                block.innerHTML = '<span class="mm-tools-title"></span><div class="sx-dims__row"><span class="sx-dims__val"></span>'
+                    + '<button type="button" class="sx-dims__turn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg></button></div>'
+                block.querySelector('.mm-tools-title').textContent = MmCustom.t('adjustHeight', 'Height') + ' × ' + MmCustom.t('adjustWidth', 'Width')
+                dims = { value: block.querySelector('.sx-dims__val'), turn: block.querySelector('button') }
+                dims.turn.title = name
+                dims.turn.setAttribute('aria-label', name)
+                dims.turn.addEventListener('click', function () {
+                    const el = options.element()
+
+                    if (!el || !el.isConnected || !options.usable(el)) return
+
+                    showGuides(el)
+                    MmCustom.position.quarterTurn(el, { keep: !!options.keep })
+                    sync()
+                    hideGuides()
+                })
+                first.insertAdjacentElement('afterend', block)
+            }
 
             const figure = function (value) {
                 if (!cmPerUnit()) return String(Math.round(value))
@@ -931,6 +957,20 @@
             }
 
             function sync() {
+                if (dims) {
+                    const el = options.element()
+                    let size = null
+
+                    try {
+                        size = el && el.isConnected && options.usable(el) ? MmCustom.position.dims(el) : null
+                    } catch (e) { size = null } // not drawn
+
+                    const k = cmPerUnit() || 1
+
+                    dims.turn.disabled = !size
+                    dims.value.textContent = size ? figure(size.height * k).replace(/ cm$/, '') + ' × ' + figure(size.width * k) : ''
+                }
+
                 Object.keys(rows).forEach(function (axis) {
                     const row = rows[axis]
                     let now = null
