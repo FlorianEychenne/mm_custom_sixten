@@ -474,14 +474,22 @@
             })
         }
 
-        // Phone layout (under 992 px): the chosen row of the kind just selected is brought to the top of the panel, so a tap
-        // on a logo, a text or a colour of the mat shows its row and its editor, wherever it is in the list
+        // The chosen row of the kind just selected is brought into the panel, so a tap or a click on a logo, a text or a colour
+        // of the mat shows its row and its editor, wherever it is in the list (phone: at the top of the panel)
         function showChosenRow() {
             const key = rowToShow
 
             rowToShow = null
 
-            if (!key || !window.matchMedia('(max-width: 991.98px)').matches) return
+            if (!key) return
+
+            // Computer (Mathieu, 2026-11-14): an element chosen on the mat (2D or 3D) may be far down the list; when its row
+            // or its editor is out of the panel, the panel scrolls to bring the row to its top
+            if (!window.matchMedia('(max-width: 991.98px)').matches) {
+                revealRow(key)
+
+                return
+            }
 
             const tools = $('.tools', dock)
             const row = $('[data-sx-kind="' + key + '"] .sx-row.on')
@@ -492,6 +500,33 @@
             const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
             tools.scrollTo({ top: Math.max(0, top), behavior: smooth ? 'smooth' : 'auto' })
+        }
+
+        // The chosen row of a kind and its editor in sight in the panel that scrolls them (computer)
+        function revealRow(key) {
+            const row = $('[data-sx-kind="' + key + '"] .sx-row.on')
+            let box = row && row.parentElement
+
+            while (box && box !== document.body) {
+                const overflow = window.getComputedStyle(box).overflowY
+
+                if ((overflow === 'auto' || overflow === 'scroll') && box.scrollHeight > box.clientHeight) break
+                box = box.parentElement
+            }
+
+            if (!row || !box || box === document.body) return
+
+            const view = box.getBoundingClientRect()
+            const r = row.getBoundingClientRect()
+            const editor = editors[key]
+            const under = editor && editor.offsetParent && (row.compareDocumentPosition(editor) & Node.DOCUMENT_POSITION_FOLLOWING)
+            const bottom = under ? Math.max(r.bottom, editor.getBoundingClientRect().bottom) : r.bottom
+
+            if (r.top >= view.top && bottom <= view.bottom) return
+
+            const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+            box.scrollTo({ top: Math.max(0, r.top - view.top + box.scrollTop - 8), behavior: smooth ? 'smooth' : 'auto' })
         }
 
         // The eye of a row shows or hides its text or its logo, like the switch of the editor

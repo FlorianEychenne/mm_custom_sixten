@@ -6,6 +6,17 @@ Une entrée par commit, la plus récente en haut.
 
 ## 14/11/2026
 
+### Ordinateur (Mathieu) : la ligne de l'élément choisi sur le tapis visible dans le volet
+
+Demande de Mathieu : un logo ou un texte choisi sur le tapis (2D ou 3D) en bas de liste n'était pas visible dans le
+volet de gauche.
+
+- `views/js/layout.js` (`showChosenRow`, `revealRow`) : sur l'ordinateur aussi, après une sélection, si la ligne choisie
+  ou son éditeur sort du volet, le volet défile pour amener la ligne en haut (aussi loin que la liste le permet) ; rien
+  ne bouge si tout est déjà visible. Téléphone inchangé.
+- Vérifié sur le dev (Chromium, 1440 x 900, barnum 3x3) : clic sur le logo L12 en 2D puis sur la tente 3D, ligne et
+  éditeur visibles ; aucune erreur.
+
 ### Barnum (Mathieu) : scène en 2D d'abord, tente 3D modifiable directement
 
 Demandes de Mathieu : « La première vue doit être en 2D » ; « Je veux que la 3D soit éditable ».
