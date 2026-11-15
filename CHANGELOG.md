@@ -4,6 +4,22 @@ Une entrée par commit, la plus récente en haut.
 
 ---
 
+## 15/11/2026
+
+### Textes (Mathieu) : « Texte / Contour » remis dans la couleur des textes
+
+Demande de Mathieu : la première version du module laissait le client mettre un contour sur un texte ; le volet de
+Sixten ne le proposait plus.
+
+- `views/js/layout.js` (`mountOutline`) : deux boutons « Texte | Contour » au-dessus des pastilles de la couleur du
+  texte (téléphone et ordinateur) ; les pastilles, la palette et le code peignent la partie choisie. Avec « Contour » :
+  épaisseur en mm sur le tapis (0,5 à 12 mm ; 4 mm pour un premier contour), « Sans contour », ou « Contour d'origine »
+  pour un texte que le gabarit dessine au trait (le « 38 » de Stripe garde son épaisseur et retrouve son contour blanc).
+  Angles arrondis (`stroke-linejoin: round`) pour les contours ajoutés. Moteur : `texts.setStroke` / `setStrokeWidth`.
+- `views/css/site.css`, `mm_custom_sixten.php`, `translations/` : habillage et six chaînes (fr, de, es, it, nl).
+- Vérifié sur le dev (Chromium, WebKit ; 390 x 844, 1440 x 900) : contour, épaisseur, annuler, « Sans contour »,
+  « Contour d'origine », aucune erreur.
+
 ## 14/11/2026
 
 ### Ordinateur (Mathieu) : le volet va aussi à la ligne choisie quand il change de type

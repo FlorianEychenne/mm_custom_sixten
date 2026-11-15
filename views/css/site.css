@@ -156,7 +156,19 @@ body#module-mm_custom-customModule .sx-text-bar button:disabled{opacity:.35;poin
 
 body#module-mm_custom-customModule .module-container .tools .sx-text-foot{display:flex;align-items:center;gap:1rem;margin-top:.25rem}
 body#module-mm_custom-customModule .module-container .tools .sx-text-foot:empty{display:none}
-/* couleurs du texte : « Texte / Contour » et le contour ne sont pas proposés ; palette (pastille + code), marques, tendances */
+/* couleurs du texte : « Texte / Contour » (remis le 15/11/2026), épaisseur du contour en mm ; palette (pastille + code), marques, tendances */
+body#module-mm_custom-customModule .module-container .tools .sx-ink{display:grid;grid-template-columns:1fr 1fr;box-shadow:inset 0 0 0 1.5px #000}
+body#module-mm_custom-customModule .module-container .tools .sx-ink__btn{height:2.5rem;padding:0 .5rem;border:0;border-radius:0;background:transparent;color:#000;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background-color .2s,color .2s}
+body#module-mm_custom-customModule .module-container .tools .sx-ink__btn[aria-pressed=true]{background:#000;color:#fff}
+body#module-mm_custom-customModule .module-container .tools .sx-outline{display:flex;flex-direction:column;gap:.375rem}
+body#module-mm_custom-customModule .module-container .tools .sx-outline[hidden]{display:none}
+body#module-mm_custom-customModule .module-container .tools .sx-outline__row{display:flex;align-items:center;gap:.75rem}
+body#module-mm_custom-customModule .module-container .tools .sx-outline__row>.mm-tools-title{flex:1;margin:0}
+body#module-mm_custom-customModule .module-container .tools .sx-outline__val{font-family:var(--mmx-caps);font-size:.8125rem;font-weight:600;white-space:nowrap}
+body#module-mm_custom-customModule .module-container .tools .sx-outline__off{padding:0;border:0;background:none;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:underline;text-underline-offset:.2em;cursor:pointer}
+body#module-mm_custom-customModule .module-container .tools .sx-outline__off:disabled{opacity:.35;cursor:default}
+body#module-mm_custom-customModule .module-container .tools .sx-outline input[type=range]:disabled{opacity:.35}
+body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-ink,body#module-mm_custom-customModule.sx-chips .module-container .tools .sx-outline{margin:0 0 .5rem}
 body#module-mm_custom-customModule .module-container .tools .text-design .font-colors{display:flex;flex-direction:column;gap:.875rem}
 
 body#module-mm_custom-customModule .module-container .tools .text-design .font-colors>label.mm-tools-title{margin:0}

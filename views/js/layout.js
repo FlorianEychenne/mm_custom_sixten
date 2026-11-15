@@ -815,6 +815,40 @@
             }
         })
 
+        // Colour of a text: its letters or their outline (« Texte / Contour », given back on 2026-11-15 at Mathieu's
+        // request, as in the first version of the module). The swatches, the palette and the code paint what is chosen.
+        let textInk = 'fill' // 'fill' or 'stroke'
+        let outline = null // thickness and « No outline » (mountOutline, below)
+
+        const painted = function (paint) { return !!paint && paint !== 'none' && paint !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(paint) }
+
+        // Colour of the chosen part of a text ('' : no outline)
+        function inkOf(el) {
+            const style = window.getComputedStyle(el)
+
+            if (textInk === 'fill') return style.fill
+
+            return painted(style.stroke) && parseFloat(style.strokeWidth) > 0 ? style.stroke : ''
+        }
+
+        function colorText(value) {
+            const el = current.text
+
+            if (!el) return
+
+            if (textInk === 'fill') {
+                MmCustom.texts.setFill(el, value)
+
+                return
+            }
+
+            // A text without outline gets one of OUTLINE_MM; one that has one (the numbers drawn in outline) keeps its thickness
+            const width = outline && outline.has(el) ? parseFloat(window.getComputedStyle(el).strokeWidth) : outline ? outline.toLocal(el, OUTLINE_MM) : 14
+
+            el.style.strokeLinejoin = 'round' // no spikes at the corners of thick letters
+            MmCustom.texts.setStroke(el, value, Math.round(width * 100) / 100)
+        }
+
         // Wheel: a swatch (opens iro.js, ui/color-picker.js) and the hexadecimal code, in place of the module's button
         const wheels = {}
 
@@ -841,7 +875,8 @@
             hex.setAttribute('aria-label', t('colorCode', 'Colour code'))
 
             const apply = function (value) {
-                if (inText) { if (current.text) MmCustom.texts.setFill(current.text, value) } else if (current.color) MmCustom.colors.apply(current.color, value)
+                if (inText) colorText(value)
+                else if (current.color) MmCustom.colors.apply(current.color, value)
             }
 
             swatch.addEventListener('click', function () {
@@ -873,7 +908,7 @@
 
             function sync() {
                 const value = inText
-                    ? (current.text ? hexOf(window.getComputedStyle(current.text).fill) : '')
+                    ? (current.text ? hexOf(inkOf(current.text)) || '' : '')
                     : (current.color ? hexOf(MmCustom.colors.read(current.color)) : '')
 
                 paint(value)
@@ -917,6 +952,9 @@
         // Template units to cm (MmCustom.product.cmPerUnit, from the size of the product); 0 when unknown
         const cmPerUnit = function () { return MmCustom.product.cmPerUnit() }
         const roundCm = function (value) { return Math.round(value * 10) / 10 }
+        const OUTLINE_MM = 4 // outline given to a text that has none, in mm on the mat (the first module: 14 units, about 5 mm)
+        const OUTLINE_MIN = 0.5
+        const OUTLINE_MAX = 12
         // Position of a text or of a logo on a computer (mountEdgeRows): left / right and up / down as the screen shows the
         // mat, as distances to the nearest edge of the mat (MmCustom.position of the engine, as the wheels of the phone): an
         // icon names the edge, « Centred » at the same distance from both. Dimension lines are drawn on the mat while a
@@ -1173,9 +1211,10 @@
 
             MmCustom.texts.select(current.text, { silent: true }) // reads its matrix again (the text editor writes through it)
 
-            markPicked(textBlock, [window.getComputedStyle(current.text).fill])
+            markPicked(textBlock, [inkOf(current.text)])
 
             if (wheels.text) wheels.text.sync()
+            if (outline) outline.sync()
             if (fontField) fontField.sync()
             if (textSliders) textSliders.sync()
 
@@ -1188,11 +1227,142 @@
 
                 if (!swatch || !current.text) return
 
-                MmCustom.texts.setFill(current.text, swatch.style.backgroundColor)
+                colorText(swatch.style.backgroundColor)
                 markPicked(textBlock, [swatch.style.backgroundColor])
 
                 if (wheels.text) wheels.text.sync()
             })
+
+            outline = mountOutline($('.font-colors', textBlock))
+        }
+
+        // « Texte / Contour » above the swatches; with « Contour », the thickness of the outline in mm (on the mat) and
+        // « No outline » (« Original outline » for a text the template draws with one: it goes back to it)
+        function mountOutline(scope) {
+            if (!scope) return null
+
+            const ink = document.createElement('div')
+            const box = document.createElement('div')
+
+            ink.className = 'sx-ink'
+            ink.setAttribute('role', 'group')
+            ink.setAttribute('aria-label', t('inkWhich', 'Colour of'))
+            ink.innerHTML = '<button type="button" class="sx-ink__btn" data-ink="fill" aria-pressed="true"></button>'
+                + '<button type="button" class="sx-ink__btn" data-ink="stroke" aria-pressed="false"></button>'
+            ink.children[0].textContent = t('inkText', 'Text')
+            ink.children[1].textContent = t('inkOutline', 'Outline')
+
+            box.className = 'sx-outline'
+            box.hidden = true
+            box.innerHTML = '<div class="sx-outline__row"><label class="mm-tools-title" for="sx-outline-width"></label>'
+                + '<span class="sx-outline__val"></span><button type="button" class="sx-outline__off"></button></div>'
+                + '<input type="range" id="sx-outline-width" min="' + OUTLINE_MIN + '" max="' + OUTLINE_MAX + '" step="0.5">'
+            box.querySelector('label').textContent = t('outlineWidth', 'Thickness')
+
+            const title = scope.querySelector(':scope>.mm-tools-title')
+
+            scope.insertBefore(box, title ? title.nextSibling : scope.firstChild)
+            scope.insertBefore(ink, box)
+
+            const range = box.querySelector('input')
+            const value = box.querySelector('.sx-outline__val')
+            const off = box.querySelector('.sx-outline__off')
+            const own = new WeakMap() // text → the template draws it with an outline
+
+            // Template units per unit of the text (its matrix and groups); the stroke width is in the units of the text
+            const scale = function (el) {
+                const root = MmCustom.svg.root()
+                const a = el.getScreenCTM && el.getScreenCTM()
+                const b = root && root.getScreenCTM && root.getScreenCTM()
+                const det = function (m) { return Math.abs(m.a * m.d - m.b * m.c) }
+
+                if (a && b && det(b) > 0 && det(a) > 0) return Math.sqrt(det(a) / det(b))
+
+                const m = el.transform && el.transform.baseVal.consolidate()
+
+                return m ? Math.sqrt(det(m.matrix)) || 1 : 1
+            }
+            const toMm = function (el, width) { return width * scale(el) * (cmPerUnit() || 2.54 / 72) * 10 }
+            const toLocal = function (el, mm) { return mm / 10 / (cmPerUnit() || 2.54 / 72) / scale(el) }
+            const has = function (el) { const style = window.getComputedStyle(el); return painted(style.stroke) && parseFloat(style.strokeWidth) > 0 }
+            const mine = function (el) { return !!(el.style.stroke || el.style.strokeWidth) }
+
+            // Does the template draw this text with an outline? Read once, without the customer's outline
+            const templateOutline = function (el) {
+                if (own.has(el)) return own.get(el)
+
+                const keep = [el.style.stroke, el.style.strokeWidth, el.style.strokeLinejoin]
+
+                el.style.stroke = el.style.strokeWidth = el.style.strokeLinejoin = ''
+
+                const drawn = has(el)
+
+                el.style.stroke = keep[0]
+                el.style.strokeWidth = keep[1]
+                el.style.strokeLinejoin = keep[2]
+                own.set(el, drawn)
+
+                return drawn
+            }
+            const format = function (mm) { return (Math.round(mm * 10) / 10).toLocaleString(document.documentElement.lang || undefined) + ' mm' }
+
+            function sync() {
+                const el = current.text && current.text.isConnected ? current.text : null
+                const on = !!el && has(el)
+
+                ink.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.ink === textInk)) })
+                box.hidden = textInk !== 'stroke'
+                range.disabled = !on
+                off.disabled = !el || !mine(el)
+                off.textContent = el && templateOutline(el) ? t('outlineOriginal', 'Original outline') : t('outlineOff', 'No outline')
+
+                const mm = on ? toMm(el, parseFloat(window.getComputedStyle(el).strokeWidth)) : 0
+
+                value.textContent = on ? format(mm) : '—'
+
+                if (on && document.activeElement !== range) {
+                    if (mm > OUTLINE_MAX) range.max = String(Math.ceil(mm))
+                    range.value = String(mm)
+                }
+            }
+
+            ink.addEventListener('click', function (event) {
+                const button = event.target.closest('.sx-ink__btn')
+
+                if (!button) return
+
+                textInk = button.dataset.ink
+                if (ui.colorPicker) ui.colorPicker.close()
+                if (current.text) syncText()
+                else sync()
+            })
+
+            range.addEventListener('input', function () {
+                const el = current.text
+
+                if (!el || !has(el)) return
+
+                MmCustom.texts.setStrokeWidth(el, Math.round(toLocal(el, parseFloat(range.value)) * 100) / 100)
+                value.textContent = format(parseFloat(range.value))
+            })
+
+            off.addEventListener('click', function () {
+                const el = current.text
+
+                if (!el) return
+
+                el.style.removeProperty('stroke')
+                el.style.removeProperty('stroke-width')
+                el.style.removeProperty('stroke-linejoin')
+                MmCustom.emit('text:change', { element: el, property: 'stroke', value: null })
+                syncText()
+            })
+
+            MmCustom.on('text:change', function (event) { if (event.detail && event.detail.element === current.text) sync() })
+
+            sync()
+
+            return { sync: sync, has: has, toLocal: toLocal }
         }
 
         // Field (several lines when the text allows it): ui/text-editor.js of mm_custom. No alignment: the text is moved instead.

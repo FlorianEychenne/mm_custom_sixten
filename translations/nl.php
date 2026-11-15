@@ -144,3 +144,8 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_508186a0dded4c4c4cf876b
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_398124682999fe955755feb5cfccf031'] = 'Midden';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6f6cb72d544962fa333e2e34ce64f719'] = 'Formaat';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_6664a7258c81622e59f381237e62e947'] = 'Links / rechts centreren';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_4a490919d3354b1053f8182cf900d16d'] = 'Kleur van';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_606b51cc1c9d0b4af394419a22f2ff1f'] = 'Omlijning';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_2431eae3d1fb711c3a6f44a48ad7da5e'] = 'Dikte';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_82de119e5cf3eb578d4909b5e70f2fe9'] = 'Zonder omlijning';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7168a4a114c48ee4ea09b5ebb6389ec5'] = 'Oorspronkelijke omlijning';
