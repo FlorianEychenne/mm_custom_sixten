@@ -121,12 +121,16 @@ const scenarios = {
       await page.waitForTimeout(200);
       expect('texte écrit', await zoneText(page, 2), 'ROSSI');
       expect('titre de la ligne', await page.locator('.sx-rows--text .sx-row.on .sx-row__title').textContent(), 'ROSSI');
-      await page.click('.sx-fontmenu__btn');
+      // On a computer the list of fonts opens on its own with the text editor (Mathieu, 2026-11-13)
+      if (!(await page.isVisible('.sx-fontlist li'))) await page.click('.sx-fontmenu__btn');
       await page.locator('.sx-fontlist li').first().click();
       expect('police choisie', await page.evaluate(() => getComputedStyle(MmCustom.zones.all('text')[2].element).fontFamily), (v) => /Anton/.test(v));
       const size0 = await page.evaluate(() => MmCustom.texts.size(MmCustom.zones.all('text')[2].element));
-      await page.locator('.sx-size button').last().click();
-      expect('taille du texte +10 %', await page.evaluate(() => MmCustom.texts.size(MmCustom.zones.all('text')[2].element)), (v) => v > size0);
+      // Size of the text: height of its capitals in cm (Mathieu, 2026-11-13), 2 cm more
+      const cm0 = parseFloat(await page.inputValue('#sx-text-size-cm'));
+      await page.fill('#sx-text-size-cm', String(Math.round((cm0 + 2) * 10) / 10));
+      await page.press('#sx-text-size-cm', 'Enter');
+      expect('taille du texte en cm', await page.evaluate(() => MmCustom.texts.size(MmCustom.zones.all('text')[2].element)), (v) => v > size0);
       await page.locator('.sx-rows--text .sx-row.on .sx-row__eye').click();
       expect('texte caché', await page.evaluate(() => MmCustom.texts.isHidden(MmCustom.zones.all('text')[2].element)), true);
       expect('œil barré sur la ligne', await page.locator('.sx-rows--text .sx-row.on').evaluate((r) => r.classList.contains('is-hidden')), true);
@@ -158,9 +162,9 @@ const scenarios = {
       expect('ligne L1 à sa place', await page.locator('.sx-rows--logo .sx-row').first().evaluate((r) => r.querySelector('.sx-row__badge').textContent + ' ' + r.querySelector('.sx-row__title').textContent), (v) => /^L1 Yamaha/i.test(v));
       expect('vignette « Votre logo »', await page.locator('.sx-logo--current .sx-meta b').textContent(), (v) => /Yamaha/i.test(v));
       const x0 = await page.evaluate(() => MmCustom.geometry.boundsOf(MmCustom.logos.frame(MmCustom.logos.placed()[0])).x);
-      await page.evaluate(() => { const i = document.querySelector('.sx-logo-pos input'); i.value = 100; i.dispatchEvent(new Event('input', { bubbles: true })) });
+      await page.evaluate(() => { const i = document.querySelector('.sx-logo-sliders:not(.sx-text-sliders) .sx-logo-pos input'); i.value = 100; i.dispatchEvent(new Event('input', { bubbles: true })) });
       expect('décalage gauche / droite', await page.evaluate((x) => Math.round(MmCustom.geometry.boundsOf(MmCustom.logos.frame(MmCustom.logos.placed()[0])).x - x), x0), 100);
-      expect('décalage en cm', await page.locator('.sx-logo-pos__val').textContent(), '+ 4 cm');
+      expect('décalage en cm', await page.locator('.sx-logo-sliders:not(.sx-text-sliders) .sx-logo-pos__val').textContent(), '+ 4 cm');
       await page.evaluate(() => { const i = document.querySelector('#sx-logo-size'); i.value = Number(i.value) + 300; i.dispatchEvent(new Event('input', { bubbles: true })) });
       await page.waitForTimeout(200);
       expect('alerte de dépassement', await page.isVisible('.sx-logo-hint'), true);
@@ -179,7 +183,7 @@ const scenarios = {
       expect('logo importé', await page.locator('.sx-rows--logo .sx-row').nth(1).locator('.sx-row__title').textContent(), 'mon logo');
 
       // Image du design, story Instagram
-      const [image] = await Promise.all([page.waitForEvent('download', { timeout: 60000 }), page.click('.sx-shot:not(.sx-shot--story)')]);
+      const [image] = await Promise.all([page.waitForEvent('download', { timeout: 60000 }), page.click('.sx-shot:not(.sx-shot--story):not(.sx-shot--3d)')]);
       expect('image du design', image.suggestedFilename(), (v) => /design\.png$/.test(v));
       const [story] = await Promise.all([page.waitForEvent('download', { timeout: 60000 }), page.click('.sx-shot--story')]);
       expect('story Instagram', story.suggestedFilename(), (v) => /-story\.png$/.test(v));
@@ -187,6 +191,15 @@ const scenarios = {
       PNG = PNG || (await import(process.env.MMC_E2E_PNGJS || 'pngjs')).PNG;
       const storyPng = PNG.sync.read(fs.readFileSync(path.join(outDir, 'story.png')));
       expect('story 1080 × 1920', storyPng.width + 'x' + storyPng.height, '1080x1920');
+
+      // Vue 3D (Mathieu, 2026-11-12) : s'ouvre avec le tapis dessiné, se ferme
+      await page.click('.sx-shot--3d');
+      await page.waitForSelector('.sx3d .sx3d__viewer canvas', { timeout: 60000 });
+      await page.waitForTimeout(1500);
+      expect('vue 3D ouverte', await page.evaluate(() => { const c = document.querySelector('.sx3d .sx3d__viewer canvas'); return c.width > 100 && c.height > 100; }), true);
+      await page.click('.sx3d__close');
+      await page.waitForTimeout(500);
+      expect('vue 3D fermée', await page.evaluate(() => { const o = document.querySelector('.sx3d'); return !o || !o.isConnected || o.hidden || getComputedStyle(o).display === 'none' || getComputedStyle(o).visibility === 'hidden'; }), true);
 
       // Scène : quart de tour, zoom, ⤢
       await page.click('.sx-toggle--rot');

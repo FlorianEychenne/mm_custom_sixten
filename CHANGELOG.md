@@ -621,6 +621,14 @@ auront les mêmes contraintes de positionnement.
   1440 × 900 (curseurs inchangés, bouton absent). Pas encore essayé sur un vrai téléphone ; les suites e2e ne couvrent
   pas cet outil.
 
+### 1.1.0 : version des changements de Mathieu (12 et 13/11), tests à jour
+
+- Numéro de version des changements de Mathieu ci-dessous (vue 3D et « Voir chez moi », téléphone, tailles en cm,
+  historique), déjà en service sur new.sixten par copie.
+- `tests/e2e/run.mjs` : parcours adapté (liste des polices ouverte d'elle-même, taille du texte en cm, curseur de décalage
+  du logo, bouton image distinct du bouton 3D) ; ouverture et fermeture de la vue 3D vérifiées ; captures de référence
+  refaites (hors dépôt).
+
 ### Téléphone (Mathieu) : la liste des polices ne s'ouvre plus toute seule
 
 - `views/js/layout.js` (`mountFontField`) : avec un clavier à l'écran (mise en page sous 992 px, ou doigt comme
