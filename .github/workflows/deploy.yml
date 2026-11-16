@@ -1,0 +1,130 @@
+name: Deploy mm_custom_sixten
+
+# Les sites sont décrits dans .github/deploy-sites.json.
+#
+# - Pousser un tag v* déploie cette version sur tous les sites de dev (stage "dev").
+# - La prod se déploie site par site : onglet Actions > Deploy mm_custom > Run workflow,
+#   en choisissant le site et le tag à envoyer. Ce bouton n'apparaît qu'une fois ce
+#   fichier présent sur main.
+#
+# Pour ajouter un site : l'ajouter à deploy-sites.json et à la liste des options ci-dessous,
+# autoriser la clé SSH sur son serveur et compléter le secret SSH_KNOWN_HOSTS.
+#
+# Repris du workflow de mm_custom (mêmes secrets : SSH_PRIVATE_KEY, SSH_KEY_VPSDEV, SSH_KNOWN_HOSTS,
+# à créer dans les réglages de ce dépôt). Les deux modules vont ensemble : déployer mm_custom puis
+# mm_custom_sixten, et sur la prod, mettre à jour les deux modules depuis le back-office ensuite.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      site:
+        description: Site à déployer
+        required: true
+        type: choice
+        options:
+          - sixten-new
+          - sixten-prod
+      version:
+        description: Tag à déployer (ex. v1.1.2)
+        required: true
+        type: string
+
+jobs:
+  select:
+    runs-on: ubuntu-latest
+    outputs:
+      sites: ${{ steps.select.outputs.sites }}
+
+    steps:
+      - name: Checkout the site list
+        uses: actions/checkout@v4
+
+      - name: Select the sites to deploy
+        id: select
+        env:
+          EVENT: ${{ github.event_name }}
+          SITE: ${{ inputs.site }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            sites=$(jq -c --arg site "$SITE" '[.[] | select(.name == $site)]' .github/deploy-sites.json)
+          else
+            sites=$(jq -c '[.[] | select(.stage == "dev")]' .github/deploy-sites.json)
+          fi
+
+          if [ "$sites" = "[]" ]; then
+            echo "::error::Aucun site à déployer"
+            exit 1
+          fi
+
+          echo "sites=$sites" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: select
+    name: Deploy to ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Deploy to every target even if one fails
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.select.outputs.sites) }}
+
+    steps:
+      # Only a tag can be deployed, never a branch
+      - name: Checkout tagged code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', inputs.version) || github.ref }}
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          # SSH_KEY_VPSDEV : clé dédiée au serveur de dev mediamart (new.sixten), autorisée sur le compte flo
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+            ${{ secrets.SSH_KEY_VPSDEV }}
+
+      - name: Register known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+          # Empreintes publiques du serveur de dev mediamart (vpsdev.24fluence.com, port 2240 : new.sixten)
+          echo "[vpsdev.24fluence.com]:2240 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtDDqC/mEEjyPQw5j59YuUPGygS69aXsUSiFpSt6LQC" >> ~/.ssh/known_hosts
+          echo "[vpsdev.24fluence.com]:2240 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL7YiKy9cPi1WjOR+attWpyC1ez2Zz1MZufa4ne6g2c1SVuVI+9Wabrk7itq+Z/x5KkIhzOIgjzMIsxFvuGxhX4=" >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy to ${{ matrix.name }}
+        run: |
+          # Aucune métadonnée n'est imposée : le serveur refuse la propriété et les dates,
+          # et --perms échouerait sur les fichiers appartenant encore à www-data, que le
+          # compte de déploiement n'a pas le droit de modifier (rsync sortirait en 23).
+          # Les droits de lecture sont réglés juste après, à l'étape suivante.
+          rsync -rlvz --delete \
+            --no-perms --no-owner --no-group --no-times --omit-dir-times \
+            -e "ssh -p ${{ matrix.port }} -o StrictHostKeyChecking=yes" \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.vscode/' \
+            --exclude '.gitignore' \
+            --exclude '.DS_Store' \
+            --exclude 'tests/' \
+            --exclude 'config.xml' \
+            --exclude 'config_*.xml' \
+            ./ \
+            ${{ matrix.user }}@${{ matrix.host }}:${{ matrix.path }}/
+
+      - name: Make deployed files readable by the web server on ${{ matrix.name }}
+        # Not on the mediamart dev server (sixten-new): rights there come from the mediamart group and ACLs, reset every
+        # 10 minutes, and must not be changed by hand (server rule 3)
+        if: ${{ matrix.host != 'vpsdev.24fluence.com' }}
+        run: |
+          # Un fichier réécrit par rsync appartient au compte de déploiement et garde
+          # les droits restrictifs de l'ancien (rw-rw----) : Apache, qui tourne en
+          # www-data, ne peut plus le lire et le module ne se charge pas.
+          # On n'ajoute la lecture que sur ce que ce compte possède, le reste appartient
+          # déjà à www-data et n'a pas besoin d'être touché.
+          ssh -p ${{ matrix.port }} -o StrictHostKeyChecking=yes \
+            ${{ matrix.user }}@${{ matrix.host }} \
+            "find ${{ matrix.path }} -user ${{ matrix.user }} -exec chmod o+rX {} +"

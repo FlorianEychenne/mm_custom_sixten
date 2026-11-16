@@ -1,0 +1,18 @@
+[
+  {
+    "name": "sixten-new",
+    "stage": "dev",
+    "user": "flo",
+    "host": "vpsdev.24fluence.com",
+    "port": 2240,
+    "path": "/home/mediamart/www/new.sixten-environmental.com/modules/mm_custom_sixten"
+  },
+  {
+    "name": "sixten-prod",
+    "stage": "prod",
+    "user": "mediamart",
+    "host": "sixten-environmental.com",
+    "port": 2240,
+    "path": "/home/mediamart/www/sixten-environmental.com/modules/mm_custom_sixten"
+  }
+]

@@ -42,6 +42,21 @@ php bin/console prestashop:module install mm_custom_sixten
 
 Puis régler la catégorie racine si le site porte plusieurs marques, et vider le cache.
 
+## Déploiement
+
+GitHub Actions (`.github/workflows/deploy.yml`, sites dans `.github/deploy-sites.json`), comme `mm_custom` :
+
+- pousser un tag `v*` (ex. `v1.1.2`) déploie cette version sur new.sixten (cible « dev ») ;
+- la prod se lance à la main : onglet Actions > Deploy mm_custom_sixten > Run workflow, site `sixten-prod`, tag.
+
+Copie par rsync `--delete`, sans `.git`, `.github`, `tests/` ni `config*.xml`. Le module ne garde aucune donnée dans son
+dossier (les images partagées de « Voir chez moi » sont dans `var/mm_custom_sixten_ar/`). Secrets du dépôt à créer :
+`SSH_PRIVATE_KEY`, `SSH_KEY_VPSDEV`, `SSH_KNOWN_HOSTS` (les mêmes que pour `mm_custom`).
+
+Après le déploiement : mise à jour du module (back-office, Modules > Mises à jour, ou
+`bin/console prestashop:module upgrade mm_custom_sixten`) pour que la version en base suive, puis vider le cache. Déployer
+`mm_custom` d'abord quand les deux modules changent ensemble.
+
 ## Tests de bout en bout
 
 `tests/e2e/run.mjs` : captures (ordinateur, tablette, téléphone) comparées à des références hors dépôt, et parcours

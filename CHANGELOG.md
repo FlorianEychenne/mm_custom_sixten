@@ -6,6 +6,15 @@ Une entrée par commit, la plus récente en haut.
 
 ## 16/11/2026
 
+### Déploiement par GitHub Actions, comme mm_custom
+
+Demandé par flo.
+
+- `.github/workflows/deploy.yml` (repris de `mm_custom`) : un tag `v*` déploie sur new.sixten, la prod se lance à la main
+  (Run workflow, site `sixten-prod`). Pas de dossiers de données à protéger (le module n'en a pas).
+- `.github/deploy-sites.json` : `sixten-new` (dev) et `sixten-prod` (`modules/mm_custom_sixten` de sixten-environmental.com).
+- `README.md` : section « Déploiement ».
+
 ### 1.1.2 : séance de mises à jour du 16/11 (repères, palette, « Plus de couleurs »)
 
 Numéro de version des deux commits du 16/11 ci-dessous, copiés sur new.sixten avec `mm_custom` 3.0.6 : bouton des
