@@ -68,7 +68,7 @@ body#module-mm_custom-customModule .sx-actions .save-custom,
 body#module-mm_custom-customModule .sx-config-close{position:static;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;height:2.25rem;min-height:0;margin:0;padding:0 .875rem;border:1.5px solid #fff;border-radius:0;background:transparent;color:#fff;font-family:var(--mmx-caps);font-size:.6875rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;line-height:1;cursor:pointer;backdrop-filter:none;transition:background-color .2s,color .2s,border-color .2s}
 body#module-mm_custom-customModule .sx-shot{width:2.25rem;padding:0;pointer-events:auto}
 body#module-mm_custom-customModule .sx-stage-hint .sx-shot{border:0;box-shadow:inset 0 0 0 1.5px #000;color:#000}
-body#module-mm_custom-customModule .sx-stage-hint .sx-shot:hover,body#module-mm_custom-customModule .sx-stage-hint .sx-shot:focus-visible{background:#000;color:#fff}
+body#module-mm_custom-customModule .sx-stage-hint .sx-shot:is(:hover,:focus,:focus-visible){background:#000;color:#fff;outline:0}
 body#module-mm_custom-customModule .sx-shot svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 body#module-mm_custom-customModule .sx-stage-hint .sx-quit{display:none} /* « Quitter » : seulement dans le menu « … » du téléphone (layout.js, mountStageMore) */
 body#module-mm_custom-customModule .sx-shot.is-busy{opacity:.5;pointer-events:none}
@@ -283,9 +283,9 @@ body#module-mm_custom-customModule .sx-printwarn svg{flex:none;width:1rem;height
 body#module-mm_custom-customModule .sx-toggle{display:inline-flex;align-items:center;justify-content:center;width:2.25rem;height:2.25rem;padding:0;border:0;box-shadow:inset 0 0 0 1.5px #000;background:#fff;color:#000;font-family:var(--mmx-caps);font-size:.625rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;pointer-events:auto;transition:background-color .2s,color .2s}
 body#module-mm_custom-customModule .sx-toggle span{display:none}
 body#module-mm_custom-customModule .sx-toggle svg{width:1.0625rem;height:1rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
-body#module-mm_custom-customModule .sx-toggle:hover{background:#000;color:#fff}
-
-body#module-mm_custom-customModule .sx-toggle--hots[aria-pressed=false]{color:var(--mmx-text-2);box-shadow:inset 0 0 0 1.5px var(--mmx-border)}
+body#module-mm_custom-customModule .sx-toggle:is(:hover,:focus,:focus-visible){background:#000;color:#fff;outline:0}
+/* repères : éteints par défaut (bouton comme les autres), allumés = bouton enfoncé, fond noir */
+body#module-mm_custom-customModule .sx-toggle--hots[aria-pressed=true]{background:#000;color:#fff}
 body#module-mm_custom-customModule .sx-stage-hint p{margin:0;display:flex;align-items:center;gap:.5rem;font-family:var(--mmx-caps);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mmx-text-2);font-weight:600}
 
 body#module-mm_custom-customModule .sx-zoom{position:absolute;z-index:5;right:var(--mm-stage-pad);bottom:1.25rem;display:flex;align-items:stretch;height:2.5rem;padding:0;background:#fff;box-shadow:inset 0 0 0 1.5px #000;border:0;border-radius:0}
@@ -505,7 +505,7 @@ body#module-mm_custom-customModule .module-container .template svg[id^="template
 
 /* Bouton photo (aperçu PNG) du configurateur (0.17.10) : sur fond blanc comme les autres boutons de la scène (rotation, repères) ; noir au survol */
 body#module-mm_custom-customModule .sx-stage-hint .sx-shot{background:#fff}
-body#module-mm_custom-customModule .sx-stage-hint .sx-shot:hover,body#module-mm_custom-customModule .sx-stage-hint .sx-shot:focus-visible{background:#000;color:#fff}
+body#module-mm_custom-customModule .sx-stage-hint .sx-shot:is(:hover,:focus,:focus-visible){background:#000;color:#fff;outline:0}
 
 /* Rail des outils sans icônes (0.18.17) : seul le libellé vertical reste, centré */
 

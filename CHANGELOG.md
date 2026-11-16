@@ -6,6 +6,25 @@ Une entrée par commit, la plus récente en haut.
 
 ## 16/11/2026
 
+### Bouton des repères, focus des boutons de la scène, palette du contour au téléphone, clic par cadre
+
+Demandé par flo :
+
+- `views/css/site.css` : le bouton des repères a l'aspect des autres (noir) quand ils sont cachés (à l'ouverture) ; allumé,
+  il est enfoncé (fond noir). Focus des boutons de la scène (repères, image, story, annuler, réinitialiser, rotation) en
+  fond noir comme le survol.
+- `views/js/layout.js` :
+  - après un clic sur le bouton des repères, il perd le focus (sinon il resterait noir et ferait croire les repères
+    allumés) ; au clavier, il le garde ;
+  - téléphone : la palette (couleur d'un texte ou d'une zone) est remesurée quand elle grandit (`ResizeObserver`) ;
+    « Contour » ajoutait la ligne « Épaisseur » et poussait le bas de la palette sous le bas de l'écran (870 px pour un
+    écran de 844 dans l'essai) ;
+  - le clic sur le tapis passe par `MmCustom.zones.at` (mm_custom) : un logo ou un texte se choisit aussi dans les vides
+    de son dessin.
+- Vérifié sur le dev (Chromium, 1440 × 900 et 390 × 844).
+
+## 16/11/2026
+
 ### 1.1.1 : vue 3D (Mathieu) chargée par une adresse absolue (serveurs de médias)
 
 Signalé par Mathieu après la mise en ligne sur le VPS : « La vue 3D n’est pas disponible sur cet appareil. ». Avec les

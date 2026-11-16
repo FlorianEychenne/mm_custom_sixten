@@ -266,9 +266,10 @@
             MmCustom.zones.select(zone)
         }
 
-        // A click on the mat selects the zone under the pointer (the click that ends a drag is swallowed by drag.js)
+        // A click on the mat selects the zone under the pointer, a logo or a text by its frame (the click that ends a drag
+        // is swallowed by drag.js)
         MmCustom.svg.root().addEventListener('click', function (event) {
-            const zone = MmCustom.zones.of(event.target)
+            const zone = MmCustom.zones.at ? MmCustom.zones.at(event.clientX, event.clientY, event.target, event.pointerType) : MmCustom.zones.of(event.target)
 
             if (zone) MmCustom.zones.select(zone)
         })
@@ -691,10 +692,12 @@
         }
 
         if (ui.markers) {
-            markersButton.addEventListener('click', function () {
+            markersButton.addEventListener('click', function (event) {
                 markersOn = !markersOn
                 paintMarkersButton()
                 showMarkers()
+                // Focus paints the button black like « on »: after a click of the mouse or a tap, its look says the state
+                if (event.detail) markersButton.blur()
             })
             paintMarkersButton()
         } else {
@@ -2878,6 +2881,24 @@
                 field.addEventListener('blur', function () {
                     window.setTimeout(function () { if (mode === 'text' && document.activeElement !== field) leave() }, 0)
                 })
+            }
+
+            // The palette grows while it is open (« Contour » adds the thickness, a message, a second line of colours): its
+            // height is measured again, or its bottom would go under the bottom of the screen. Not the text field: it waits
+            // for the keyboard at 55 % of the screen (measure(true)), and its lines are measured on input.
+            if (window.ResizeObserver) {
+                let last = 0
+
+                new ResizeObserver(function () {
+                    if (mode !== 'color') return
+
+                    const height = Math.ceil(dock.getBoundingClientRect().height)
+
+                    if (height !== last) {
+                        last = height
+                        measure()
+                    }
+                }).observe(dock)
             }
 
             if (viewport) {
