@@ -4,6 +4,21 @@ Une entrée par commit, la plus récente en haut.
 
 ---
 
+## 16/11/2026
+
+### 1.1.1 : vue 3D (Mathieu) chargée par une adresse absolue (serveurs de médias)
+
+Signalé par Mathieu après la mise en ligne sur le VPS : « La vue 3D n’est pas disponible sur cet appareil. ». Avec les
+serveurs de médias de PrestaShop (`cdn1-3.six10.us`), `layout.js` est servi dans le JS combiné du thème par un autre
+domaine ; le navigateur considère ce script comme d'une autre origine et résout `import()` par rapport à `about:blank` :
+l'adresse relative de `viewer3d.js` échouait (« Failed to resolve module specifier »). `loadViewer` résout maintenant
+l'adresse par rapport à la page (`new URL(VIEWER_URL, document.baseURI)`), qui reste sur le domaine de la boutique.
+Fichier : `views/js/layout.js`.
+
+Fait par Mathieu directement sur new.sixten (puis copié sur la prod) dans la nuit du 16/11, reporté ici à l'identique.
+
+---
+
 ## 15/11/2026
 
 ### Textes (Mathieu) : « Texte / Contour » remis dans la couleur des textes

@@ -3264,7 +3264,9 @@
 
             let viewerModule = null
             const loadViewer = function () {
-                return viewerModule ? Promise.resolve(viewerModule) : import(VIEWER_URL).then(function (m) { viewerModule = m; return m })
+                // Adresse absolue : derrière les serveurs de médias (PS_MEDIA_SERVERS), ce fichier est servi dans le JS combiné par un
+                // autre domaine (cdn1-3.six10.us) ; le navigateur ne résout alors pas une adresse relative dans import() (base about:blank)
+                return viewerModule ? Promise.resolve(viewerModule) : import(new URL(VIEWER_URL, document.baseURI).href).then(function (m) { viewerModule = m; return m })
             }
 
             // Barnum : la tente sur la scène
