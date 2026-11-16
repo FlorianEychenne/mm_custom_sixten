@@ -6,6 +6,19 @@ Une entrée par commit, la plus récente en haut.
 
 ## 16/11/2026
 
+### Indication « Plus de couleurs » à côté de la couleur personnalisée
+
+Demandé par flo : la pastille de couleur à gauche du code passait pour un simple aperçu, alors qu'elle ouvre la roue.
+
+- `views/js/layout.js` : à droite du bloc pastille + code, une flèche vers la gauche et « Plus de couleurs » (petites
+  capitales, comme les titres « Tendances »), pour les zones de couleur comme pour les textes. Un clic dessus ouvre la roue
+  aussi (cible plus grande) ; elle est ancrée sur tout le bloc, un second clic la referme. Hors de l'ordre de tabulation et
+  caché aux lecteurs d'écran : la pastille garde le clavier et son nom.
+- `views/css/site.css` : au téléphone (palette sous le tapis), le bloc pastille + code prend sa largeur utile (code sur
+  6,5 rem, toujours en 16 px pour Safari) au lieu de toute la ligne ; le texte prend le reste (points de suspension en
+  dessous de 340 px de large).
+- Chaîne `moreColors` traduite (fr, de, es, it, nl).
+
 ### Bouton des repères, focus des boutons de la scène, palette du contour au téléphone, clic par cadre
 
 Demandé par flo :

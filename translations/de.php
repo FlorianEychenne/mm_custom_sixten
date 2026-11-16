@@ -31,6 +31,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_a15c6b5f308e050a8844873
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_278f9a3d3077c522e71022e302b9e0e4'] = 'Palette';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_303812bf3aa17935edbd933b5fc934fb'] = 'Farbrad';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7ea8084783a96d22e9c8218131972b4f'] = 'Farbcode';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7fc1dfd1d0dac904297a61184c5c37a0'] = 'Mehr Farben';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_194f5394ae2e9c74dc3c441b92862d1d'] = 'Schriftart';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_54d555b5782f3e9e45091d7064f9a964'] = 'Ihr Text';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e2afee8ab96378a760582a12e01d2b40'] = 'Die gedruckten Farben können je nach Bildschirm und Druckverfahren leicht von den angezeigten abweichen.';

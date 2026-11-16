@@ -31,6 +31,7 @@ $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_a15c6b5f308e050a8844873
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_278f9a3d3077c522e71022e302b9e0e4'] = 'Paleta';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_303812bf3aa17935edbd933b5fc934fb'] = 'Rueda de colores';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7ea8084783a96d22e9c8218131972b4f'] = 'Código de color';
+$_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_7fc1dfd1d0dac904297a61184c5c37a0'] = 'Más colores';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_194f5394ae2e9c74dc3c441b92862d1d'] = 'Fuente';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_54d555b5782f3e9e45091d7064f9a964'] = 'Tu texto';
 $_MODULE['<{mm_custom_sixten}prestashop>mm_custom_sixten_e2afee8ab96378a760582a12e01d2b40'] = 'Los colores impresos pueden variar ligeramente respecto a los de la pantalla, según tu pantalla y el proceso de impresión.';

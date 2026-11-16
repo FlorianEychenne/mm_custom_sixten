@@ -173,6 +173,7 @@ class Mm_custom_sixten extends Module
             'trends' => $this->l('Trends'),
             'colorWheel' => $this->l('Colour wheel'),
             'colorCode' => $this->l('Colour code'),
+            'moreColors' => $this->l('More colours'),
             'inkWhich' => $this->l('Colour of'),
             'inkText' => $this->l('Text'),
             'inkOutline' => $this->l('Outline'),

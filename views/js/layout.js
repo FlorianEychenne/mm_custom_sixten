@@ -864,7 +864,12 @@
             title.className = 'mm-tools-title colors-section-title'
             title.textContent = t('palette', 'Palette')
             wheel.className = 'mm-wheel'
+            // the "More colours" hint, an arrow pointing at the swatch: a plain swatch looks like a preview, not like a button.
+            // A click on it opens the wheel too (bigger target); out of the tab order, the swatch keeps the keyboard.
             wheel.innerHTML = '<div class="mm-wheel-preview"><button type="button" class="mm-wheel-swatch"></button><input type="text" class="mm-wheel-hex" maxlength="7" spellcheck="false" autocomplete="off"></div>'
+                + '<button type="button" class="mm-wheel-more" tabindex="-1" aria-hidden="true">'
+                + '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M14 8H2.5M7 3.5 2.5 8 7 12.5"/></svg>'
+                + '<span></span></button>'
 
             if (old) old.remove()
 
@@ -872,6 +877,9 @@
 
             const swatch = wheel.querySelector('.mm-wheel-swatch')
             const hex = wheel.querySelector('.mm-wheel-hex')
+            const more = wheel.querySelector('.mm-wheel-more')
+
+            more.lastChild.textContent = t('moreColors', 'More colours')
 
             swatch.title = t('colorWheel', 'Colour wheel')
             swatch.setAttribute('aria-label', swatch.title)
@@ -882,17 +890,21 @@
                 else if (current.color) MmCustom.colors.apply(current.color, value)
             }
 
-            swatch.addEventListener('click', function () {
+            // anchored on the whole block: the swatch and the hint both open it and close it again
+            const toggle = function () {
                 if (!ui.colorPicker) return
 
-                ui.colorPicker.open(swatch, {
+                ui.colorPicker.open(wheel, {
                     color: hex.value || '#ffffff',
                     onInput: function (value) {
                         apply(value)
                         paint(value)
                     },
                 }).catch(function (error) { console.error('mm_custom_sixten: colour picker', error) })
-            })
+            }
+
+            swatch.addEventListener('click', toggle)
+            more.addEventListener('click', toggle)
             hex.addEventListener('change', function () {
                 const value = hex.value.trim().replace(/^([0-9a-f]{6})$/i, '#$1')
 
