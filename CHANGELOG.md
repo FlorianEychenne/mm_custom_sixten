@@ -6,6 +6,12 @@ Une entrée par commit, la plus récente en haut.
 
 ## 16/11/2026
 
+### 1.1.2 : séance de mises à jour du 16/11 (repères, palette, « Plus de couleurs »)
+
+Numéro de version des deux commits du 16/11 ci-dessous, copiés sur new.sixten avec `mm_custom` 3.0.6 : bouton des
+repères (repères cachés à l'ouverture), focus des boutons de la scène, palette du contour au téléphone, clic par cadre,
+indication « Plus de couleurs ».
+
 ### Indication « Plus de couleurs » à côté de la couleur personnalisée
 
 Demandé par flo : la pastille de couleur à gauche du code passait pour un simple aperçu, alors qu'elle ouvre la roue.
